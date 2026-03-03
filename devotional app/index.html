@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Excellent Day Devotional</title>
+
+<!-- ═══ PWA META TAGS ═══ -->
+<meta name="application-name" content="Excellent Day">
+<meta name="description" content="A daily Christian devotional app with Bible reader, prayer, journal and reading plan.">
+<meta name="theme-color" content="#2A3B30" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#181E22" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Excellent Day">
+
+<!-- PWA Manifest -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Apple Touch Icons (iOS home screen icon) -->
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/icon-120.png">
+
+<!-- Fallback icon for browsers -->
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+
+<!-- iOS Splash Screens -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cinzel:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════════
+   THEME TOKENS
+══════════════════════════════════════ */
+:root {
+  --transition: 0.4s ease;
+}
+
+/* LIGHT MODE — Soft Morning */
+[data-theme="light"] {
+  --bg:          #F4F1EB;
+  --bg-2:        #EDE8DF;
+  --bg-3:        #E6DFD3;
+  --surface:     #FDFAF5;
+  --surface-2:   #F7F2E8;
+  --border:      #DDD6C8;
+  --border-soft: #EAE4D8;
+
+  --text-1:      #2C2416;
+  --text-2:      #5A4F3C;
+  --text-3:      #8A7D6A;
+  --text-4:      #B5A992;
+
+  --gold:        #B5862A;
+  --gold-light:  #D4A840;
+  --gold-bg:     rgba(181,134,42,0.1);
+  --gold-border: rgba(181,134,42,0.28);
+
+  --accent:      #5C7E6A;
+  --accent-light:#7A9E88;
+  --accent-bg:   rgba(92,126,106,0.1);
+  --accent-border:rgba(92,126,106,0.3);
+
+  --verse-bg:    #2A3B30;
+  --verse-text:  #F0EDE4;
+
+  --shadow-sm:   0 2px 8px rgba(44,36,22,0.07);
+  --shadow-md:   0 6px 24px rgba(44,36,22,0.1);
+  --shadow-lg:   0 12px 40px rgba(44,36,22,0.13);
+
+  --nav-bg:      #FDFAF5;
+  --nav-border:  #DDD6C8;
+
+  --toggle-bg:   #DDD6C8;
+  --toggle-icon: "☀";
+}
+
+/* DARK MODE — Candlelit Slate */
+[data-theme="dark"] {
+  --bg:          #181E22;
+  --bg-2:        #1E262C;
+  --bg-3:        #232D34;
+  --surface:     #1E262C;
+  --surface-2:   #232D34;
+  --border:      #2E3D48;
+  --border-soft: #283540;
+
+  --text-1:      #E8E0D0;
+  --text-2:      #B8AFA0;
+  --text-3:      #7A7060;
+  --text-4:      #4A4438;
+
+  --gold:        #C8A84A;
+  --gold-light:  #E0C060;
+  --gold-bg:     rgba(200,168,74,0.1);
+  --gold-border: rgba(200,168,74,0.25);
+
+  --accent:      #5A8A78;
+  --accent-light:#78A892;
+  --accent-bg:   rgba(90,138,120,0.12);
+  --accent-border:rgba(90,138,120,0.28);
+
+  --verse-bg:    #141C20;
+  --verse-text:  #E8E0D0;
+
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md:   0 6px 24px rgba(0,0,0,0.4);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.5);
+
+  --nav-bg:      #181E22;
+  --nav-border:  #2E3D48;
+
+  --toggle-bg:   #2E3D48;
+  --toggle-icon: "☾";
+}
+
+/* ══════════════════════════════════════
+   GLOBAL RESET & BASE
+══════════════════════════════════════ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  font-family: 'Source Serif 4', serif;
+  background: var(--bg);
+  color: var(--text-1);
+  transition: background var(--transition), color var(--transition);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════
+   SPLASH
+══════════════════════════════════════ */
+#splash {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0;
+  background: #2A3B30;
+  transition: opacity 0.9s ease;
+}
+#splash.hide { opacity: 0; pointer-events: none; }
+
+.sp-emblem {
+  width: 88px; height: 88px; position: relative; margin-bottom: 28px;
+  animation: sp-float 4s ease-in-out infinite;
+}
+@keyframes sp-float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+.sp-circle {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%, #4A7A5E, #2A3B30 65%);
+  border: 1.5px solid rgba(200,168,74,0.35);
+  box-shadow: 0 0 32px rgba(92,126,106,0.35), 0 0 64px rgba(92,126,106,0.12);
+  position: absolute; inset: 0;
+}
+.sp-cross {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 34px; height: 34px;
+}
+.sp-cross::before, .sp-cross::after {
+  content: ''; position: absolute;
+  background: #C8A84A; border-radius: 2px;
+  box-shadow: 0 0 10px rgba(200,168,74,0.6);
+}
+.sp-cross::before { width: 4px; height: 34px; left: 15px; top: 0; }
+.sp-cross::after  { width: 28px; height: 4px; left: 3px; top: 10px; }
+
+.sp-ring {
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,168,74,0.15);
+  animation: sp-ring 3s ease-in-out infinite;
+}
+.sp-ring-2 {
+  position: absolute; inset: -16px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,168,74,0.07);
+  animation: sp-ring 3s ease-in-out infinite 0.5s;
+}
+@keyframes sp-ring {
+  0%,100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.sp-title {
+  font-family: 'Cinzel', serif; font-size: 1.55rem; font-weight: 700;
+  color: #E8C060; letter-spacing: 0.1em; text-align: center;
+  text-shadow: 0 2px 16px rgba(200,168,74,0.3);
+  animation: sp-up 0.8s ease 0.4s both;
+  margin-bottom: 6px;
+}
+.sp-sub {
+  font-family: 'Source Serif 4', serif; font-style: italic;
+  font-size: 0.95rem; color: rgba(200,180,150,0.7);
+  letter-spacing: 0.06em;
+  animation: sp-up 0.8s ease 0.7s both;
+  margin-bottom: 32px;
+}
+.sp-divider {
+  display: flex; align-items: center; gap: 12px;
+  animation: sp-up 0.8s ease 0.9s both;
+}
+.sp-divider span { color: #C8A84A; font-size: 0.8rem; }
+.sp-line { width: 50px; height: 1px; background: linear-gradient(90deg, transparent, rgba(200,168,74,0.5)); }
+.sp-line.r { background: linear-gradient(90deg, rgba(200,168,74,0.5), transparent); }
+
+@keyframes sp-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════ */
+#app { display: none; height: 100vh; flex-direction: column; }
+#app.show { display: flex; }
+
+/* ══════════════════════════════════════
+   TOP BAR
+══════════════════════════════════════ */
+.topbar {
+  height: 60px; flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
+  position: sticky; top: 0; z-index: 200;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+  background: var(--verse-bg);
+  border: 1px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  transition: background var(--transition);
+}
+.brand-mark::before, .brand-mark::after {
+  content: ''; position: absolute;
+  background: var(--gold); border-radius: 1.5px;
+  transition: background var(--transition);
+}
+.brand-mark::before { width: 3px; height: 16px; }
+.brand-mark::after  { width: 12px; height: 3px; top: 8px; }
+
+.brand-text { line-height: 1.15; }
+.brand-name {
+  font-family: 'Cinzel', serif; font-size: 0.9rem; font-weight: 600;
+  color: var(--text-1); letter-spacing: 0.05em;
+  transition: color var(--transition);
+}
+.brand-sub {
+  font-size: 0.62rem; color: var(--text-3); letter-spacing: 0.1em;
+  transition: color var(--transition);
+}
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-date-wrap { text-align: right; }
+.tb-date {
+  font-family: 'Cinzel', serif; font-size: 0.65rem;
+  color: var(--gold); letter-spacing: 0.07em;
+  transition: color var(--transition);
+}
+.tb-time { font-size: 0.62rem; color: var(--text-3); transition: color var(--transition); }
+
+/* THEME TOGGLE */
+.theme-toggle {
+  width: 44px; height: 24px; border-radius: 12px;
+  background: var(--toggle-bg); border: 1px solid var(--border);
+  cursor: pointer; position: relative; flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s;
+  display: flex; align-items: center; padding: 2px;
+}
+.toggle-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, background 0.3s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+}
+[data-theme="light"] .toggle-thumb { transform: translateX(0); }
+[data-theme="dark"]  .toggle-thumb { transform: translateX(20px); }
+[data-theme="light"] .toggle-thumb::after { content: '☀'; }
+[data-theme="dark"]  .toggle-thumb::after { content: '☾'; }
+
+/* ══════════════════════════════════════
+   MAIN + PAGES
+══════════════════════════════════════ */
+.main {
+  flex: 1; overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  transition: background var(--transition);
+}
+.page { display: none; padding: 22px 16px 32px; max-width: 680px; margin: 0 auto; }
+.page.active { display: block; animation: pg-in 0.35s ease; }
+@keyframes pg-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════
+   BOTTOM NAV
+══════════════════════════════════════ */
+.bnav {
+  display: flex; flex-shrink: 0;
+  background: var(--nav-bg);
+  border-top: 1px solid var(--nav-border);
+  padding: 6px 0 10px;
+  transition: background var(--transition), border-color var(--transition);
+  position: relative; z-index: 200;
+}
+.nb {
+  flex: 1; border: none; background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 4px 2px;
+  color: var(--text-3);
+  font-family: 'Cinzel', serif; font-size: 0.53rem; letter-spacing: 0.09em; text-transform: uppercase;
+  transition: color 0.22s;
+  position: relative;
+}
+.nb svg { width: 21px; height: 21px; stroke-width: 1.5; transition: color 0.22s; }
+.nb.active { color: var(--accent); }
+.nb.active svg { color: var(--accent); }
+.nb::after {
+  content: ''; position: absolute; top: 0; left: 28%; right: 28%;
+  height: 2px; background: var(--accent); border-radius: 0 0 3px 3px;
+  opacity: 0; transition: opacity 0.22s;
+}
+.nb.active::after { opacity: 1; }
+
+/* ══════════════════════════════════════
+   SECTION HEADS
+══════════════════════════════════════ */
+.sh {
+  display: flex; align-items: center; gap: 10px;
+  margin: 22px 0 12px;
+}
+.sh:first-child { margin-top: 0; }
+.sh-label {
+  font-family: 'Cinzel', serif; font-size: 0.58rem; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--text-3); white-space: nowrap;
+  transition: color var(--transition);
+}
+.sh-line {
+  flex: 1; height: 1px;
+  background: var(--border-soft);
+  transition: background var(--transition);
+}
+.sh-gem { color: var(--gold); font-size: 0.55rem; flex-shrink: 0; transition: color var(--transition); }
+
+/* ══════════════════════════════════════
+   CARDS
+══════════════════════════════════════ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 16px;
+  padding: 20px 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition), transform 0.2s;
+}
+.card:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+
+/* ══════════════════════════════════════
+   PAGE HEADER
+══════════════════════════════════════ */
+.ph { text-align: center; margin-bottom: 24px; }
+.ph-label {
+  font-family: 'Source Serif 4', serif; font-style: italic;
+  font-size: 0.95rem; color: var(--text-3); letter-spacing: 0.06em;
+  margin-bottom: 5px; transition: color var(--transition);
+}
+.ph-title {
+  font-family: 'Cinzel', serif; font-size: 1.5rem; font-weight: 700;
+  color: var(--text-1); line-height: 1.2; letter-spacing: 0.03em;
+  transition: color var(--transition);
+}
+.ph-divider {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; margin-top: 12px;
+}
+.ph-divider span { color: var(--gold); font-size: 0.7rem; transition: color var(--transition); }
+.ph-div-line {
+  width: 32px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+  transition: background var(--transition);
+}
+.ph-div-line.r { background: linear-gradient(90deg, var(--gold), transparent); }
+
+/* ══════════════════════════════════════
+   VERSE OF THE DAY
+══════════════════════════════════════ */
+.votd {
+  background: var(--verse-bg);
+  border-radius: 18px; padding: 26px 22px; margin-bottom: 14px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition), box-shadow var(--transition);
+}
+[data-theme="light"] .votd {
+  background: linear-gradient(145deg, #2A3B30 0%, #1E2E24 60%, #253428 100%);
+}
+[data-theme="dark"] .votd {
+  background: linear-gradient(145deg, #141C1A 0%, #0F1715 60%, #141E1A 100%);
+  border: 1px solid rgba(90,138,120,0.2);
+}
+.votd::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 90% 10%, rgba(200,168,74,0.08) 0%, transparent 65%),
+              radial-gradient(ellipse 40% 50% at 5% 90%, rgba(90,138,120,0.12) 0%, transparent 65%);
+  pointer-events: none;
+}
+.votd::after {
+  content: '\201C';
+  position: absolute; top: -12px; left: 14px;
+  font-family: Georgia, serif; font-size: 100px;
+  color: rgba(200,168,74,0.07); pointer-events: none; line-height: 1;
+}
+
+.votd-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 13px; border-radius: 20px; margin-bottom: 16px;
+  background: rgba(200,168,74,0.12); border: 1px solid rgba(200,168,74,0.28);
+  font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.15em;
+  color: #E0C060; text-transform: uppercase;
+}
+.vb-dot { width: 4px; height: 4px; border-radius: 50%; background: #C8A84A; box-shadow: 0 0 5px #C8A84A; }
+.votd-verse {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 1.22rem; line-height: 1.72;
+  color: rgba(240,234,220,0.92); margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.votd-ref {
+  font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.12em;
+  color: #C8A84A; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.votd-ref::before { content: ''; width: 18px; height: 1px; background: rgba(200,168,74,0.5); }
+
+/* ══════════════════════════════════════
+   TAGS
+══════════════════════════════════════ */
+.tags { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.tag {
+  padding: 4px 11px; border-radius: 20px; font-size: 0.7rem;
+  font-family: 'Source Serif 4', serif; font-style: italic; letter-spacing: 0.02em;
+  border: 1px solid;
+  transition: all var(--transition);
+}
+.tg { background: var(--gold-bg); border-color: var(--gold-border); color: var(--gold); }
+.ta { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent); }
+
+/* ══════════════════════════════════════
+   REFLECTION TEXT
+══════════════════════════════════════ */
+.rtext {
+  font-family: 'Source Serif 4', serif;
+  font-size: 1.06rem; line-height: 1.82; color: var(--text-2);
+  transition: color var(--transition);
+}
+.rtext p { margin-bottom: 12px; }
+.rtext p:last-child { margin-bottom: 0; }
+
+/* ══════════════════════════════════════
+   PRAYER BLOCK
+══════════════════════════════════════ */
+.prayer {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 14px 14px 0;
+  padding: 18px 20px; margin-bottom: 14px;
+  transition: background var(--transition), border-color var(--transition);
+}
+.prayer-lbl {
+  font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 7px;
+  transition: color var(--transition);
+}
+.prayer-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.prayer-text {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 1.02rem; line-height: 1.76; color: var(--text-2);
+  transition: color var(--transition);
+}
+
+/* ══════════════════════════════════════
+   STREAK
+══════════════════════════════════════ */
+.streak-row { display: flex; gap: 5px; margin-bottom: 14px; }
+.sd {
+  flex: 1; height: 46px; border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: background var(--transition), border-color var(--transition);
+}
+.sd.done {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+.sd.today { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sd-ltr {
+  font-family: 'Cinzel', serif; font-size: 0.5rem; letter-spacing: 0.04em;
+  color: var(--text-3); transition: color var(--transition);
+}
+.sd.done .sd-ltr { color: var(--accent); }
+.sd-icon { font-size: 0.65rem; color: var(--accent); }
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 11px 22px; border-radius: 50px; cursor: pointer; border: none;
+  font-family: 'Cinzel', serif; font-size: 0.68rem; letter-spacing: 0.09em;
+  text-transform: uppercase; font-weight: 600; transition: all 0.22s;
+}
+.bp {
+  background: var(--verse-bg);
+  color: #C8A84A;
+  border: 1px solid rgba(200,168,74,0.3);
+  box-shadow: var(--shadow-sm);
+}
+[data-theme="light"] .bp { background: #2A3B30; color: #E0C060; }
+[data-theme="dark"]  .bp { background: #1A2820; color: #C8A84A; border-color: rgba(200,168,74,0.2); }
+.bp:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.bs {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-2);
+  transition: all 0.22s, background var(--transition), border-color var(--transition);
+}
+.bs:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.brow { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 8px; }
+.brow .bp { flex: 1; }
+
+/* ══════════════════════════════════════
+   BIBLE READER
+══════════════════════════════════════ */
+.bsel {
+  width: 100%; padding: 10px 13px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; color: var(--text-1);
+  font-family: 'Source Serif 4', serif; font-size: 0.93rem;
+  outline: none; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px;
+  margin-bottom: 13px;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.bsel:focus { border-color: var(--accent); }
+
+.ttabs {
+  display: flex; border-radius: 10px; overflow: hidden;
+  border: 1px solid var(--border); margin-bottom: 14px;
+  transition: border-color var(--transition);
+}
+.ttab {
+  flex: 1; padding: 9px; background: var(--surface); border: none; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-3); transition: all 0.2s, background var(--transition), color var(--transition);
+}
+.ttab.active { background: var(--accent-bg); color: var(--accent); }
+.ttab:not(:last-child) { border-right: 1px solid var(--border); }
+
+.tsect { margin-bottom: 16px; }
+.tlbl {
+  font-family: 'Cinzel', serif; font-size: 0.56rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px; transition: color var(--transition);
+}
+.tlbl::after { content: ''; flex: 1; height: 1px; background: var(--border-soft); }
+
+.bgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.bbtn {
+  padding: 9px 6px; border-radius: 9px; text-align: center; cursor: pointer;
+  border: 1px solid var(--border-soft);
+  background: var(--surface);
+  font-family: 'Source Serif 4', serif; font-size: 0.78rem;
+  color: var(--text-2); line-height: 1.2;
+  transition: all 0.18s, background var(--transition), border-color var(--transition), color var(--transition);
+}
+.bbtn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+.bbtn.sel { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent); }
+
+.cgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; margin-bottom: 16px; }
+.cbtn {
+  aspect-ratio: 1; border-radius: 8px;
+  border: 1px solid var(--border-soft); background: var(--surface);
+  cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.65rem;
+  color: var(--text-2); display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s, background var(--transition), color var(--transition);
+}
+.cbtn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+.cbtn.sel  { background: var(--gold-bg); border-color: var(--gold-border); color: var(--gold); }
+
+.rdr-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.rdr-title {
+  font-family: 'Cinzel', serif; font-size: 1.1rem; font-weight: 700;
+  color: var(--text-1); transition: color var(--transition);
+}
+.rdr-sub { font-size: 0.76rem; color: var(--text-3); margin-top: 2px; transition: color var(--transition); }
+
+.bkbtn {
+  display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.06em;
+  color: var(--text-2); cursor: pointer; white-space: nowrap;
+  transition: all 0.18s, background var(--transition), border-color var(--transition), color var(--transition);
+}
+.bkbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+.chnav { display: flex; gap: 7px; margin-bottom: 14px; }
+.chnav .bkbtn { flex: 1; justify-content: center; }
+
+.vlist { list-style: none; }
+.vi {
+  display: flex; gap: 12px; padding: 9px 10px; border-radius: 9px;
+  cursor: pointer; transition: background 0.14s; margin-bottom: 1px;
+}
+.vi:hover { background: var(--surface-2); }
+.vi.hl {
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent); padding-left: 8px;
+}
+.vnum {
+  font-family: 'Cinzel', serif; font-size: 0.6rem; font-weight: 700;
+  color: var(--gold); min-width: 18px; padding-top: 4px; text-align: right; opacity: 0.7;
+  transition: color var(--transition);
+}
+.vtxt {
+  font-family: 'Source Serif 4', serif; font-size: 1.04rem; line-height: 1.76;
+  color: var(--text-1); transition: color var(--transition);
+}
+
+.bv { display: none; }
+.bv.show { display: block; animation: pg-in 0.28s ease; }
+
+.ld { display: flex; gap: 5px; justify-content: center; padding: 36px; }
+.ld span {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); opacity: 0.5;
+  animation: ld-dot 0.9s ease-in-out infinite;
+  transition: background var(--transition);
+}
+.ld span:nth-child(2) { animation-delay: .15s; }
+.ld span:nth-child(3) { animation-delay: .3s; }
+@keyframes ld-dot {
+  0%,80%,100% { transform: scale(0.5); opacity: 0.35; }
+  40%          { transform: scale(1); opacity: 1; }
+}
+
+/* ══════════════════════════════════════
+   JOURNAL
+══════════════════════════════════════ */
+.jtarea {
+  width: 100%; min-height: 160px; resize: vertical;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px;
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 1rem; line-height: 1.76; color: var(--text-1);
+  outline: none; transition: border-color 0.2s, background var(--transition), color var(--transition);
+  margin-bottom: 10px;
+}
+.jtarea:focus { border-color: var(--accent); }
+.jtarea::placeholder { color: var(--text-4); }
+
+.jentry {
+  background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: 12px; padding: 16px 18px; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+  transition: background var(--transition), border-color var(--transition);
+}
+.jentry::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: linear-gradient(180deg, var(--accent), transparent);
+}
+.jdate {
+  font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em;
+  color: var(--accent); margin-bottom: 8px; text-transform: uppercase;
+  transition: color var(--transition);
+}
+.jtext {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 0.97rem; line-height: 1.72; color: var(--text-2);
+  transition: color var(--transition);
+}
+
+/* ══════════════════════════════════════
+   READING PLAN
+══════════════════════════════════════ */
+.plan-hero {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px 18px; margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition), border-color var(--transition);
+}
+.plan-name {
+  font-family: 'Cinzel', serif; font-size: 0.95rem; font-weight: 700;
+  color: var(--text-1); margin-bottom: 2px; transition: color var(--transition);
+}
+.plan-desc { font-size: 0.82rem; color: var(--text-3); margin-bottom: 14px; font-style: italic; }
+.pbar {
+  height: 6px; background: var(--bg-3); border-radius: 3px; overflow: hidden;
+  transition: background var(--transition);
+}
+.pfill {
+  height: 100%; border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  transition: width 0.7s ease;
+}
+.plbl-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.7rem; color: var(--text-3); margin-top: 5px;
+  transition: color var(--transition);
+}
+.plbl-row span:last-child { color: var(--gold); font-family: 'Cinzel', serif; }
+
+.pdi {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border-soft);
+  transition: border-color var(--transition);
+}
+.pdi:last-child { border-bottom: none; }
+.pck {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; cursor: pointer;
+  border: 2px solid var(--border); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.22s, border-color var(--transition);
+}
+.pck.done { background: var(--accent); border-color: var(--accent); }
+.pck.done::after { content: '✓'; color: white; font-size: 0.7rem; font-weight: 700; }
+.pdlbl {
+  font-family: 'Cinzel', serif; font-size: 0.56rem; letter-spacing: 0.1em;
+  color: var(--text-3); text-transform: uppercase; transition: color var(--transition);
+}
+.pdr { font-family: 'Source Serif 4', serif; font-size: 0.97rem; color: var(--text-1); margin-top: 1px; transition: color var(--transition); }
+.prdbtn {
+  margin-left: auto; padding: 5px 11px; border-radius: 7px;
+  border: 1px solid var(--border); background: transparent;
+  font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.07em;
+  color: var(--text-3); cursor: pointer; white-space: nowrap;
+  transition: all 0.18s, border-color var(--transition), color var(--transition);
+}
+.prdbtn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 78px; left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--verse-bg); color: #E0C060;
+  padding: 9px 20px; border-radius: 50px;
+  font-family: 'Cinzel', serif; font-size: 0.66rem; letter-spacing: 0.07em;
+  border: 1px solid rgba(200,168,74,0.25);
+  opacity: 0; pointer-events: none; transition: all 0.28s; z-index: 9000;
+  white-space: nowrap; box-shadow: var(--shadow-lg);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 420px) {
+  .page { padding: 16px 12px 28px; }
+  .bgrid { grid-template-columns: repeat(3, 1fr); }
+  .cgrid { grid-template-columns: repeat(5, 1fr); }
+  .ph-title { font-size: 1.3rem; }
+  .votd-verse { font-size: 1.08rem; }
+}
+
+/* ═══ PWA INSTALL BANNER ═══ */
+.install-banner {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 8000;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  padding: 18px 20px 28px;
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex; align-items: center; gap: 14px;
+}
+.install-banner.show { transform: translateY(0); }
+
+.install-icon {
+  width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+  background: #2A3B30;
+  border: 1px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.install-icon::before, .install-icon::after {
+  content: ''; position: absolute;
+  background: #C8A84A; border-radius: 1.5px;
+}
+.install-icon::before { width: 3px; height: 20px; }
+.install-icon::after  { width: 16px; height: 3px; top: 10px; }
+
+.install-text { flex: 1; }
+.install-title {
+  font-family: 'Cinzel', serif; font-size: 0.82rem; font-weight: 700;
+  color: var(--text-1); letter-spacing: 0.04em; margin-bottom: 2px;
+}
+.install-sub {
+  font-family: 'Source Serif 4', serif; font-style: italic;
+  font-size: 0.78rem; color: var(--text-3);
+}
+.install-actions { display: flex; flex-direction: column; gap: 7px; }
+.install-btn {
+  padding: 9px 16px; border-radius: 50px; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.08em;
+  font-weight: 600; text-transform: uppercase; border: none;
+  background: #2A3B30; color: #C8A84A;
+  border: 1px solid var(--gold-border);
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.install-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.install-dismiss {
+  background: none; border: none; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.58rem;
+  color: var(--text-3); letter-spacing: 0.06em; text-align: center;
+  padding: 2px;
+}
+
+/* iOS install instruction banner */
+.ios-banner {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 8000;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
+  padding: 18px 20px 32px;
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.15);
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+}
+.ios-banner.show { transform: translateY(0); }
+.ios-banner-title {
+  font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 700;
+  color: var(--text-1); margin-bottom: 10px;
+}
+.ios-steps {
+  font-family: 'Source Serif 4', serif; font-size: 0.88rem;
+  color: var(--text-2); line-height: 1.8; margin-bottom: 14px;
+}
+.ios-steps strong { color: var(--accent); font-style: normal; }
+.ios-close {
+  background: none; border: 1px solid var(--border); border-radius: 50px;
+  padding: 8px 20px; cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--text-3);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="sp-emblem">
+    <div class="sp-circle"></div>
+    <div class="sp-ring"></div>
+    <div class="sp-ring-2"></div>
+    <div class="sp-cross"></div>
+  </div>
+  <div class="sp-title">Excellent Day<br>Devotional</div>
+  <div class="sp-sub">This is the day the LORD has made</div>
+  <div class="sp-divider">
+    <div class="sp-line"></div>
+    <span>✦</span>
+    <div class="sp-line r"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"></div>
+      <div class="brand-text">
+        <div class="brand-name">Excellent Day</div>
+        <div class="brand-sub">Daily Devotional</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-date-wrap">
+        <div class="tb-date" id="topDate"></div>
+        <div class="tb-time" id="topTime"></div>
+      </div>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <div class="toggle-thumb" id="toggleThumb"></div>
+      </button>
+    </div>
+  </header>
+
+  <!-- Pages -->
+  <main class="main">
+
+    <!-- TODAY -->
+    <div class="page active" id="page-today">
+      <div class="ph">
+        <div class="ph-label" id="greetLbl">Good Morning</div>
+        <h1 class="ph-title" id="devotionalTitle">His Mercies<br>Are New</h1>
+        <div class="ph-divider">
+          <div class="ph-div-line"></div>
+          <span>✦</span>
+          <div class="ph-div-line r"></div>
+        </div>
+      </div>
+
+      <!-- Verse of the Day — loaded dynamically from Supabase -->
+      <div class="votd" id="votdCard">
+        <div class="votd-badge"><div class="vb-dot"></div>Verse of the Day</div>
+        <p class="votd-verse" id="votdVerse">"It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness."</p>
+        <div class="votd-ref" id="votdRef">Lamentations 3:22–23 · KJV</div>
+      </div>
+
+      <div class="tags" id="devotionalTags">
+        <span class="tag tg">✦ Faithfulness</span>
+        <span class="tag ta">Mercy & Grace</span>
+        <span class="tag ta">Old Testament</span>
+      </div>
+
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Today's Reflection</div><div class="sh-line"></div></div>
+      <div class="card">
+        <div class="rtext" id="devotionalReflection">
+          <p>Each sunrise is a covenant renewed. Before the noise of the day finds you, God has already gone before — His mercy not diminished by yesterday's failures, not strained by tomorrow's unknowns.</p>
+          <p>Jeremiah penned these words in the ruins of Jerusalem, surrounded by devastation. Yet he anchored his soul to one unshakeable truth: God's compassions are not depleted. They are replenished with every dawn.</p>
+          <p>Today, whatever you carry into this new day, lay it at His feet. His faithfulness is not a feeling that fluctuates. It is His very nature — as steady and unchanging as His holy name.</p>
+        </div>
+      </div>
+
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Morning Prayer</div><div class="sh-line"></div></div>
+      <div class="prayer">
+        <div class="prayer-lbl"><div class="prayer-dot"></div>Pray Together</div>
+        <p class="prayer-text" id="devotionalPrayer">"Lord, I receive this new morning as a gift from Your hands. Let Your mercies be the lens through which I see every challenge today. May Your faithfulness be my confidence, and Your love be my strength. Amen."</p>
+      </div>
+
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Devotional Streak</div><div class="sh-line"></div></div>
+      <div class="streak-row" id="streakRow"></div>
+
+      <div class="brow">
+        <button class="btn bp" onclick="nav('bible')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+          Open Bible
+        </button>
+        <button class="btn bs" onclick="nav('journal')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Journal
+        </button>
+      </div>
+    </div>
+
+    <!-- BIBLE -->
+    <div class="page" id="page-bible">
+      <div class="ph" style="margin-bottom:18px">
+        <div class="ph-label">The Living Word</div>
+        <h2 class="ph-title" style="font-size:1.32rem">Holy Bible — KJV</h2>
+        <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
+      </div>
+
+      <!-- Book View -->
+      <div class="bv show" id="bv-books">
+        <select class="bsel" id="transSelect">
+          <option value="KJV">KJV — King James Version</option>
+          <option value="NIV">NIV — New International Version</option>
+          <option value="ESV">ESV — English Standard Version</option>
+          <option value="NLT">NLT — New Living Translation</option>
+        </select>
+        <div class="ttabs">
+          <button class="ttab active" onclick="filterBooks('all',this)">All Books</button>
+          <button class="ttab" onclick="filterBooks('ot',this)">Old Testament</button>
+          <button class="ttab" onclick="filterBooks('nt',this)">New Testament</button>
+        </div>
+        <div id="booksWrap"></div>
+      </div>
+
+      <!-- Chapter View -->
+      <div class="bv" id="bv-chapters">
+        <div class="rdr-hdr">
+          <div><div class="rdr-title" id="chBookName"></div><div class="rdr-sub">Select a chapter</div></div>
+          <button class="bkbtn" onclick="showBV('bv-books')">← Books</button>
+        </div>
+        <div class="cgrid" id="chGrid"></div>
+      </div>
+
+      <!-- Verse View -->
+      <div class="bv" id="bv-verses">
+        <div class="rdr-hdr">
+          <div><div class="rdr-title" id="vTitle"></div><div class="rdr-sub" id="vSub"></div></div>
+          <button class="bkbtn" onclick="showBV('bv-chapters')">← Chapters</button>
+        </div>
+        <div class="chnav">
+          <button class="bkbtn" id="prevBtn" onclick="navCh(-1)">‹ Previous</button>
+          <button class="bkbtn" id="nextBtn" onclick="navCh(1)">Next ›</button>
+        </div>
+        <ul class="vlist" id="vList"></ul>
+      </div>
+    </div>
+
+    <!-- JOURNAL -->
+    <div class="page" id="page-journal">
+      <div class="ph" style="margin-bottom:18px">
+        <div class="ph-label">Reflect & Record</div>
+        <h2 class="ph-title" style="font-size:1.32rem">My Journal</h2>
+        <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
+      </div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Today's Entry</div><div class="sh-line"></div></div>
+      <div class="card" style="padding:16px">
+        <div style="font-family:'Cinzel',serif;font-size:0.56rem;letter-spacing:0.1em;color:var(--accent);margin-bottom:10px;text-transform:uppercase;transition:color var(--transition)" id="jDateLbl"></div>
+        <textarea class="jtarea" id="jInput" placeholder="What is the Lord speaking to your heart today? Write your thoughts, prayers, or insights from His Word…"></textarea>
+        <div class="brow">
+          <button class="btn bp" onclick="saveJ()" style="flex:1">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Entry
+          </button>
+          <button class="btn bs" onclick="document.getElementById('jInput').value=''">Clear</button>
+        </div>
+      </div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Past Reflections</div><div class="sh-line"></div></div>
+      <div id="jHistory">
+        <div style="text-align:center;padding:28px;font-family:'Lora',serif;font-style:italic;color:var(--text-4);font-size:0.98rem;transition:color var(--transition)">
+          Your written reflections will appear here…
+        </div>
+      </div>
+    </div>
+
+    <!-- READING PLAN -->
+    <div class="page" id="page-plan">
+      <div class="ph" style="margin-bottom:18px">
+        <div class="ph-label">Your Sacred Journey</div>
+        <h2 class="ph-title" style="font-size:1.32rem">Reading Plan</h2>
+        <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
+      </div>
+      <div class="plan-hero">
+        <div class="plan-name">New Testament in 90 Days</div>
+        <div class="plan-desc">Matthew through Revelation — one passage at a time</div>
+        <div class="pbar"><div class="pfill" id="planFill" style="width:0%"></div></div>
+        <div class="plbl-row"><span id="planLbl">0 of 90 days</span><span id="planPct">0%</span></div>
+      </div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">This Week's Readings</div><div class="sh-line"></div></div>
+      <div class="card" style="padding:4px 14px">
+        <ul id="planList" style="list-style:none"></ul>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bnav">
+    <button class="nb active" id="nb-today" onclick="nav('today')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Today
+    </button>
+    <button class="nb" id="nb-bible" onclick="nav('bible')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Bible
+    </button>
+    <button class="nb" id="nb-journal" onclick="nav('journal')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Journal
+    </button>
+    <button class="nb" id="nb-plan" onclick="nav('plan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Plan
+    </button>
+  </nav>
+  <!-- PWA Install Banner (Android) -->
+  <div class="install-banner" id="installBanner">
+    <div class="install-icon"></div>
+    <div class="install-text">
+      <div class="install-title">Add to Home Screen</div>
+      <div class="install-sub">Install for the full app experience</div>
+    </div>
+    <div class="install-actions">
+      <button class="install-btn" id="installBtn">Install App</button>
+      <button class="install-dismiss" id="installDismiss">Not now</button>
+    </div>
+  </div>
+
+  <!-- iOS Install Instructions -->
+  <div class="ios-banner" id="iosBanner">
+    <div class="ios-banner-title">Install on iPhone</div>
+    <div class="ios-steps">
+      Tap the <strong>Share ↑</strong> button in Safari<br>
+      then tap <strong>"Add to Home Screen"</strong><br>
+      and tap <strong>"Add"</strong> to install
+    </div>
+    <button class="ios-close" onclick="document.getElementById('iosBanner').classList.remove('show');localStorage.setItem('edd_ios_dismissed','1')">Got it</button>
+  </div>
+
+</div><!-- end #app -->
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══════════════════════════════════════════════════════
+//  SUPABASE CONFIGURATION
+//  Replace these values with your own from:
+//  https://supabase.com → Your Project → Settings → API
+// ══════════════════════════════════════════════════════
+// ─────────────────────────────────────────────────────
+//  HOW TO SET UP SUPABASE:
+//  1. Go to https://supabase.com and create a free project
+//  2. Dashboard → Settings → API
+//  3. Copy "Project URL"  → paste below as SUPABASE_URL
+//     (must look like: https://abcdefgh.supabase.co)
+//  4. Copy "anon public"  → paste below as SUPABASE_ANON
+//     (a long JWT string starting with "eyJhbGci...")
+//  5. Run the SQL in the comment block further below
+// ─────────────────────────────────────────────────────
+const SUPABASE_URL  = 'https://gouiwpmidjomnhduphyr.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvdWl3cG1pZGpvbW5oZHVwaHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODY0ODIsImV4cCI6MjA4ODA2MjQ4Mn0.WfcRlcpEFvLmWkeqHtgnP2GK2tEl1Rp6BckPBckc1qM';
+
+// Safety guard: if CDN fails to load, the app uses localStorage instead
+const _db = (typeof window !== 'undefined' && window.supabase)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+  : null;
+
+// ── AUTH HELPERS ────────────────────────────────────────
+let currentUser = null;
+
+async function getUser() {
+  if (!_db) return null;
+  const { data: { user } } = await _db.auth.getUser();
+  currentUser = user;
+  return user;
+}
+
+async function signInAnonymously() {
+  if (!_db) return null;
+  const { data, error } = await _db.auth.signInAnonymously();
+  if (error) {
+    console.warn('Supabase auth failed, falling back to localStorage:', error.message);
+    return null;
+  }
+  currentUser = data.user;
+  return data.user;
+}
+
+async function ensureUser() {
+  if (!_db) return null;
+  if (currentUser) return currentUser;
+  const user = await getUser();
+  if (user) return user;
+  return await signInAnonymously();
+}
+
+// ── JOURNAL (Supabase) ──────────────────────────────────
+async function saveJournalToDB(text) {
+  if (!_db) return null;
+  const user = await ensureUser();
+  if (!user) return null;
+  const { data, error } = await _db
+    .from('journal_entries')
+    .insert({ user_id: user.id, text, created_at: new Date().toISOString() })
+    .select()
+    .single();
+  if (error) { console.error('Journal save error:', error.message); return null; }
+  return data;
+}
+
+async function loadJournalFromDB() {
+  if (!_db) return null;
+  const user = await ensureUser();
+  if (!user) return null;
+  const { data, error } = await _db
+    .from('journal_entries')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+  if (error) { console.error('Journal load error:', error.message); return null; }
+  return data;
+}
+
+async function deleteJournalEntry(id) {
+  if (!_db) return;
+  const { error } = await _db
+    .from('journal_entries')
+    .delete()
+    .eq('id', id);
+  if (error) console.error('Delete error:', error.message);
+}
+
+// ── READING PLAN (Supabase) ─────────────────────────────
+async function savePlanProgressToDB(dayIndex, done) {
+  if (!_db) return;
+  const user = await ensureUser();
+  if (!user) return;
+  await _db
+    .from('reading_progress')
+    .upsert({ user_id: user.id, day_index: dayIndex, completed: done },
+             { onConflict: 'user_id,day_index' });
+}
+
+async function loadPlanProgressFromDB() {
+  if (!_db) return null;
+  const user = await ensureUser();
+  if (!user) return null;
+  const { data, error } = await _db
+    .from('reading_progress')
+    .select('day_index, completed')
+    .eq('user_id', user.id);
+  if (error) { console.error('Plan load error:', error.message); return null; }
+  return data;
+}
+
+// ── STREAK (Supabase) ───────────────────────────────────
+async function recordTodayStreak() {
+  if (!_db) return;
+  const user = await ensureUser();
+  if (!user) return;
+  const today = new Date().toISOString().split('T')[0];
+  await _db
+    .from('streak_days')
+    .upsert({ user_id: user.id, date: today },
+             { onConflict: 'user_id,date' });
+}
+
+async function loadStreakFromDB() {
+  if (!_db) return null;
+  const user = await ensureUser();
+  if (!user) return null;
+  // Get last 7 days
+  const since = new Date();
+  since.setDate(since.getDate() - 6);
+  const { data, error } = await _db
+    .from('streak_days')
+    .select('date')
+    .eq('user_id', user.id)
+    .gte('date', since.toISOString().split('T')[0]);
+  if (error) { console.error('Streak load error:', error.message); return null; }
+  return data ? data.map(r => r.date) : [];
+}
+
+// ══════════════════════════════════════════════════════
+//  SUPABASE SQL — Run this in your Supabase SQL editor
+//  (Dashboard → SQL Editor → New Query → Paste & Run)
+// ══════════════════════════════════════════════════════
+/*
+-- Journal entries table
+create table if not exists journal_entries (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users(id) on delete cascade,
+  text        text not null,
+  created_at  timestamptz default now()
+);
+alter table journal_entries enable row level security;
+create policy "Users manage own journal" on journal_entries
+  for all using (auth.uid() = user_id);
+
+-- Reading plan progress table
+create table if not exists reading_progress (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users(id) on delete cascade,
+  day_index   int not null,
+  completed   boolean default false,
+  unique(user_id, day_index)
+);
+alter table reading_progress enable row level security;
+create policy "Users manage own progress" on reading_progress
+  for all using (auth.uid() = user_id);
+
+-- Streak tracking table
+create table if not exists streak_days (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references auth.users(id) on delete cascade,
+  date        date not null,
+  unique(user_id, date)
+);
+alter table streak_days enable row level security;
+create policy "Users manage own streak" on streak_days
+  for all using (auth.uid() = user_id);
+*/
+// ── BIBLE DATA ─────────────────────────
+const OT=[
+  {n:"Genesis",c:50},{n:"Exodus",c:40},{n:"Leviticus",c:27},{n:"Numbers",c:36},
+  {n:"Deuteronomy",c:34},{n:"Joshua",c:24},{n:"Judges",c:21},{n:"Ruth",c:4},
+  {n:"1 Samuel",c:31},{n:"2 Samuel",c:24},{n:"1 Kings",c:22},{n:"2 Kings",c:25},
+  {n:"1 Chronicles",c:29},{n:"2 Chronicles",c:36},{n:"Ezra",c:10},{n:"Nehemiah",c:13},
+  {n:"Esther",c:10},{n:"Job",c:42},{n:"Psalms",c:150},{n:"Proverbs",c:31},
+  {n:"Ecclesiastes",c:12},{n:"Song of Solomon",c:8},{n:"Isaiah",c:66},
+  {n:"Jeremiah",c:52},{n:"Lamentations",c:5},{n:"Ezekiel",c:48},{n:"Daniel",c:12},
+  {n:"Hosea",c:14},{n:"Joel",c:3},{n:"Amos",c:9},{n:"Obadiah",c:1},{n:"Jonah",c:4},
+  {n:"Micah",c:7},{n:"Nahum",c:3},{n:"Habakkuk",c:3},{n:"Zephaniah",c:3},
+  {n:"Haggai",c:2},{n:"Zechariah",c:14},{n:"Malachi",c:4}
+];
+const NT=[
+  {n:"Matthew",c:28},{n:"Mark",c:16},{n:"Luke",c:24},{n:"John",c:21},{n:"Acts",c:28},
+  {n:"Romans",c:16},{n:"1 Corinthians",c:16},{n:"2 Corinthians",c:13},{n:"Galatians",c:6},
+  {n:"Ephesians",c:6},{n:"Philippians",c:4},{n:"Colossians",c:4},{n:"1 Thessalonians",c:5},
+  {n:"2 Thessalonians",c:3},{n:"1 Timothy",c:6},{n:"2 Timothy",c:4},{n:"Titus",c:3},
+  {n:"Philemon",c:1},{n:"Hebrews",c:13},{n:"James",c:5},{n:"1 Peter",c:5},
+  {n:"2 Peter",c:3},{n:"1 John",c:5},{n:"2 John",c:1},{n:"3 John",c:1},
+  {n:"Jude",c:1},{n:"Revelation",c:22}
+];
+
+const KJV={
+  "John 3":["There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:","The same came to Jesus by night, and said unto him, Rabbi, we know that thou art a teacher come from God: for no man can do these miracles that thou doest, except God be with him.","Jesus answered and said unto him, Verily, verily, I say unto thee, Except a man be born again, he cannot see the kingdom of God.","Nicodemus saith unto him, How can a man be born when he is old? can he enter the second time into his mother's womb, and be born?","Jesus answered, Verily, verily, I say unto thee, Except a man be born of water and of the Spirit, he cannot enter into the kingdom of God.","That which is born of the flesh is flesh; and that which is born of the Spirit is spirit.","Marvel not that I said unto thee, Ye must be born again.","The wind bloweth where it listeth, and thou hearest the sound thereof, but canst not tell whence it cometh, and whither it goeth: so is every one that is born of the Spirit.","Nicodemus answered and said unto him, How can these things be?","Jesus answered and said unto him, Art thou a master of Israel, and knowest not these things?","Verily, verily, I say unto thee, We speak that we do know, and testify that we have seen; and ye receive not our witness.","If I have told you earthly things, and ye believe not, how shall ye believe, if I tell you of heavenly things?","And no man hath ascended up to heaven, but he that came down from heaven, even the Son of man which is in heaven.","And as Moses lifted up the serpent in the wilderness, even so must the Son of man be lifted up:","That whosoever believeth in him should not perish, but have eternal life.","For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.","For God sent not his Son into the world to condemn the world; but that the world through him might be saved.","He that believeth on him is not condemned: but he that believeth not is condemned already, because he hath not believed in the name of the only begotten Son of God.","And this is the condemnation, that light is come into the world, and men loved darkness rather than light, because their deeds were evil.","For every one that doeth evil hateth the light, neither cometh to the light, lest his deeds should be reproved.","But he that doeth truth cometh to the light, that his deeds may be made manifest, that they are wrought in God."],
+  "Psalms 23":["The LORD is my shepherd; I shall not want.","He maketh me to lie down in green pastures: he leadeth me beside the still waters.","He restoreth my soul: he leadeth me in the paths of righteousness for his name's sake.","Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me.","Thou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over.","Surely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever."],
+  "Psalms 91":["He that dwelleth in the secret place of the most High shall abide under the shadow of the Almighty.","I will say of the LORD, He is my refuge and my fortress: my God; in him will I trust.","Surely he shall deliver thee from the snare of the fowler, and from the noisome pestilence.","He shall cover thee with his feathers, and under his wings shalt thou trust: his truth shall be thy shield and buckler.","Thou shalt not be afraid for the terror by night; nor for the arrow that flieth by day;","Nor for the pestilence that walketh in darkness; nor for the destruction that wasteth at noonday.","A thousand shall fall at thy side, and ten thousand at thy right hand; but it shall not come nigh thee.","Only with thine eyes shalt thou behold and see the reward of the wicked.","Because thou hast made the LORD, which is my refuge, even the most High, thy habitation;","There shall no evil befall thee, neither shall any plague come nigh thy dwelling.","For he shall give his angels charge over thee, to keep thee in all thy ways.","They shall bear thee up in their hands, lest thou dash thy foot against a stone.","Thou shalt tread upon the lion and adder: the young lion and the dragon shalt thou trample under feet.","Because he hath set his love upon me, therefore will I deliver him: I will set him on high, because he hath known my name.","He shall call upon me, and I will answer him: I will be with him in trouble; I will deliver him, and honour him.","With long life will I satisfy him, and shew him my salvation."],
+  "Proverbs 3":["My son, forget not my law; but let thine heart keep my commandments:","For length of days, and long life, and peace, shall they add to thee.","Let not mercy and truth forsake thee: bind them about thy neck; write them upon the table of thine heart:","So shalt thou find favour and good understanding in the sight of God and man.","Trust in the LORD with all thine heart; and lean not unto thine own understanding.","In all thy ways acknowledge him, and he shall direct thy paths.","Be not wise in thine own eyes: fear the LORD, and depart from evil.","It shall be health to thy navel, and marrow to thy bones.","Honour the LORD with thy substance, and with the firstfruits of all thine increase:","So shall thy barns be filled with plenty, and thy presses shall burst out with new wine.","My son, despise not the chastening of the LORD; neither be weary of his correction:","For whom the LORD loveth he correcteth; even as a father the son in whom he delighteth.","Happy is the man that findeth wisdom, and the man that getteth understanding.","For the merchandise of it is better than the merchandise of silver, and the gain thereof than fine gold.","She is more precious than rubies: and all the things thou canst desire are not to be compared unto her."],
+  "Romans 8":["There is therefore now no condemnation to them which are in Christ Jesus, who walk not after the flesh, but after the Spirit.","For the law of the Spirit of life in Christ Jesus hath made me free from the law of sin and death.","For what the law could not do, in that it was weak through the flesh, God sending his own Son in the likeness of sinful flesh, and for sin, condemned sin in the flesh:","That the righteousness of the law might be fulfilled in us, who walk not after the flesh, but after the Spirit.","For they that are after the flesh do mind the things of the flesh; but they that are after the Spirit the things of the Spirit.","For to be carnally minded is death; but to be spiritually minded is life and peace.","Because the carnal mind is enmity against God: for it is not subject to the law of God, neither indeed can be.","So then they that are in the flesh cannot please God.","But ye are not in the flesh, but in the Spirit, if so be that the Spirit of God dwell in you. Now if any man have not the Spirit of Christ, he is none of his.","And if Christ be in you, the body is dead because of sin; but the Spirit is life because of righteousness.","But if the Spirit of him that raised up Jesus from the dead dwell in you, he that raised up Christ from the dead shall also quicken your mortal bodies by his Spirit that dwelleth in you.","Therefore, brethren, we are debtors, not to the flesh, to live after the flesh.","For if ye live after the flesh, ye shall die: but if ye through the Spirit do mortify the deeds of the body, ye shall live.","For as many as are led by the Spirit of God, they are the sons of God.","For ye have not received the spirit of bondage again to fear; but ye have received the Spirit of adoption, whereby we cry, Abba, Father.","The Spirit itself beareth witness with our spirit, that we are the children of God:","And if children, then heirs; heirs of God, and joint-heirs with Christ; if so be that we suffer with him, that we may be also glorified together.","For I reckon that the sufferings of this present time are not worthy to be compared with the glory which shall be revealed in us.","And we know that all things work together for good to them that love God, to them who are the called according to his purpose.","Nay, in all these things we are more than conquerors through him that loved us.","For I am persuaded, that neither death, nor life, nor angels, nor principalities, nor powers, nor things present, nor things to come,","Nor height, nor depth, nor any other creature, shall be able to separate us from the love of God, which is in Christ Jesus our Lord."],
+  "Matthew 1":["The book of the generation of Jesus Christ, the son of David, the son of Abraham.","Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren;","And Judas begat Phares and Zara of Thamar; and Phares begat Esrom; and Esrom begat Aram;","And Aram begat Aminadab; and Aminadab begat Naasson; and Naasson begat Salmon;","And Salmon begat Booz of Rachab; and Booz begat Obed of Ruth; and Obed begat Jesse;","And Jesse begat David the king; and David the king begat Solomon of her that had been the wife of Urias;","And Jacob begat Joseph the husband of Mary, of whom was born Jesus, who is called Christ.","So all the generations from Abraham to David are fourteen generations; and from David until the carrying away into Babylon are fourteen generations; and from the carrying away into Babylon unto Christ are fourteen generations.","Now the birth of Jesus Christ was on this wise: When as his mother Mary was espoused to Joseph, before they came together, she was found with child of the Holy Ghost.","Then Joseph her husband, being a just man, and not willing to make her a publick example, was minded to put her away privily.","But while he thought on these things, behold, the angel of the Lord appeared unto him in a dream, saying, Joseph, thou son of David, fear not to take unto thee Mary thy wife: for that which is conceived in her is of the Holy Ghost.","And she shall bring forth a son, and thou shalt call his name JESUS: for he shall save his people from their sins.","Behold, a virgin shall be with child, and shall bring forth a son, and they shall call his name Emmanuel, which being interpreted is, God with us.","Then Joseph being raised from sleep did as the angel of the Lord had bidden him, and took unto him his wife:","And knew her not till she had brought forth her firstborn son: and he called his name JESUS."],
+  "Ephesians 6":["Finally, my brethren, be strong in the Lord, and in the power of his might.","Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.","For we wrestle not against flesh and blood, but against principalities, against powers, against the rulers of the darkness of this world, against spiritual wickedness in high places.","Wherefore take unto you the whole armour of God, that ye may be able to withstand in the evil day, and having done all, to stand.","Stand therefore, having your loins girt about with truth, and having on the breastplate of righteousness;","And your feet shod with the preparation of the gospel of peace;","Above all, taking the shield of faith, wherewith ye shall be able to quench all the fiery darts of the wicked.","And take the helmet of salvation, and the sword of the Spirit, which is the word of God:","Praying always with all prayer and supplication in the Spirit, and watching thereunto with all perseverance and supplication for all saints;"]
+};
+
+function getVerses(book, ch) {
+  const k = `${book} ${ch}`;
+  if (KJV[k]) return KJV[k];
+  const n = Math.min(26, Math.max(8, Math.floor(Math.random()*16)+8));
+  return Array.from({length:n},(_,i)=>`[${book} ${ch}:${i+1}] — Connect to a Bible API to load the full King James Version text for this passage.`);
+}
+
+// ── STATE ───────────────────────────────
+let curBook = null, curCh = 1;
+let journals = JSON.parse(localStorage.getItem('edd_jj') || '[]');
+let planDone = JSON.parse(localStorage.getItem('edd_pp') || 'null') || [true,true,true,true,true,false,false];
+let theme = localStorage.getItem('edd_theme') || 'light';
+
+const PLAN = [
+  {day:'Day 1',r:'Matthew 1–2',b:'Matthew',c:1},
+  {day:'Day 2',r:'Matthew 3–4',b:'Matthew',c:3},
+  {day:'Day 3',r:'Matthew 5–6',b:'Matthew',c:5},
+  {day:'Day 4',r:'Matthew 7–8',b:'Matthew',c:7},
+  {day:'Day 5',r:'Matthew 9–10',b:'Matthew',c:9},
+  {day:'Day 6',r:'Matthew 11–12',b:'Matthew',c:11},
+  {day:'Day 7',r:'Matthew 13–14',b:'Matthew',c:13},
+];
+
+// ── BOOT ────────────────────────────────
+window.addEventListener('load', () => {
+  // Apply saved theme before app shows
+  document.documentElement.setAttribute('data-theme', theme);
+
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('app').classList.add('show');
+      boot();
+    }, 1000);
+  }, 3000);
+});
+
+// ── DAILY DEVOTIONAL (Supabase) ─────────────────────────
+async function loadTodayDevotional() {
+  if (!_db) return; // fallback: keep hardcoded content
+
+  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+  const { data, error } = await _db
+    .from('devotionals')
+    .select('*')
+    .eq('date', today)
+    .single();
+
+  if (error || !data) {
+    console.log('No devotional found for today — showing default content');
+    return; // keep the hardcoded fallback content
+  }
+
+  // Update the page title
+  const titleEl = document.getElementById('devotionalTitle');
+  if (titleEl) titleEl.innerHTML = data.title.replace(' ', '<br>');
+
+  // Update verse
+  const verseEl = document.getElementById('votdVerse');
+  if (verseEl) verseEl.textContent = '"' + data.verse + '"';
+
+  // Update verse reference
+  const refEl = document.getElementById('votdRef');
+  if (refEl) refEl.textContent = data.verse_ref;
+
+  // Update reflection paragraphs
+  const reflEl = document.getElementById('devotionalReflection');
+  if (reflEl) {
+    reflEl.innerHTML = [data.reflection_1, data.reflection_2, data.reflection_3]
+      .filter(Boolean)
+      .map(p => `<p>${p}</p>`)
+      .join('');
+  }
+
+  // Update prayer
+  const prayerEl = document.getElementById('devotionalPrayer');
+  if (prayerEl) prayerEl.textContent = '"' + data.prayer + '"';
+
+  // Update tags
+  if (data.tags && data.tags.length) {
+    const tagsEl = document.getElementById('devotionalTags');
+    if (tagsEl) {
+      tagsEl.innerHTML = data.tags.map((tag, i) =>
+        `<span class="tag ${i === 0 ? 'tg' : 'ta'}">${i === 0 ? '✦ ' : ''}${tag}</span>`
+      ).join('');
+    }
+  }
+}
+
+async function boot() {
+  tick(); setInterval(tick, 30000);
+  setGreeting();
+  buildBooks();
+
+  const d = new Date();
+  document.getElementById('jDateLbl').textContent =
+    d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  // Try Supabase first; fall back gracefully to localStorage
+  try {
+    await ensureUser();
+    await Promise.all([ loadTodayDevotional(), initJournal(), initPlan(), initStreak() ]);
+  } catch(e) {
+    console.warn('Supabase unavailable — using localStorage fallback:', e.message);
+    buildStreak(); buildJournalHistory(); buildPlan();
+  }
+}
+
+// ── SUPABASE INIT HELPERS ────────────────────
+async function initJournal() {
+  const rows = await loadJournalFromDB();
+  if (rows) {
+    journals = rows.map(e => ({
+      id:   e.id,
+      date: new Date(e.created_at).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+      text: e.text
+    }));
+  }
+  buildJournalHistory();
+}
+
+async function initPlan() {
+  const rows = await loadPlanProgressFromDB();
+  if (rows && rows.length > 0) {
+    planDone = Array(PLAN.length).fill(false);
+    rows.forEach(r => { if (r.day_index < PLAN.length) planDone[r.day_index] = r.completed; });
+  }
+  buildPlan();
+}
+
+async function initStreak() {
+  await recordTodayStreak();
+  const dates = await loadStreakFromDB();
+  if (dates) buildStreakFromDates(dates);
+  else        buildStreak();
+}
+
+function tick() {
+  const n = new Date();
+  document.getElementById('topDate').textContent = n.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('topTime').textContent = n.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+
+function setGreeting() {
+  const h = new Date().getHours();
+  document.getElementById('greetLbl').textContent = h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+}
+
+// ── THEME TOGGLE ────────────────────────
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('edd_theme', theme);
+  toast(theme === 'dark' ? '☾ Dark mode' : '☀ Light mode');
+}
+
+// ── NAVIGATION ──────────────────────────
+function nav(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  document.getElementById('nb-' + p).classList.add('active');
+}
+
+// ── BIBLE ───────────────────────────────
+function buildBooks(filter = 'all') {
+  let h = '';
+  if (filter !== 'nt') h += `<div class="tsect"><div class="tlbl">Old Testament · 39 Books</div><div class="bgrid">${OT.map(b=>`<button class="bbtn" onclick="selBook('${b.n}',${b.c})">${b.n}</button>`).join('')}</div></div>`;
+  if (filter !== 'ot') h += `<div class="tsect"><div class="tlbl">New Testament · 27 Books</div><div class="bgrid">${NT.map(b=>`<button class="bbtn" onclick="selBook('${b.n}',${b.c})">${b.n}</button>`).join('')}</div></div>`;
+  document.getElementById('booksWrap').innerHTML = h;
+}
+
+function filterBooks(v, btn) {
+  document.querySelectorAll('.ttab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  buildBooks(v);
+}
+
+function selBook(name, chapters) {
+  curBook = {name, chapters};
+  document.getElementById('chBookName').textContent = name;
+  document.getElementById('chGrid').innerHTML = Array.from({length:chapters},(_,i)=>
+    `<button class="cbtn" onclick="selCh(${i+1})">${i+1}</button>`
+  ).join('');
+  showBV('bv-chapters');
+}
+
+function selCh(ch) {
+  curCh = ch;
+  document.getElementById('vTitle').textContent = `${curBook.name} ${ch}`;
+  document.getElementById('vSub').textContent = `King James Version · Chapter ${ch} of ${curBook.chapters}`;
+  document.getElementById('prevBtn').disabled = ch <= 1;
+  document.getElementById('nextBtn').disabled = ch >= curBook.chapters;
+  showBV('bv-verses');
+  renderVerses();
+}
+
+function renderVerses() {
+  const ul = document.getElementById('vList');
+  ul.innerHTML = '<div class="ld"><span></span><span></span><span></span></div>';
+  setTimeout(() => {
+    const vv = getVerses(curBook.name, curCh);
+    ul.innerHTML = vv.map((v,i) =>
+      `<li class="vi" onclick="this.classList.toggle('hl')"><span class="vnum">${i+1}</span><span class="vtxt">${v}</span></li>`
+    ).join('');
+  }, 300);
+}
+
+function navCh(d) { const n = curCh + d; if (n >= 1 && n <= curBook.chapters) selCh(n); }
+
+function showBV(id) {
+  document.querySelectorAll('.bv').forEach(v => v.classList.remove('show'));
+  document.getElementById(id).classList.add('show');
+}
+
+// ── STREAK ──────────────────────────────
+function buildStreakFromDates(activeDates) {
+  // activeDates = array of 'YYYY-MM-DD' strings from Supabase
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date();
+  const todayIdx = today.getDay();
+  const row = document.getElementById('streakRow');
+  row.innerHTML = days.map((d, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() - ((todayIdx - i + 7) % 7));
+    const dateStr = date.toISOString().split('T')[0];
+    const done = activeDates.includes(dateStr);
+    const isT  = i === todayIdx;
+    return `<div class="sd ${done?'done':''} ${isT?'today':''}">
+      <span class="sd-ltr">${d}</span>
+      <span class="sd-icon">${done ? '✦' : '·'}</span>
+    </div>`;
+  }).join('');
+}
+
+function buildStreak() {
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date().getDay();
+  document.getElementById('streakRow').innerHTML = days.map((d,i) => {
+    const done = i < 5, isT = i === today;
+    return `<div class="sd ${done?'done':''} ${isT?'today':''}">
+      <span class="sd-ltr">${d}</span>
+      <span class="sd-icon">${done ? '✦' : '·'}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── JOURNAL ─────────────────────────────
+async function saveJ() {
+  const t = document.getElementById('jInput').value.trim();
+  if (!t) { toast('Write something first ✦'); return; }
+
+  const entry = {
+    date: new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),
+    text: t
+  };
+
+  // Try Supabase first
+  const saved = await saveJournalToDB(t);
+  if (saved) {
+    entry.id = saved.id;
+    toast('Saved to cloud — Praise the Lord 🙏');
+  } else {
+    // Fallback: localStorage only
+    localStorage.setItem('edd_jj', JSON.stringify(journals));
+    toast('Saved locally 🙏');
+  }
+
+  journals.unshift(entry);
+  document.getElementById('jInput').value = '';
+  buildJournalHistory();
+}
+
+function buildJournalHistory() {
+  const c = document.getElementById('jHistory');
+  if (!journals.length) {
+    c.innerHTML = `<div style="text-align:center;padding:28px;font-family:'Lora',serif;font-style:italic;color:var(--text-4);font-size:0.98rem;transition:color var(--transition)">Your written reflections will appear here…</div>`;
+    return;
+  }
+  c.innerHTML = journals.map(e =>
+    `<div class="jentry"><div class="jdate">${e.date}</div><div class="jtext">${e.text}</div></div>`
+  ).join('');
+}
+
+// ── READING PLAN ────────────────────────
+function buildPlan() {
+  const done = planDone.filter(Boolean).length;
+  const pct = Math.round((done / 90) * 100);
+  document.getElementById('planFill').style.width = pct + '%';
+  document.getElementById('planLbl').textContent = `${done} of 90 days complete`;
+  document.getElementById('planPct').textContent = pct + '%';
+  document.getElementById('planList').innerHTML = PLAN.map((p,i) => `
+    <li class="pdi">
+      <div class="pck ${planDone[i]?'done':''}" onclick="togglePlan(${i})"></div>
+      <div><div class="pdlbl">${p.day}</div><div class="pdr">${p.r}</div></div>
+      <button class="prdbtn" onclick="openRead('${p.b}',${p.c})">Read →</button>
+    </li>`
+  ).join('');
+}
+
+async function togglePlan(i) {
+  planDone[i] = !planDone[i];
+  localStorage.setItem('edd_pp', JSON.stringify(planDone));
+  await savePlanProgressToDB(i, planDone[i]);
+  buildPlan();
+}
+
+function openRead(bookName, ch) {
+  const book = [...OT,...NT].find(b => b.n === bookName);
+  if (!book) return;
+  curBook = {name: book.n, chapters: book.c};
+  curCh = ch;
+  nav('bible');
+  document.getElementById('vTitle').textContent = `${bookName} ${ch}`;
+  document.getElementById('vSub').textContent = `King James Version · Chapter ${ch} of ${book.c}`;
+  document.getElementById('prevBtn').disabled = ch <= 1;
+  document.getElementById('nextBtn').disabled = ch >= book.c;
+  showBV('bv-verses');
+  renderVerses();
+}
+
+// ── TOAST ────────────────────────────────
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+</script>
+
+<!-- ═══ PWA SERVICE WORKER + INSTALL PROMPT ═══ -->
+<script>
+// ── REGISTER SERVICE WORKER ─────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(reg => console.log('✅ Service Worker registered:', reg.scope))
+      .catch(err => console.log('❌ Service Worker failed:', err));
+  });
+}
+
+// ── PWA INSTALL PROMPT (Android) ────────────────
+let deferredPrompt = null;
+const installBanner = document.getElementById('installBanner');
+const installBtn    = document.getElementById('installBtn');
+const installDismiss = document.getElementById('installDismiss');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show install banner after 3s
+  setTimeout(() => {
+    if (installBanner) installBanner.classList.add('show');
+  }, 3000);
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      installBanner.classList.remove('show');
+    }
+    deferredPrompt = null;
+  });
+}
+
+if (installDismiss) {
+  installDismiss.addEventListener('click', () => {
+    installBanner.classList.remove('show');
+    localStorage.setItem('edd_install_dismissed', '1');
+  });
+}
+
+// Don't show again if already dismissed
+if (localStorage.getItem('edd_install_dismissed')) {
+  if (installBanner) installBanner.style.display = 'none';
+}
+
+// ── DETECT IF ALREADY INSTALLED ─────────────────
+window.addEventListener('appinstalled', () => {
+  if (installBanner) installBanner.classList.remove('show');
+  console.log('✅ App installed successfully');
+});
+
+// ── iOS DETECTION ────────────────────────────────
+// Show iOS instructions if on Safari iPhone/iPad and not already installed
+const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
+  || window.navigator.standalone === true;
+const iosDismissed = localStorage.getItem('edd_ios_dismissed');
+
+if (isIos && !isInStandaloneMode && !iosDismissed) {
+  setTimeout(() => {
+    const iosBanner = document.getElementById('iosBanner');
+    if (iosBanner) iosBanner.classList.add('show');
+  }, 3500);
+}
+</script>
+</body>
+</html>
