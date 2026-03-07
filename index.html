@@ -2741,17 +2741,79 @@ function applyDevotionalToPage(data) {
 }
 
 // ── DAILY DEVOTIONAL (Supabase) ─────────────────────────
-async function loadTodayDevotional() {
-  // Step 1: Always apply local daily rotation first — app works without Supabase
-  const localDevotional = getTodayLocalDevotional();
-  applyDevotionalToPage(localDevotional);
-  buildHymn();
+// ── OFFLINE CACHE KEYS ──────────────────────────────────
+const CACHE_PREFIX     = 'edd_devo_'; // key: edd_devo_YYYY-MM-DD
+const CACHE_PREFETCH   = 7;           // days ahead to prefetch
 
-  // Step 2: Try Supabase for an override (optional — won't break anything if it fails)
+function getCachedDevotional(dateStr) {
+  try {
+    const raw = localStorage.getItem(CACHE_PREFIX + dateStr);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function cacheDevotional(dateStr, data) {
+  try {
+    localStorage.setItem(CACHE_PREFIX + dateStr, JSON.stringify(data));
+  } catch(e) { /* storage full — ignore */ }
+}
+
+function pruneCachedDevotionals() {
+  // Remove cached devotionals older than 30 days to save space
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith(CACHE_PREFIX)) {
+      const dateStr = key.replace(CACHE_PREFIX, '');
+      if (new Date(dateStr) < cutoff) localStorage.removeItem(key);
+    }
+  });
+}
+
+async function prefetchUpcomingDevotionals() {
+  // Background: fetch & cache next 7 days of devotionals from Supabase
   if (!_db) return;
+  try {
+    const dates = [];
+    for (let i = 0; i <= CACHE_PREFETCH; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      dates.push(d.toISOString().split('T')[0]);
+    }
+    const { data, error } = await _db
+      .from('devotionals')
+      .select('*')
+      .in('date', dates);
+    if (!error && data && data.length) {
+      data.forEach(devo => {
+        if (devo.date) cacheDevotional(devo.date, devo);
+      });
+      console.log('[Cache] Prefetched', data.length, 'devotionals for offline use');
+    }
+  } catch(e) {
+    console.log('[Cache] Prefetch failed — will use local rotation offline');
+  }
+}
 
+async function loadTodayDevotional() {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
+  // Step 1: Check localStorage cache first (works fully offline)
+  const cached = getCachedDevotional(today);
+  if (cached) {
+    console.log('[Devo] Loaded from offline cache:', today);
+    applyDevotionalToPage(cached);
+    buildHymn();
+  } else {
+    // Step 2: Fall back to built-in local rotation
+    const localDevotional = getTodayLocalDevotional();
+    applyDevotionalToPage(localDevotional);
+    buildHymn();
+    console.log('[Devo] Using local rotation (no cache for today)');
+  }
+
+  // Step 3: Background sync — fetch from Supabase and update silently
+  if (!_db) return;
   try {
     const { data, error } = await _db
       .from('devotionals')
@@ -2759,20 +2821,23 @@ async function loadTodayDevotional() {
       .eq('date', today)
       .single();
 
-    // No Supabase entry today — keep the local rotation (already applied above)
-    if (error || !data) {
-      console.log('No Supabase devotional for today — using local rotation');
-      return;
+    if (!error && data) {
+      // Save to cache for offline use
+      cacheDevotional(today, data);
+      // Update the page silently with fresh Supabase content
+      applyDevotionalToPage(data);
+      buildHymn();
+      console.log('[Devo] Updated from Supabase and cached:', today);
     }
 
-    // Supabase entry found — override with it (all fields validated)
-    console.log('Supabase devotional loaded for', today, ':', Object.keys(data));
-    applyDevotionalToPage(data);
-    buildHymn(); // re-match hymn to updated content
+    // Also prefetch upcoming days in the background
+    setTimeout(() => {
+      prefetchUpcomingDevotionals();
+      pruneCachedDevotionals();
+    }, 3000);
 
-  } catch (e) {
-    console.warn('Supabase devotional fetch failed:', e.message, '— local rotation in use');
-    // Local rotation already applied — nothing to do
+  } catch(e) {
+    console.log('[Devo] Background sync failed — cached/local version in use');
   }
 }
 

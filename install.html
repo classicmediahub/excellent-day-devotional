@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Install Excellent Day Devotional</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(90,138,120,0.18) 0%,transparent 70%),#0E1512;
+  color:#EDE8DF;font-family:'Lora',serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{max-width:480px;margin:0 auto;padding:40px 24px 60px}
+
+/* Hero */
+.emblem{
+  width:90px;height:90px;border-radius:24px;
+  background:linear-gradient(145deg,#1A2E24,#141E1A);
+  border:1px solid rgba(200,168,74,0.35);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;position:relative;box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+.emblem::before,.emblem::after{content:'';position:absolute;background:#C8A84A;border-radius:2px}
+.emblem::before{width:5px;height:36px}
+.emblem::after{width:26px;height:5px;top:22px}
+
+.app-name{
+  font-family:'Cinzel',serif;font-size:1.7rem;font-weight:700;
+  text-align:center;letter-spacing:0.04em;margin-bottom:6px;
+}
+.app-sub{
+  font-style:italic;color:#6A6258;text-align:center;
+  font-size:0.95rem;margin-bottom:8px;
+}
+.app-desc{
+  text-align:center;color:#B0A898;font-size:0.9rem;
+  line-height:1.7;margin-bottom:32px;
+}
+
+/* Features */
+.features{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px;
+}
+.feat{
+  background:rgba(30,45,39,0.7);border:1px solid #2E4038;
+  border-radius:12px;padding:14px 12px;text-align:center;
+}
+.feat-icon{font-size:1.4rem;margin-bottom:6px}
+.feat-label{font-family:'Cinzel',serif;font-size:0.55rem;letter-spacing:0.1em;color:#B0A898;text-transform:uppercase}
+
+/* Divider */
+.divider{
+  display:flex;align-items:center;gap:10px;margin-bottom:24px;
+}
+.div-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(200,168,74,0.3),transparent)}
+.div-gem{color:#C8A84A;font-size:0.7rem}
+
+/* Steps */
+.step-title{
+  font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.14em;
+  text-transform:uppercase;color:#5A8A78;margin-bottom:14px;text-align:center;
+}
+
+/* Android steps */
+.steps-android,.steps-ios{display:none}
+.steps-android.show,.steps-ios.show{display:block}
+
+.step{
+  display:flex;gap:14px;align-items:flex-start;
+  background:rgba(30,45,39,0.5);border:1px solid #2E4038;
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;
+}
+.step-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  background:rgba(200,168,74,0.12);border:1px solid rgba(200,168,74,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:0.7rem;color:#C8A84A;font-weight:700;
+}
+.step-text{font-size:0.9rem;color:#B0A898;line-height:1.6}
+.step-text strong{color:#EDE8DF;font-style:normal}
+
+/* Big install button */
+.install-btn{
+  display:block;width:100%;padding:18px;border-radius:14px;
+  background:linear-gradient(135deg,#2A4A3A,#1E3628);
+  border:1px solid rgba(90,138,120,0.4);
+  color:#C8A84A;font-family:'Cinzel',serif;
+  font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;
+  font-weight:700;text-align:center;cursor:pointer;
+  text-decoration:none;margin-bottom:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  transition:all 0.22s;
+}
+.install-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.5)}
+
+.open-btn{
+  display:block;width:100%;padding:14px;border-radius:14px;
+  background:transparent;border:1px solid #2E4038;
+  color:#6A6258;font-family:'Cinzel',serif;
+  font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;
+  text-align:center;cursor:pointer;text-decoration:none;
+  transition:all 0.18s;
+}
+.open-btn:hover{border-color:rgba(90,138,120,0.4);color:#B0A898}
+
+/* OS switcher */
+.os-tabs{display:flex;gap:8px;margin-bottom:20px}
+.os-tab{
+  flex:1;padding:10px;border-radius:10px;cursor:pointer;
+  border:1px solid #2E4038;background:transparent;
+  font-family:'Cinzel',serif;font-size:0.58rem;letter-spacing:0.1em;
+  color:#6A6258;text-transform:uppercase;transition:all 0.18s;
+}
+.os-tab.active{background:rgba(90,138,120,0.12);border-color:rgba(90,138,120,0.35);color:#78A892}
+
+/* Note */
+.note{
+  text-align:center;font-size:0.78rem;color:#3E3830;
+  font-style:italic;line-height:1.6;margin-top:20px;
+}
+
+/* Verse footer */
+.verse-footer{
+  margin-top:40px;padding:20px;
+  background:rgba(14,21,18,0.8);border:1px solid #1A2520;
+  border-radius:14px;text-align:center;
+}
+.verse-text{font-style:italic;color:#6A6258;font-size:0.88rem;line-height:1.7;margin-bottom:6px}
+.verse-ref{font-family:'Cinzel',serif;font-size:0.52rem;letter-spacing:0.1em;color:#3E3830}
+
+/* PWA install prompt */
+#pwaPrompt{display:none}
+#pwaPrompt.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="emblem"></div>
+  <div class="app-name">Excellent Day</div>
+  <div class="app-sub">Daily Devotional</div>
+  <div class="app-desc">
+    Begin every morning with God's Word.<br>
+    Verse, reflection, prayer & hymn — delivered daily.
+  </div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feat"><div class="feat-icon">📖</div><div class="feat-label">Daily Devotional</div></div>
+    <div class="feat"><div class="feat-icon">✝️</div><div class="feat-label">Full Bible</div></div>
+    <div class="feat"><div class="feat-icon">📝</div><div class="feat-label">Prayer Journal</div></div>
+    <div class="feat"><div class="feat-icon">♪</div><div class="feat-label">CAC Hymns</div></div>
+  </div>
+
+  <div class="divider"><div class="div-line"></div><div class="div-gem">✦</div><div class="div-line"></div></div>
+
+  <!-- PWA Install (shown automatically on Android Chrome) -->
+  <div id="pwaPrompt">
+    <a class="install-btn" id="pwaInstallBtn" href="#">
+      ⬇ Install App — Free
+    </a>
+  </div>
+
+  <!-- Manual steps -->
+  <div id="manualSteps">
+    <div class="step-title">How to install</div>
+
+    <!-- OS Tabs -->
+    <div class="os-tabs">
+      <button class="os-tab active" id="tabAndroid" onclick="showOS('android')">🤖 Android</button>
+      <button class="os-tab" id="tabIos" onclick="showOS('ios')">🍎 iPhone</button>
+    </div>
+
+    <!-- Android Steps -->
+    <div class="steps-android show" id="stepsAndroid">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Tap the <strong>Open App</strong> button below to open in Chrome</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Tap the <strong>3 dots menu ⋮</strong> in the top right corner of Chrome</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Tap <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Tap <strong>"Add"</strong> — the app appears on your home screen instantly ✦</div>
+      </div>
+    </div>
+
+    <!-- iOS Steps -->
+    <div class="steps-ios" id="stepsIos">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Tap <strong>Open App</strong> below — it must open in <strong>Safari</strong> (not Chrome)</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Tap the <strong>Share button ⬆</strong> at the bottom of the screen</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Scroll down and tap <strong>"Add to Home Screen"</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Tap <strong>"Add"</strong> — the app icon appears on your iPhone home screen ✦</div>
+      </div>
+    </div>
+
+    <br>
+    <a class="install-btn" href="https://classicmediahub.github.io/excellent-day-devotional/" target="_blank">
+      Open App
+    </a>
+    <a class="open-btn" href="https://classicmediahub.github.io/excellent-day-devotional/" target="_blank">
+      Open in browser instead
+    </a>
+
+    <div class="note">
+      Free forever · No account required · Works offline after first visit
+    </div>
+  </div>
+
+  <!-- Verse footer -->
+  <div class="verse-footer">
+    <div class="verse-text">"This is the day which the LORD hath made;<br>we will rejoice and be glad in it."</div>
+    <div class="verse-ref">Psalm 118:24 · KJV</div>
+  </div>
+
+</div>
+
+<script>
+// Detect OS automatically
+const ua = navigator.userAgent.toLowerCase();
+const isIos     = /iphone|ipad|ipod/.test(ua);
+const isAndroid = /android/.test(ua);
+
+if (isIos) showOS('ios');
+else       showOS('android');
+
+function showOS(os) {
+  document.getElementById('stepsAndroid').classList.toggle('show', os === 'android');
+  document.getElementById('stepsIos').classList.toggle('show', os === 'ios');
+  document.getElementById('tabAndroid').classList.toggle('active', os === 'android');
+  document.getElementById('tabIos').classList.toggle('active', os === 'ios');
+}
+
+// Show native install prompt if available (Android Chrome)
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('pwaPrompt').classList.add('show');
+
+  document.getElementById('pwaInstallBtn').addEventListener('click', async ev => {
+    ev.preventDefault();
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      document.getElementById('pwaPrompt').classList.remove('show');
+    }
+    deferredPrompt = null;
+  });
+});
+</script>
+</body>
+</html>
