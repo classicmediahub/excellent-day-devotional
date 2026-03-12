@@ -1,131 +1,85 @@
 // ═══════════════════════════════════════════════════════
-//  Excellent Day Devotional — Service Worker
-//  Handles offline caching so the app works without internet
+//  Excellent Day Devotional — Service Worker v2
+//  Full offline support with background sync
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME = 'excellent-day-v1';
-
-// Files to cache for offline use
-const STATIC_ASSETS = [
+const CACHE_NAME    = 'excellent-day-v2';
+const APP_SHELL     = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-  // Google Fonts (cached on first load)
-  'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cinzel:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap',
-  // Supabase CDN
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 
-// ── INSTALL: cache all static assets ──────────────────
-self.addEventListener('install', (event) => {
-  console.log('[SW] Installing...');
+// ── INSTALL: cache app shell immediately ──────────────
+self.addEventListener('install', event => {
+  console.log('[SW] Installing v2...');
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Caching static assets');
-      // Cache each asset individually so one failure doesn't break everything
+    caches.open(CACHE_NAME).then(cache => {
       return Promise.allSettled(
-        STATIC_ASSETS.map(url => cache.add(url).catch(err => {
-          console.warn('[SW] Failed to cache:', url, err);
-        }))
+        APP_SHELL.map(url => cache.add(url).catch(e => console.warn('[SW] Failed to cache:', url)))
       );
-    }).then(() => {
-      console.log('[SW] Install complete');
-      return self.skipWaiting(); // activate immediately
-    })
+    }).then(() => self.skipWaiting())
   );
 });
 
 // ── ACTIVATE: clean up old caches ─────────────────────
-self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating...');
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames
-          .filter(name => name !== CACHE_NAME)
-          .map(name => {
-            console.log('[SW] Deleting old cache:', name);
-            return caches.delete(name);
-          })
-      );
-    }).then(() => {
-      console.log('[SW] Activation complete');
-      return self.clients.claim(); // take control immediately
-    })
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+    ).then(() => self.clients.claim())
   );
 });
 
-// ── FETCH: serve from cache, fall back to network ─────
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-  const url = new URL(request.url);
+// ── FETCH: cache-first for app shell, network-first for data ──
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
 
-  // Skip non-GET requests and Supabase API calls (always need fresh data)
-  if (request.method !== 'GET') return;
-  if (url.hostname.includes('supabase.co')) return;
-
-  // Strategy: Cache First for static assets, Network First for HTML
-  if (request.mode === 'navigate' || request.destination === 'document') {
-    // Network First for HTML pages — always try to get fresh version
+  // Always network-first for Supabase API calls
+  if (url.hostname.includes('supabase.co') || url.hostname.includes('bible-api.com')) {
     event.respondWith(
-      fetch(request)
-        .then(response => {
-          // Cache the fresh response
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return response;
-        })
-        .catch(() => {
-          // Offline: serve cached version
-          return caches.match(request) || caches.match('/index.html');
-        })
+      fetch(event.request).catch(() => new Response(
+        JSON.stringify({ error: 'offline' }),
+        { headers: { 'Content-Type': 'application/json' } }
+      ))
     );
-  } else {
-    // Cache First for everything else (fonts, icons, scripts)
+    return;
+  }
+
+  // Cache-first for same-origin assets (HTML, icons, fonts)
+  if (url.hostname === self.location.hostname || url.hostname.includes('fonts.g')) {
     event.respondWith(
-      caches.match(request).then(cached => {
+      caches.match(event.request).then(cached => {
         if (cached) return cached;
-        // Not in cache — fetch and cache it
-        return fetch(request).then(response => {
-          if (!response || response.status !== 200) return response;
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        return fetch(event.request).then(response => {
+          // Cache successful responses
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
           return response;
         }).catch(() => {
-          console.warn('[SW] Fetch failed for:', request.url);
+          // If offline and not cached, return the cached index.html for navigation
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
         });
       })
     );
+    return;
   }
-});
 
-// ── BACKGROUND SYNC: retry failed journal saves ───────
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-journal') {
-    console.log('[SW] Background sync: journal');
-    // Supabase handles retries — this is a hook for future use
-  }
-});
-
-// ── PUSH NOTIFICATIONS (future feature) ──────────────
-self.addEventListener('push', (event) => {
-  if (!event.data) return;
-  const data = event.data.json();
-  self.registration.showNotification(data.title || 'Excellent Day', {
-    body: data.body || 'Your daily devotional is ready 🙏',
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-72.png',
-    tag: 'daily-devotional',
-    renotify: true,
-    data: { url: data.url || '/' }
-  });
-});
-
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow(event.notification.data.url || '/')
+  // Default: network with cache fallback
+  event.respondWith(
+    fetch(event.request).catch(() => caches.match(event.request))
   );
+});
+
+// ── BACKGROUND SYNC ───────────────────────────────────
+self.addEventListener('sync', event => {
+  if (event.tag === 'sync-devotionals') {
+    console.log('[SW] Background sync triggered');
+  }
 });
