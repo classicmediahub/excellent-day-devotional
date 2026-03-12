@@ -2673,10 +2673,14 @@ document.addEventListener('click', function(e) {
 });
 
 function applyLanguage() {
-  // Reload devotional in new language
-  const cached = getCachedDevotional(new Date().toISOString().split('T')[0] + '_' + currentLang);
-  const localDevo = getTodayLocalDevotional();
-  applyDevotionalToPage(cached || localDevo);
+  // Reload devotional in new language — use Supabase cache if available
+  const _today = new Date().toISOString().split('T')[0];
+  const _cached = getCachedDevotional(_today); // full Supabase row with all lang fields
+  if (_cached) {
+    applyDevotionalToPage(_cached); // pick() inside will use currentLang automatically
+  } else {
+    applyDevotionalToPage(getTodayLocalDevotional());
+  }
 
   // Greeting
   const h = new Date().getHours();
@@ -3072,33 +3076,46 @@ function getTodayLocalDevotional() {
 function applyDevotionalToPage(data) {
   if (!data) return;
 
-  if (data.title && typeof data.title === 'string') {
+  // Pick language-specific fields if available, fall back to English
+  const lang = currentLang || 'en';
+  const suffix = (lang !== 'en') ? ('_' + lang) : '';
+
+  function pick(field) {
+    // e.g. for lang='yo': try data.title_yo first, fall back to data.title
+    if (suffix && data[field + suffix] && typeof data[field + suffix] === 'string' && data[field + suffix].trim())
+      return data[field + suffix];
+    return data[field] || '';
+  }
+
+  const title = pick('title');
+  if (title) {
     const el = document.getElementById('devotionalTitle');
     if (el) {
-      // Break title at the first space for two-line display
-      const parts = data.title.split(' ');
+      const parts = title.split(' ');
       const mid = Math.ceil(parts.length / 2);
       el.innerHTML = parts.slice(0, mid).join(' ') + '<br>' + parts.slice(mid).join(' ');
     }
   }
-  if (data.verse && typeof data.verse === 'string') {
+  const verse = pick('verse');
+  if (verse) {
     const el = document.getElementById('votdVerse');
-    if (el) el.textContent = '\u201C' + data.verse + '\u201D';
+    if (el) el.textContent = '\u201C' + verse + '\u201D';
   }
   if (data.verse_ref && typeof data.verse_ref === 'string') {
     const el = document.getElementById('votdRef');
     if (el) el.textContent = data.verse_ref;
   }
-  const reflections = [data.reflection_1, data.reflection_2, data.reflection_3].filter(
+  const reflections = [pick('reflection_1'), pick('reflection_2'), pick('reflection_3')].filter(
     r => r && typeof r === 'string' && r.trim()
   );
   if (reflections.length) {
     const el = document.getElementById('devotionalReflection');
     if (el) el.innerHTML = reflections.map(p => `<p>${p}</p>`).join('');
   }
-  if (data.prayer && typeof data.prayer === 'string') {
+  const prayer = pick('prayer');
+  if (prayer) {
     const el = document.getElementById('devotionalPrayer');
-    if (el) el.textContent = '\u201C' + data.prayer + '\u201D';
+    if (el) el.textContent = '\u201C' + prayer + '\u201D';
   }
   if (Array.isArray(data.tags) && data.tags.length) {
     const el = document.getElementById('devotionalTags');
@@ -3167,11 +3184,14 @@ async function prefetchUpcomingDevotionals() {
 
 async function loadTodayDevotional() {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  // Always fetch fresh from Supabase first — language-aware
+  // Cache key includes language so switching language shows correct version
+  const cacheKey = today; // raw Supabase data cached once, lang applied at display
 
   // Step 1: Check localStorage cache first (works fully offline)
-  const cached = getCachedDevotional(today);
+  const cached = getCachedDevotional(cacheKey);
   if (cached) {
-    console.log('[Devo] Loaded from offline cache:', today);
+    console.log('[Devo] Loaded from offline cache:', cacheKey);
     applyDevotionalToPage(cached);
     buildHymn();
   } else {
@@ -3182,7 +3202,7 @@ async function loadTodayDevotional() {
     console.log('[Devo] Using local rotation (no cache for today)');
   }
 
-  // Step 3: Background sync — fetch from Supabase and update silently
+  // Step 3: Always fetch fresh from Supabase — gets all language fields
   if (!_db) return;
   try {
     const { data, error } = await _db
@@ -3192,12 +3212,12 @@ async function loadTodayDevotional() {
       .single();
 
     if (!error && data) {
-      // Save to cache for offline use
-      cacheDevotional(today, data);
-      // Update the page silently with fresh Supabase content
+      // Save full Supabase row (all language fields) to cache
+      cacheDevotional(cacheKey, data);
+      // Apply with current language — pick() in applyDevotionalToPage handles lang
       applyDevotionalToPage(data);
       buildHymn();
-      console.log('[Devo] Updated from Supabase and cached:', today);
+      console.log('[Devo] Updated from Supabase (lang=' + currentLang + '):', today);
     }
 
     // Also prefetch upcoming days in the background
