@@ -3,7 +3,7 @@
 //  Full offline support with background sync
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME    = 'excellent-day-v3';
+const CACHE_NAME    = 'excellent-day-v4';
 const APP_SHELL     = [
   '/',
   '/index.html',
@@ -14,7 +14,7 @@ const APP_SHELL     = [
 
 // ── INSTALL: cache app shell immediately ──────────────
 self.addEventListener('install', event => {
-  console.log('[SW] Installing v3 — multilingual update...');
+  console.log('[SW] Installing v4 — multilingual update...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return Promise.allSettled(

@@ -1612,6 +1612,18 @@ button.brand:active { transform: scale(0.97); }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         <div class="notif-dot"></div>
       </button>
+      <!-- Language switcher in topbar -->
+      <div style="position:relative">
+        <button id="langTopBtn" onclick="toggleTopLangPicker()" 
+          style="background:transparent;border:1px solid rgba(200,168,74,0.4);border-radius:20px;padding:4px 10px;color:var(--gold);font-family:var(--serif);font-size:0.72rem;cursor:pointer;display:flex;align-items:center;gap:4px;letter-spacing:0.03em">
+          <span id="langTopFlag">🇬🇧</span><span id="langTopCode">EN</span>
+        </button>
+        <div id="langTopPicker" style="display:none;position:absolute;right:0;top:36px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;z-index:999;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+          <div onclick="setLang('en');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text);border-bottom:1px solid var(--border)">🇬🇧 English</div>
+          <div onclick="setLang('yo');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text);border-bottom:1px solid var(--border)">🇳🇬 Yorùbá</div>
+          <div onclick="setLang('pcm');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text)">🇳🇬 Pidgin</div>
+        </div>
+      </div>
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <div class="toggle-thumb" id="toggleThumb"></div>
       </button>
@@ -2604,7 +2616,7 @@ function setLang(lang) {
   currentLang = lang;
   localStorage.setItem('edd_lang', lang);
   applyLanguage();
-  // Highlight active language button
+  // Highlight active language button in side menu
   ['en','yo','pcm'].forEach(l => {
     const btn = document.getElementById('lang-btn-' + l);
     if (btn) {
@@ -2619,9 +2631,31 @@ function setLang(lang) {
       }
     }
   });
+  // Update topbar lang button
+  const flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬'};
+  const codes = {en:'EN', yo:'YO', pcm:'PCM'};
+  const flagEl = document.getElementById('langTopFlag');
+  const codeEl = document.getElementById('langTopCode');
+  if (flagEl) flagEl.textContent = flags[lang] || '🇬🇧';
+  if (codeEl) codeEl.textContent = codes[lang] || 'EN';
   toast(LANGS[lang] ? LANGS[lang].label : lang);
 }
 
+
+
+function toggleTopLangPicker() {
+  const p = document.getElementById('langTopPicker');
+  if (!p) return;
+  p.style.display = p.style.display === 'block' ? 'none' : 'block';
+}
+
+document.addEventListener('click', function(e) {
+  const p = document.getElementById('langTopPicker');
+  const btn = document.getElementById('langTopBtn');
+  if (p && btn && !btn.contains(e.target) && !p.contains(e.target)) {
+    p.style.display = 'none';
+  }
+});
 
 function toggleLangPicker() {
   const picker = document.getElementById('langPicker');
@@ -2708,6 +2742,13 @@ function applyLanguage() {
       }
     }
   });
+  // Sync topbar lang button
+  const _flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬'};
+  const _codes = {en:'EN', yo:'YO', pcm:'PCM'};
+  const _f = document.getElementById('langTopFlag');
+  const _c = document.getElementById('langTopCode');
+  if (_f) _f.textContent = _flags[currentLang] || '🇬🇧';
+  if (_c) _c.textContent = _codes[currentLang] || 'EN';
 }
 
 function setText(id, text) {
