@@ -1559,6 +1559,12 @@ button.brand:active { transform: scale(0.97); }
   background: linear-gradient(90deg, var(--gold), transparent); opacity: 0.4;
 }
 
+
+/* Language picker */
+.lang-opt { transition: background 0.15s; }
+.lang-opt:hover { background: rgba(90,138,120,0.12) !important; }
+.lang-opt.active { background: rgba(200,168,74,0.12) !important; color: var(--gold) !important; font-weight:600; }
+
 </style>
 </head>
 <body>
@@ -1646,7 +1652,7 @@ button.brand:active { transform: scale(0.97); }
         <span class="tag ta">Old Testament</span>
       </div>
 
-      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Today's Reflection</div><div class="sh-line"></div></div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label" id="sh-reflection">Today's Reflection</div><div class="sh-line"></div></div>
       <div class="card">
         <div class="rtext" id="devotionalReflection">
           <p>Each sunrise is a covenant renewed. Before the noise of the day finds you, God has already gone before — His mercy not diminished by yesterday's failures, not strained by tomorrow's unknowns.</p>
@@ -1710,17 +1716,17 @@ button.brand:active { transform: scale(0.97); }
       </div>
 
 
-      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Devotional Streak</div><div class="sh-line"></div></div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label" id="sh-streak">Devotional Streak</div><div class="sh-line"></div></div>
       <div class="streak-row" id="streakRow"></div>
 
       <div class="brow">
         <button class="btn bp" onclick="nav('bible')">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-          Open Bible
+          <span id="qa-bible">Open Bible</span>
         </button>
         <button class="btn bs" onclick="nav('journal')">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Journal
+          <span id="qa-journal">Journal</span>
         </button>
       </div>
     </div>
@@ -1729,7 +1735,7 @@ button.brand:active { transform: scale(0.97); }
     <div class="page" id="page-bible">
       <div class="ph" style="margin-bottom:18px">
         <div class="ph-label">The Living Word</div>
-        <h2 class="ph-title" style="font-size:1.32rem">Holy Bible — KJV</h2>
+        <h2 class="ph-title" style="font-size:1.32rem" id="bible-page-title">Holy Bible — KJV</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
 
@@ -1778,10 +1784,10 @@ button.brand:active { transform: scale(0.97); }
     <div class="page" id="page-journal">
       <div class="ph" style="margin-bottom:18px">
         <div class="ph-label">Reflect & Record</div>
-        <h2 class="ph-title" style="font-size:1.32rem">My Journal</h2>
+        <h2 class="ph-title" style="font-size:1.32rem" id="journal-page-title">My Journal</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
-      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Today's Entry</div><div class="sh-line"></div></div>
+      <div class="sh"><div class="sh-gem">✦</div><div class="sh-label" id="sh-entry">Today's Entry</div><div class="sh-line"></div></div>
       <div class="card" style="padding:16px">
         <div style="font-family:'Cinzel',serif;font-size:0.56rem;letter-spacing:0.1em;color:var(--accent);margin-bottom:10px;text-transform:uppercase;transition:color var(--transition)" id="jDateLbl"></div>
         <textarea class="jtarea" id="jInput" placeholder="What is the Lord speaking to your heart today? Write your thoughts, prayers, or insights from His Word…"></textarea>
@@ -1805,7 +1811,7 @@ button.brand:active { transform: scale(0.97); }
     <div class="page" id="page-plan">
       <div class="ph" style="margin-bottom:18px">
         <div class="ph-label">Your Sacred Journey</div>
-        <h2 class="ph-title" style="font-size:1.32rem">Reading Plan</h2>
+        <h2 class="ph-title" style="font-size:1.32rem" id="plan-page-title">Reading Plan</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
       <div class="plan-hero">
@@ -1824,7 +1830,7 @@ button.brand:active { transform: scale(0.97); }
     <div class="page" id="page-search">
       <div class="ph" style="margin-bottom:14px">
         <div class="ph-label">Find His Word</div>
-        <h2 class="ph-title" style="font-size:1.32rem">Search the Bible</h2>
+        <h2 class="ph-title" style="font-size:1.32rem" id="search-page-title">Search the Bible</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
       <div class="search-box">
@@ -1900,11 +1906,11 @@ button.brand:active { transform: scale(0.97); }
   <nav class="bnav">
     <button class="nb active" id="nb-today" onclick="nav('today')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Today
+      <span id="nav-lbl-today">Today</span>
     </button>
     <button class="nb" id="nb-bible" onclick="nav('bible')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
-      Bible
+      <span id="nav-lbl-bible">Bible</span>
     </button>
     <button class="nb" id="nb-search" onclick="nav('search')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -1912,7 +1918,7 @@ button.brand:active { transform: scale(0.97); }
     </button>
     <button class="nb" id="nb-journal" onclick="nav('journal')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      Journal
+      <span id="nav-lbl-journal">Journal</span>
     </button>
     <button class="nb" id="nb-plan" onclick="nav('plan')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -1992,7 +1998,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">Today's Devotional</div>
+          <div class="sm-item-name" id="menu-lbl-today">Today's Devotional</div>
           <div class="sm-item-sub">Verse, reflection & prayer</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2002,7 +2008,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">Holy Bible</div>
+          <div class="sm-item-name" id="menu-lbl-bible">Holy Bible</div>
           <div class="sm-item-sub">Read KJV scripture</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2012,7 +2018,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">Search the Bible</div>
+          <div class="sm-item-name" id="menu-lbl-search">Search the Bible</div>
           <div class="sm-item-sub">Find verses by keyword</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2022,7 +2028,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">My Journal</div>
+          <div class="sm-item-name" id="menu-lbl-journal">My Journal</div>
           <div class="sm-item-sub">Reflect & record</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2032,7 +2038,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">Reading Plan</div>
+          <div class="sm-item-name" id="menu-lbl-plan">Reading Plan</div>
           <div class="sm-item-sub">NT in 90 days</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2042,7 +2048,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">CAC Hymn Book</div>
+          <div class="sm-item-name" id="menu-lbl-hymns">CAC Hymn Book</div>
           <div class="sm-item-sub">80 hymns of the faith</div>
         </div>
         <div class="sm-arrow">›</div>
@@ -2058,7 +2064,7 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name" id="themeMenuLabel">Light / Dark Mode</div>
+          <div class="sm-item-name" id="menu-lbl-theme">Light / Dark Mode</div>
           <div class="sm-item-sub" id="themeMenuSub">Toggle appearance</div>
         </div>
         <div class="sm-toggle-pill" id="themeMenuPill"></div>
@@ -2068,15 +2074,15 @@ button.brand:active { transform: scale(0.97); }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
         </div>
         <div class="sm-item-text">
-          <div class="sm-item-name">Daily Notifications</div>
-          <div class="sm-item-sub" id="smNotifSub">5:30 AM devotional reminder</div>
+          <div class="sm-item-name" id="menu-lbl-notif">Daily Notifications</div>
+          <div class="sm-item-sub" id="smNotifSub"><span id="menu-lbl-notif-sub">5:30 AM devotional reminder</span></div>
         </div>
         <div class="sm-notif-dot" id="smNotifDot"></div>
       </li>
       <!-- Time picker row — visible only when notifications are ON -->
       <li class="sm-item sm-time-row" id="smTimeRow" style="display:none;padding:10px 18px 14px 56px">
         <div class="sm-item-text" style="flex:1">
-          <div class="sm-item-name" style="font-size:0.72rem;margin-bottom:6px">Notification Time</div>
+          <div class="sm-item-name" style="font-size:0.72rem;margin-bottom:6px" id="menu-lbl-notif-time">Notification Time</div>
           <input type="time" id="notifTimePicker" value="05:30"
             onclick="event.stopPropagation()"
             onchange="setNotifTime(this.value)"
@@ -2086,6 +2092,27 @@ button.brand:active { transform: scale(0.97); }
           <div style="font-size:0.7rem;color:var(--text-4);font-style:italic;margin-top:5px">
             Tap to choose your preferred time
           </div>
+        </div>
+      </li>
+      <!-- Language Picker -->
+      <li class="sm-item" style="flex-direction:column;align-items:flex-start;padding:12px 18px 14px 18px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <svg width="16" height="16" fill="none" stroke="var(--gold)" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <div class="sm-item-name" id="menu-lbl-lang" style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase">Language</div>
+        </div>
+        <div style="display:flex;gap:8px;width:100%">
+          <button class="lang-btn" id="lang-btn-en" onclick="setLang('en')" 
+            style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:rgba(200,168,74,0.12);color:var(--gold);font-family:var(--serif);font-size:0.75rem;cursor:pointer;transition:all 0.2s">
+            🇬🇧 English
+          </button>
+          <button class="lang-btn" id="lang-btn-yo" onclick="setLang('yo')"
+            style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:var(--serif);font-size:0.75rem;cursor:pointer;transition:all 0.2s">
+            🇳🇬 Yorùbá
+          </button>
+          <button class="lang-btn" id="lang-btn-pcm" onclick="setLang('pcm')"
+            style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:var(--serif);font-size:0.75rem;cursor:pointer;transition:all 0.2s">
+            🇳🇬 Pidgin
+          </button>
         </div>
       </li>
     </ul>
@@ -2415,6 +2442,279 @@ window.addEventListener('load', () => {
 
 
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MULTILINGUAL SYSTEM — English, Yoruba, Nigerian Pidgin
+// ══════════════════════════════════════════════════════
+let currentLang = localStorage.getItem('edd_lang') || 'en';
+
+const LANGS = {
+  en: {
+    label: 'English', flag: '🇬🇧',
+    greeting_morning: 'Good Morning',
+    greeting_afternoon: 'Good Afternoon',
+    greeting_evening: 'Good Evening',
+    todays_reflection: "Today's Reflection",
+    todays_entry: "Today's Entry",
+    devotional_streak: 'Devotional Streak',
+    open_bible: 'Open Bible',
+    journal: 'Journal',
+    bible_title: 'Holy Bible — KJV',
+    journal_title: 'My Journal',
+    reading_plan_title: 'Reading Plan',
+    search_title: 'Search the Bible',
+    hymns_placeholder: 'Search hymn title, number, theme…',
+    nav_today: 'Today',
+    nav_bible: 'Bible',
+    nav_journal: 'Journal',
+    menu_today: "Today's Devotional",
+    menu_bible: 'Holy Bible',
+    menu_search: 'Search the Bible',
+    menu_journal: 'My Journal',
+    menu_plan: 'Reading Plan',
+    menu_hymns: 'CAC Hymn Book',
+    menu_theme: 'Light / Dark Mode',
+    menu_notif: 'Daily Notifications',
+    menu_notif_sub: '5:30 AM devotional reminder',
+    notif_time_label: 'Notification Time',
+    streak_days: 'day streak',
+    write_placeholder: 'Write your thoughts, prayers, reflections…',
+    save_btn: 'Save Entry',
+    saved_toast: 'Journal entry saved',
+    notif_on: '🔔 Notifications on',
+    notif_off: '🔕 Notifications off',
+    dark_mode: '☾ Dark mode',
+    light_mode: '☀ Light mode',
+    offline_title: 'No Connection',
+    offline_sub: 'Check your internet and tap to retry',
+    retry_btn: 'Retry',
+    prayer_label: 'Prayer',
+    share_label: 'Share',
+    lang_label: 'Language',
+  },
+  yo: {
+    label: 'Yorùbá', flag: '🇳🇬',
+    greeting_morning: 'Ẹ káàárọ̀',
+    greeting_afternoon: 'Ẹ káàárọ̀ ọsan',
+    greeting_evening: 'Ẹ kúùrọlẹ',
+    todays_reflection: 'Èròngbà Ọjọ́ Oni',
+    todays_entry: 'Àkọsílẹ̀ Ọjọ́ Oni',
+    devotional_streak: 'Ọjọ́ Ìfọkànsìn',
+    open_bible: 'Ṣí Bíbélì',
+    journal: 'Ìwé Àkọsílẹ̀',
+    bible_title: 'Bíbélì Mímọ́ — KJV',
+    journal_title: 'Ìwé Àkọsílẹ̀ Mi',
+    reading_plan_title: 'Ètò Kíkà',
+    search_title: 'Wá nínú Bíbélì',
+    hymns_placeholder: 'Wá orin, nọ́mbà, àkòrí…',
+    nav_today: 'Oni',
+    nav_bible: 'Bíbélì',
+    nav_journal: 'Àkọsílẹ̀',
+    menu_today: 'Ìfọkànsìn Ọjọ́ Oni',
+    menu_bible: 'Bíbélì Mímọ́',
+    menu_search: 'Wá nínú Bíbélì',
+    menu_journal: 'Ìwé Àkọsílẹ̀ Mi',
+    menu_plan: 'Ètò Kíkà',
+    menu_hymns: 'Ìwé Orin CAC',
+    menu_theme: 'Ìmọ́lẹ̀ / Òkùnkùn',
+    menu_notif: 'Ìfitọnilọ́nà Ojoojúmọ́',
+    menu_notif_sub: 'Ìfitọnilọ́nà 5:30 owurọ̀',
+    notif_time_label: 'Àkókò Ìfitọnilọ́nà',
+    streak_days: 'ọjọ́ lọ́nà',
+    write_placeholder: 'Kọ èrò, ìjọsìn, àti àwọn ìmísísàn rẹ…',
+    save_btn: 'Pamọ́ Àkọsílẹ̀',
+    saved_toast: 'Àkọsílẹ̀ ti fipamọ́',
+    notif_on: '🔔 Ìfitọnilọ́nà mọ',
+    notif_off: '🔕 Ìfitọnilọ́nà pa',
+    dark_mode: '☾ Òkùnkùn',
+    light_mode: '☀ Ìmọ́lẹ̀',
+    offline_title: 'Kò sí Ìsopọ̀',
+    offline_sub: 'Ṣàyẹ̀wò íńtánẹ́ẹ̀tì rẹ kí o tún gbìyànjú',
+    retry_btn: 'Gbìyànjú Lẹ́ẹ̀kan',
+    prayer_label: 'Ìjọsìn',
+    share_label: 'Pín',
+    lang_label: 'Èdè',
+  },
+  pcm: {
+    label: 'Naija Pidgin', flag: '🇳🇬',
+    greeting_morning: 'Good morning o',
+    greeting_afternoon: 'Afternoon greetings',
+    greeting_evening: 'Good evening o',
+    todays_reflection: 'Today Reflection',
+    todays_entry: 'Today Entry',
+    devotional_streak: 'Devotional Streak',
+    open_bible: 'Open Bible',
+    journal: 'Journal',
+    bible_title: 'Holy Bible — KJV',
+    journal_title: 'My Journal',
+    reading_plan_title: 'Reading Plan',
+    search_title: 'Search Inside Bible',
+    hymns_placeholder: 'Search hymn, number, topic…',
+    nav_today: 'Today',
+    nav_bible: 'Bible',
+    nav_journal: 'Journal',
+    menu_today: 'Today Devotional',
+    menu_bible: 'Holy Bible',
+    menu_search: 'Search Bible',
+    menu_journal: 'My Journal',
+    menu_plan: 'Reading Plan',
+    menu_hymns: 'CAC Hymn Book',
+    menu_theme: 'Light / Dark Mode',
+    menu_notif: 'Daily Notification',
+    menu_notif_sub: '5:30 morning reminder',
+    notif_time_label: 'Notification Time',
+    streak_days: 'day streak',
+    write_placeholder: 'Write your thought, prayer, wetin God show you…',
+    save_btn: 'Save Entry',
+    saved_toast: 'Journal entry don save',
+    notif_on: '🔔 Notification don on',
+    notif_off: '🔕 Notification don off',
+    dark_mode: '☾ Dark mode',
+    light_mode: '☀ Light mode',
+    offline_title: 'No Network',
+    offline_sub: 'Check your internet and try again',
+    retry_btn: 'Try Again',
+    prayer_label: 'Prayer',
+    share_label: 'Share',
+    lang_label: 'Language',
+  }
+};
+
+// Devotional translations per language
+const DEVOTIONAL_TRANSLATIONS = {
+  yo: {
+    title_prefix: '',
+    reflection_label: 'Èròngbà',
+    prayer_label: 'Ìjọsìn',
+    verse_label: 'Ẹsẹ Ìwé Mímọ́',
+  },
+  pcm: {
+    title_prefix: '',
+    reflection_label: 'Reflection',
+    prayer_label: 'Prayer',
+    verse_label: 'Bible Verse',
+  }
+};
+
+function t(key) {
+  const lang = LANGS[currentLang] || LANGS['en'];
+  return lang[key] || LANGS['en'][key] || key;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('edd_lang', lang);
+  applyLanguage();
+  // Highlight active language button
+  ['en','yo','pcm'].forEach(l => {
+    const btn = document.getElementById('lang-btn-' + l);
+    if (btn) {
+      if (l === lang) {
+        btn.style.background = 'rgba(200,168,74,0.15)';
+        btn.style.color = 'var(--gold)';
+        btn.style.borderColor = 'rgba(200,168,74,0.4)';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-2)';
+        btn.style.borderColor = 'var(--border)';
+      }
+    }
+  });
+  toast(LANGS[lang] ? LANGS[lang].label : lang);
+}
+
+
+function toggleLangPicker() {
+  const picker = document.getElementById('langPicker');
+  if (!picker) return;
+  const isOpen = picker.style.display === 'block';
+  picker.style.display = isOpen ? 'none' : 'block';
+}
+
+// Close lang picker when clicking outside
+document.addEventListener('click', function(e) {
+  const picker = document.getElementById('langPicker');
+  if (picker && !picker.closest('.sm-item')?.contains(e.target)) {
+    picker.style.display = 'none';
+  }
+});
+
+function applyLanguage() {
+  // Reload devotional in new language
+  const cached = getCachedDevotional(new Date().toISOString().split('T')[0] + '_' + currentLang);
+  const localDevo = getTodayLocalDevotional();
+  applyDevotionalToPage(cached || localDevo);
+
+  // Greeting
+  const h = new Date().getHours();
+  const greetEl = document.getElementById('greetLbl');
+  if (greetEl) greetEl.textContent = h<12 ? t('greeting_morning') : h<17 ? t('greeting_afternoon') : t('greeting_evening');
+
+  // Section headers
+  setText('sh-reflection', t('todays_reflection'));
+  setText('sh-entry', t('todays_entry'));
+  setText('sh-streak', t('devotional_streak'));
+
+  // Quick action buttons
+  setText('qa-bible', t('open_bible'));
+  setText('qa-journal', t('journal'));
+
+  // Page titles
+  setText('bible-page-title', t('bible_title'));
+  setText('journal-page-title', t('journal_title'));
+  setText('plan-page-title', t('reading_plan_title'));
+  setText('search-page-title', t('search_title'));
+
+  // Nav labels
+  setText('nav-lbl-today', t('nav_today'));
+  setText('nav-lbl-bible', t('nav_bible'));
+  setText('nav-lbl-journal', t('nav_journal'));
+
+  // Side menu items
+  setText('menu-lbl-today', t('menu_today'));
+  setText('menu-lbl-bible', t('menu_bible'));
+  setText('menu-lbl-search', t('menu_search'));
+  setText('menu-lbl-journal', t('menu_journal'));
+  setText('menu-lbl-plan', t('menu_plan'));
+  setText('menu-lbl-hymns', t('menu_hymns'));
+  setText('menu-lbl-theme', t('menu_theme'));
+  setText('menu-lbl-notif', t('menu_notif'));
+  setText('menu-lbl-notif-sub', t('menu_notif_sub'));
+  setText('menu-lbl-notif-time', t('notif_time_label'));
+  setText('menu-lbl-lang', t('lang_label'));
+
+  // Hymn search placeholder
+  const hymnSearch = document.getElementById('hymnSearchInput');
+  if (hymnSearch) hymnSearch.placeholder = t('hymns_placeholder');
+
+  // Journal placeholder
+  const journalArea = document.getElementById('journalText');
+  if (journalArea) journalArea.placeholder = t('write_placeholder');
+
+  // Save button
+  setText('save-entry-btn', t('save_btn'));
+
+  // Highlight active language button
+  ['en','yo','pcm'].forEach(l => {
+    const btn = document.getElementById('lang-btn-' + l);
+    if (btn) {
+      if (l === currentLang) {
+        btn.style.background = 'rgba(200,168,74,0.15)';
+        btn.style.color = 'var(--gold)';
+        btn.style.borderColor = 'rgba(200,168,74,0.4)';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-2)';
+        btn.style.borderColor = 'var(--border)';
+      }
+    }
+  });
+}
+
+function setText(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
+}
+
 //  DAILY DEVOTIONAL ROTATION — 30 entries, cycles by day of year
 //  Used when Supabase has no entry for today
 // ══════════════════════════════════════════════════════
@@ -2692,10 +2992,39 @@ const DAILY_DEVOTIONALS = [
 ];
 
 // Get today's devotional from the local rotation
+
+// ── YORUBA DEVOTIONALS ──────────────────────────────────
+const DAILY_DEVOTIONALS_YO = [
+{ title:"Àánú Rẹ̀ Tuntun Ni", verse:"Àánú Oluwa kò parí, àwọn àánú rẹ̀ kò pari. Wọ́n tuntun gbogbo owurọ̀: nla ni ìgbẹ́kẹ̀lé rẹ.", verse_ref:"Ifá Lamentations 3:22-23", reflection_1:"Ọlọ́run fúnni ní ìmísísàn tuntun fun ọjọ́ tuntun kọ̀ọ̀kan. Gbogbo ohun tó ṣẹlẹ̀ lánàná ti kọjá — àánú Rẹ̀ nla ju àṣìṣe rẹ lọ.", reflection_2:"Gbà àánú tuntun tó wà fún ọ lónì. Ọ̀rọ̀ Rẹ̀ jẹ́ ìdánilójú: ìgbẹ́kẹ̀lé Rẹ̀ pín gẹ́gẹ́ bí ìgbésọ̀run.", prayer:"Oluwa, mo dúpẹ́ fún àánú tuntun ti owurọ̀ yìí. Ran mí lọ́wọ́ kí n gbé ní ìmọ̀ ìfẹ́ Rẹ tí kò ní òpin. Àmín." },
+{ title:"Gbẹ́kẹ̀lé Rẹ̀ Pẹ̀lú Ọkàn Rẹ Gbogbo", verse:"Gbẹ́kẹ̀lé Oluwa pẹ̀lú ọkàn rẹ gbogbo; má sì tẹ ara rẹ mọ òye rẹ̀ fúnra rẹ.", verse_ref:"Owe Salomoni 3:5", reflection_1:"Ọkàn ènìyàn máa ń fẹ́ òye tirẹ̀, ṣùgbọ́n Ọlọ́run pè wa láti fi ara wa sọ fún Rẹ̀ kíkún.", reflection_2:"Lónì, gbìyànjú láti jẹ́ kí àwọn ìpinnu rẹ jẹ́ ìjọsìn — máa bèrè lọ́wọ́ Ọlọ́run kí o tó ṣe ìgbésẹ̀ kankan.", prayer:"Baba, mo fi ọkàn mi fún Ọ. Jẹ́ ki ìmọ̀ Rẹ ṣamọ̀nà mi, kì í ṣe temi. Àmín." },
+{ title:"Mo Lè Ṣe Ohun Gbogbo", verse:"Mo lè ṣe ohun gbogbo nípasẹ̀ Kristi tí ń fún mi ní agbára.", verse_ref:"Fìlípì 4:13", reflection_1:"Eléyìí kì í ṣe ìgberaga ara ẹni — ó jẹ́ ìgbẹ́kẹ̀lé tó jinlẹ̀ pé agbára Ọlọ́run ń ṣiṣẹ́ nínú ọ.", reflection_2:"Irú ìpènijà wo tó wà níwájú rẹ lónì? Rántí pé kì í ṣe agbára tìrẹ ni — ó jẹ́ ti Rẹ̀.", prayer:"Oluwa, jẹ́ ki agbára Rẹ ṣiṣẹ́ nínú agbára àìní mi. Ní Rẹ ṣe ohun gbogbo nípasẹ̀ mi. Àmín." },
+{ title:"Ìfẹ́ Tí Ń Lé Ẹrù", verse:"Ìfẹ́ tó péye ń lé ẹrù jáde; nítorí ẹrù ní ìdálóró; ẹni tó bẹ̀rù kò tó pé nínú ìfẹ́.", verse_ref:"1 Jòhánù 4:18", reflection_1:"Ọlọ́run kò fún wa ní ẹ̀mí ẹrù. Ìfẹ́ Rẹ̀ kó wa láìmọ́ ìnira tó wà ní ojú-ọ̀nà wa.", reflection_2:"Pé ara wa pẹ̀lú ìfẹ́ Rẹ̀ lónì. Jẹ́ kó ṣamọ̀nà gbogbo ohun tó ń ṣe ìdààmú ọ.", prayer:"Baba, rọ́pò ẹrù mi pẹ̀lú ìmọ̀ ìfẹ́ Rẹ. Jẹ́ ìfẹ́ Rẹ̀ jẹ́ ààbò mi lónì. Àmín." },
+{ title:"Ìmísísàn Tuntun", verse:"Nítorí náà, bí ẹnikẹ́ni bá wà nínú Kristi, ó jẹ́ ẹ̀dá tuntun: àwọn ohun àtijọ́ ti kọjá; kíyèsí, ohun gbogbo ti di tuntun.", verse_ref:"2 Kọríńtì 5:17", reflection_1:"Ọlọ́run kì í ká ọ gẹ́gẹ́ bí ó ti jẹ́ ní àtijọ́. Nínú Kristi, ó rí ẹ gẹ́gẹ́ bí ẹni tí o ti di — tuntun, mímọ́, àti gbígbàpadà.", reflection_2:"Gbà ìmísísàn tuntun yìí lónì. Ọ̀rọ̀ 'tuntun' jẹ́ ọrọ ìṣe tó ń tẹ̀síwájú — ó ń ṣẹlẹ̀ ní gbogbo ìgbà.", prayer:"Oluwa, mo dúpẹ́ pé mi ò ní dópin pẹ̀lú àwọn àṣìṣe mi. Jẹ́ ìmísísàn tuntun Rẹ kún mi lónì. Àmín." },
+{ title:"Alaafia Ọlọ́run", verse:"Alaafia Ọlọ́run tó ju òye ènìyàn gbogbo lọ yóò pèlú ọkàn àti èrò yín ní Kristi Jesu.", verse_ref:"Fìlípì 4:7", reflection_1:"Alaafia yìí kì í ṣe àìsí ìṣòro — ó jẹ́ ìwàláàyè tó jinlẹ̀ àti àmójútó ní àárín ìjákulẹ̀.", reflection_2:"Ó jẹ́ ẹbùn fún àwọn tó fún ìnira wọn sí Ọlọ́run gẹ́gẹ́ bí ẹ̀bọ ìjọsìn.", prayer:"Oluwa, mo mu àwọn ìnira mi wá sí Ọ. Jẹ́ alaafia Rẹ tó ju òye lọ pèlú ọkàn mi lónì. Àmín." },
+{ title:"Ìgbẹ́kẹ̀lé Pátápátá", verse:"Gbẹ́kẹ̀lé Rẹ̀ pẹ̀lú ọkàn rẹ gbogbo ní àwọn ọ̀nà rẹ gbogbo mọ̀ Ọ̀; Òun yóò sọ àwọn ọ̀nà rẹ di tọ́.", verse_ref:"Owe Salomoni 3:5-6", reflection_1:"Ìgbẹ́kẹ̀lé kì í ṣe ìmọ̀ ohun gbogbo — ó jẹ́ ìgbẹ́kẹ̀lé pé Olúwa mọ ohun gbogbo.", reflection_2:"Ohun kan wà tó ṣoro fún ọ láti mọ ìdáhùn rẹ̀ lónì? Gbẹ́kẹ̀lé Rẹ̀ pẹ̀lú ọkàn rẹ gbogbo.", prayer:"Baba, nínú àwọn ohun tí n kò mọ, mo gbẹ́kẹ̀lé Rẹ. Jẹ́ ìgbọ́n Rẹ yìí ṣamọ̀nà mi. Àmín." },
+];
+
+// ── NIGERIAN PIDGIN DEVOTIONALS ────────────────────────
+const DAILY_DEVOTIONALS_PCM = [
+{ title:"E Mercy Dey Fresh", verse:"Na because of di mercy of di LORD, we no don finish. Him compassion no go end. E dey fresh every morning — great na him faithfulness.", verse_ref:"Lamentations 3:22-23", reflection_1:"Every morning, God dey give you fresh mercy. Wetin happen yesterday don pass. Today na new day, new chance.", reflection_2:"No carry yesterday load come today. God mercy don cover am already. Just receive am and move forward.", prayer:"Father, thank you for dis fresh mercy wey you give me today. Help me to walk inside your goodness today. Amen." },
+{ title:"Trust Am With Your Whole Heart", verse:"Trust in the LORD with all your heart; and no lean on your own understanding.", verse_ref:"Proverbs 3:5", reflection_1:"Sometimes wetin we think e make sense no be God's plan. E get better vision pass us.", reflection_2:"Today, before you take any decision, ask God first. Him direction always better pass your own.", prayer:"Lord, I give you my plans today. Guide me, because your way better pass my own. Amen." },
+{ title:"I Get Power To Do Am", verse:"I fit do everything through Christ wey dey give me strength.", verse_ref:"Philippians 4:13", reflection_1:"Dis no be big talk — na truth. Di strength no come from you, e come from Christ inside you.", reflection_2:"Wetin dey look impossible to you today? Remember say na through Christ you go do am.", prayer:"Jesus, your strength dey inside me. Help me to use am today for your glory. Amen." },
+{ title:"Perfect Love Cast Out Fear", verse:"Perfect love cast out all fear — because fear get punishment, and anyone wey dey fear no don perfect inside love.", verse_ref:"1 John 4:18", reflection_1:"God love for you no get condition. E no depend on wetin you do or no do.", reflection_2:"Fear and faith no fit stay for same place. Choose to believe God love today.", prayer:"Father, cast out every fear from my heart today. Let your love be my strength. Amen." },
+{ title:"You Be New Creature", verse:"If any person dey inside Christ, that person don become new creature — old things don pass away, everything don become new.", verse_ref:"2 Corinthians 5:17", reflection_1:"God no see who you used to be. E see who you don become inside Christ — clean, new, forgiven.", reflection_2:"Stop carrying old labels. Inside God eyes, you be new person from today.", prayer:"Lord, thank you for making me new. Help me to live like di new person wey you don make me. Amen." },
+{ title:"God Peace Pass Understanding", verse:"Di peace of God wey pass all understanding go keep your heart and mind through Christ Jesus.", verse_ref:"Philippians 4:7", reflection_1:"Dis peace no be say trouble no dey — na say even when trouble dey, your heart still dey calm.", reflection_2:"Di secret na to cast your worry on God, and receive Him peace as exchange.", prayer:"Father, I give you all my worries now. Give me your peace wey pass understanding today. Amen." },
+{ title:"Complete Trust", verse:"Trust in di LORD with all your heart; in all your ways know am, and Him go make your paths straight.", verse_ref:"Proverbs 3:5-6", reflection_1:"Trusting God no mean you go understand everything — e mean say you believe He knows everything.", reflection_2:"Give God that thing wey you no understand today. Him road always dey lead to good place.", prayer:"Father, in what I no understand, I trust you. Lead me on your path today. Amen." },
+];
+
 function getTodayLocalDevotional() {
   const d = new Date();
   const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
-  return DAILY_DEVOTIONALS[dayOfYear % DAILY_DEVOTIONALS.length];
+  // Use language-specific array if available, fall back to English
+  let arr = DAILY_DEVOTIONALS;
+  if (currentLang === 'yo' && typeof DAILY_DEVOTIONALS_YO !== 'undefined' && DAILY_DEVOTIONALS_YO.length)
+    arr = DAILY_DEVOTIONALS_YO;
+  else if (currentLang === 'pcm' && typeof DAILY_DEVOTIONALS_PCM !== 'undefined' && DAILY_DEVOTIONALS_PCM.length)
+    arr = DAILY_DEVOTIONALS_PCM;
+  return arr[dayOfYear % arr.length];
 }
 
 // Apply a devotional object to the page DOM
@@ -2844,6 +3173,10 @@ async function loadTodayDevotional() {
 async function boot() {
   tick(); setInterval(tick, 30000);
   setGreeting();
+  applyLanguage();
+  // Set initial language label
+  const lbl = document.getElementById('langCurrentLabel');
+  if (lbl && LANGS[currentLang]) lbl.textContent = LANGS[currentLang].flag + ' ' + LANGS[currentLang].label;
   buildBooks();
   buildHymnsPage();
   // Restore saved translation
@@ -2911,7 +3244,7 @@ function tick() {
 
 function setGreeting() {
   const h = new Date().getHours();
-  document.getElementById('greetLbl').textContent = h<12?'Good Morning':h<17?'Good Afternoon':'Good Evening';
+  const greetEl = document.getElementById('greetLbl'); if(greetEl) greetEl.textContent = h<12 ? t('greeting_morning') : h<17 ? t('greeting_afternoon') : t('greeting_evening');
 }
 
 // ── THEME TOGGLE ────────────────────────
