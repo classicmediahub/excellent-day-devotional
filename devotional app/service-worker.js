@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════
-//  Excellent Day Devotional — Service Worker v2
+//  Excellent Day Devotional — Service Worker v3
 //  Full offline support with background sync
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME    = 'excellent-day-v2';
+const CACHE_NAME    = 'excellent-day-v4';
 const APP_SHELL     = [
   '/',
   '/index.html',
@@ -14,7 +14,7 @@ const APP_SHELL     = [
 
 // ── INSTALL: cache app shell immediately ──────────────
 self.addEventListener('install', event => {
-  console.log('[SW] Installing v2...');
+  console.log('[SW] Installing v4 — multilingual update...');
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return Promise.allSettled(
