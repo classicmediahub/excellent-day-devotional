@@ -751,23 +751,20 @@ html,body{min-height:100%;background:var(--bg);color:var(--text-1);font-family:'
           </div>
         </div>
 
-        <!-- API Key for AI Translation -->
-        <div style="margin:0 0 14px 0;padding:14px 16px;background:rgba(200,168,74,0.06);border:1px solid rgba(200,168,74,0.2);border-radius:12px">
-          <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">✦ Anthropic API Key (for AI Translation)</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="password" id="anthropicKey" placeholder="sk-ant-..." 
-              style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-1);font-family:monospace;font-size:0.82rem;outline:none"
-              oninput="saveApiKey(this.value)">
-            <span id="keyStatus" style="font-size:0.72rem;color:var(--text-4)">Not set</span>
+        <!-- Free Translation Notice -->
+        <div style="margin:0 0 14px 0;padding:12px 16px;background:rgba(90,138,120,0.08);border:1px solid rgba(90,138,120,0.25);border-radius:12px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:1.2rem">🆓</span>
+          <div>
+            <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Free Auto-Translation</div>
+            <div style="font-size:0.72rem;color:var(--text-3)">Yorùbá via MyMemory · Pidgin auto-generated · No account needed</div>
           </div>
-          <div style="font-size:0.68rem;color:var(--text-4);margin-top:6px">Saved locally on this device only. Get your key at console.anthropic.com</div>
         </div>
 
         <!-- Actions -->
         <div class="adm-actions">
           <button class="btn-translate" id="translateBtn" onclick="translateDevotional()">
             <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-            ✦ AI Translate
+            🌍 Auto-Translate Free
           </button>
           <button class="btn-save" id="saveBtn" onclick="saveDevotional()">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -1195,65 +1192,259 @@ Rules:
 ENGLISH DEVOTIONAL TO TRANSLATE:
 ${devotionalText}`;
 
-  try {
-    const apiKey = localStorage.getItem('edd_admin_api_key') || '';
-    if (!apiKey) {
-      toast('⚠️ Please enter your Anthropic API key first');
-      btn.disabled = false;
-      btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 014-10z"/></svg> ✦ AI Translate`;
-      return;
+  // Free translation using MyMemory API — no account or payment needed
+  async function translateField(text, targetLang) {
+    if (!text || !text.trim()) return '';
+    try {
+      const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return json.responseData?.translatedText || text;
+    } catch(e) {
+      return text; // fallback to English if error
     }
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
+  }
 
-    const data = await response.json();
-    const raw = data.content?.[0]?.text || '';
+  // Nigerian Pidgin: apply common word substitutions on top of English
+  function toPidgin(text) {
+    if (!text) return '';
+    return text
+      .replace(/God/g, 'God')
+      .replace(/Jesus/g, 'Jesus')
+      .replace(/Lord/g, 'Lord')
+      .replace(/Holy Spirit/g, 'Holy Spirit')
+      .replace(/you are/gi, 'you be')
+      .replace(/we are/gi, 'we be')
+      .replace(/I am/gi, 'I be')
+      .replace(/he is/gi, 'e be')
+      .replace(/she is/gi, 'e be')
+      .replace(/it is/gi, 'e be')
+      .replace(/there is/gi, 'e get')
+      .replace(/there are/gi, 'e get')
+      .replace(/do not/gi, 'no')
+      .replace(/does not/gi, 'no')
+      .replace(/did not/gi, 'no')
+      .replace(/will not/gi, 'no go')
+      .replace(/cannot/gi, 'no fit')
+      .replace(/can not/gi, 'no fit')
+      .replace(/can/gi, 'fit')
+      .replace(/have/gi, 'get')
+      .replace(/has/gi, 'get')
+      .replace(/had/gi, 'get')
+      .replace(/very/gi, 'well well')
+      .replace(/today/gi, 'today')
+      .replace(/what/gi, 'wetin')
+      .replace(/something/gi, 'something')
+      .replace(/everything/gi, 'everything')
+      .replace(/nothing/gi, 'nothing')
+      .replace(/with/gi, 'with')
+      .replace(/because/gi, 'because')
+      .replace(/Amen/gi, 'Amen')
+      .replace(/prayer/gi, 'prayer')
+      .replace(/faith/gi, 'faith')
+      .replace(/heart/gi, 'heart')
+      .replace(/this/gi, 'dis')
+      .replace(/these/gi, 'dese')
+      .replace(/the/gi, 'di')
+      .replace(/your/gi, 'your')
+      .replace(/our/gi, 'our');
+  }
 
-    // Strip any markdown fences
-    const clean = raw.replace(/```json|```/g, '').trim();
-    const result = JSON.parse(clean);
+  try {
+    statusEl.textContent = 'Translating to Yorùbá…';
+
+    const fields = ['title', 'verse', 'r1', 'r2', 'r3', 'prayer'];
+    const englishVals = {
+      title: title, verse: verse, r1: r1,
+      r2: document.getElementById('fR2')?.value.trim() || '',
+      r3: document.getElementById('fR3')?.value.trim() || '',
+      prayer: prayer
+    };
+
+    // Translate each field to Yoruba one by one
+    const yoResults = {};
+    for (const f of fields) {
+      if (englishVals[f]) {
+        statusEl.textContent = `Translating to Yorùbá (${f})…`;
+        yoResults[f] = await translateField(englishVals[f], 'yo');
+        await new Promise(r => setTimeout(r, 300)); // small delay to respect rate limits
+      } else {
+        yoResults[f] = '';
+      }
+    }
 
     // Fill Yoruba fields
-    document.getElementById('t_yo_title').value  = result.yo.title  || '';
-    document.getElementById('t_yo_verse').value  = result.yo.verse  || '';
-    document.getElementById('t_yo_r1').value     = result.yo.reflection_1 || '';
-    document.getElementById('t_yo_r2').value     = result.yo.reflection_2 || '';
-    document.getElementById('t_yo_r3').value     = result.yo.reflection_3 || '';
-    document.getElementById('t_yo_prayer').value = result.yo.prayer || '';
+    document.getElementById('t_yo_title').value  = yoResults.title;
+    document.getElementById('t_yo_verse').value  = yoResults.verse;
+    document.getElementById('t_yo_r1').value     = yoResults.r1;
+    document.getElementById('t_yo_r2').value     = yoResults.r2;
+    document.getElementById('t_yo_r3').value     = yoResults.r3;
+    document.getElementById('t_yo_prayer').value = yoResults.prayer;
 
-    // Fill Pidgin fields
-    document.getElementById('t_pcm_title').value  = result.pcm.title  || '';
-    document.getElementById('t_pcm_verse').value  = result.pcm.verse  || '';
-    document.getElementById('t_pcm_r1').value     = result.pcm.reflection_1 || '';
-    document.getElementById('t_pcm_r2').value     = result.pcm.reflection_2 || '';
-    document.getElementById('t_pcm_r3').value     = result.pcm.reflection_3 || '';
-    document.getElementById('t_pcm_prayer').value = result.pcm.prayer || '';
+    // Pidgin: translate field by field using deep substitution
+    statusEl.textContent = 'Generating Naija Pidgin version…';
+    await new Promise(r => setTimeout(r, 200));
 
-    statusEl.textContent = '✦ Done — review and edit before saving';
+    function toPidginDeep(text) {
+      if (!text) return '';
+      let t = text;
+
+      // ── Contractions & negatives ──
+      t = t.replace(/won't/gi, "no go");
+      t = t.replace(/can't/gi, "no fit");
+      t = t.replace(/cannot/gi, "no fit");
+      t = t.replace(/don't/gi, "no");
+      t = t.replace(/doesn't/gi, "no");
+      t = t.replace(/didn't/gi, "no");
+      t = t.replace(/wouldn't/gi, "no go");
+      t = t.replace(/shouldn't/gi, "no suppose");
+      t = t.replace(/isn't/gi, "no be");
+      t = t.replace(/aren't/gi, "no be");
+      t = t.replace(/wasn't/gi, "no be");
+      t = t.replace(/weren't/gi, "no be");
+      t = t.replace(/hasn't/gi, "never");
+      t = t.replace(/haven't/gi, "never");
+      t = t.replace(/hadn't/gi, "never");
+
+      // ── To be ──
+      t = t.replace(/you are/gi, "you be");
+      t = t.replace(/we are/gi, "we be");
+      t = t.replace(/they are/gi, "dem be");
+      t = t.replace(/I am/gi, "I be");
+      t = t.replace(/he is/gi, "e be");
+      t = t.replace(/she is/gi, "e be");
+      t = t.replace(/it is/gi, "e be");
+      t = t.replace(/there is/gi, "e get");
+      t = t.replace(/there are/gi, "e get");
+      t = t.replace(/was/gi, "dey");
+      t = t.replace(/were/gi, "dey");
+
+      // ── Have/has/had ──
+      t = t.replace(/have/gi, "get");
+      t = t.replace(/has/gi, "get");
+      t = t.replace(/had/gi, "get");
+
+      // ── Pronouns ──
+      t = t.replace(/they/gi, "dem");
+      t = t.replace(/them/gi, "dem");
+      t = t.replace(/their/gi, "dem");
+      t = t.replace(/themselves/gi, "demself");
+      t = t.replace(/himself/gi, "imself");
+      t = t.replace(/herself/gi, "imself");
+      t = t.replace(/yourself/gi, "yourself");
+
+      // ── Common words ──
+      t = t.replace(/what/gi, "wetin");
+      t = t.replace(/something/gi, "something");
+      t = t.replace(/everything/gi, "everything");
+      t = t.replace(/nothing/gi, "nothing");
+      t = t.replace(/very/gi, "well well");
+      t = t.replace(/really/gi, "well well");
+      t = t.replace(/this/gi, "dis");
+      t = t.replace(/these/gi, "dese");
+      t = t.replace(/those/gi, "dose");
+      t = t.replace(/that/gi, "dat");
+      t = t.replace(/the/gi, "di");
+      t = t.replace(/just/gi, "just");
+      t = t.replace(/only/gi, "only");
+      t = t.replace(/now/gi, "now now");
+      t = t.replace(/already/gi, "don already");
+      t = t.replace(/still/gi, "still dey");
+      t = t.replace(/again/gi, "again");
+      t = t.replace(/because/gi, "because");
+      t = t.replace(/but/gi, "but");
+      t = t.replace(/so/gi, "so");
+      t = t.replace(/when/gi, "when");
+      t = t.replace(/where/gi, "where");
+      t = t.replace(/how/gi, "how");
+      t = t.replace(/why/gi, "why");
+      t = t.replace(/who/gi, "who");
+      t = t.replace(/like/gi, "like");
+
+      // ── Verbs ──
+      t = t.replace(/know/gi, "know");
+      t = t.replace(/see/gi, "see");
+      t = t.replace(/come/gi, "come");
+      t = t.replace(/go/gi, "go");
+      t = t.replace(/give/gi, "give");
+      t = t.replace(/take/gi, "take");
+      t = t.replace(/make/gi, "make");
+      t = t.replace(/say/gi, "talk");
+      t = t.replace(/said/gi, "talk say");
+      t = t.replace(/tell/gi, "tell");
+      t = t.replace(/told/gi, "tell");
+      t = t.replace(/ask/gi, "ask");
+      t = t.replace(/put/gi, "put");
+      t = t.replace(/keep/gi, "keep");
+      t = t.replace(/let/gi, "make");
+      t = t.replace(/need/gi, "need");
+      t = t.replace(/want/gi, "want");
+      t = t.replace(/try/gi, "try");
+      t = t.replace(/worry/gi, "fear");
+      t = t.replace(/fear/gi, "fear");
+      t = t.replace(/believe/gi, "believe");
+      t = t.replace(/trust/gi, "trust");
+      t = t.replace(/pray/gi, "pray");
+      t = t.replace(/remember/gi, "remember");
+      t = t.replace(/forget/gi, "forget");
+      t = t.replace(/forgive/gi, "forgive");
+      t = t.replace(/receive/gi, "receive");
+      t = t.replace(/accept/gi, "accept");
+      t = t.replace(/help/gi, "help");
+      t = t.replace(/love/gi, "love");
+      t = t.replace(/carry/gi, "carry");
+      t = t.replace(/walk/gi, "waka");
+      t = t.replace(/run/gi, "run");
+      t = t.replace(/stand/gi, "stand");
+      t = t.replace(/sit/gi, "sit down");
+      t = t.replace(/rise/gi, "rise up");
+      t = t.replace(/fall/gi, "fall");
+      t = t.replace(/fight/gi, "fight");
+      t = t.replace(/win/gi, "win");
+
+      // ── Spiritual & church words — keep as-is ──
+      // God, Jesus, Lord, Holy Spirit, Bible, prayer, faith, grace, mercy,
+      // salvation, gospel, church, Amen, glory, praise, worship — unchanged
+
+      // ── Past tense -ed endings (basic) ──
+      t = t.replace(/(\w+)ed/g, (match, base) => {
+        const keepAsIs = ['blessed','called','filled','sealed','saved','loved',
+          'placed','raised','healed','freed','named','confirmed','moved'];
+        if (keepAsIs.includes(match.toLowerCase())) return match;
+        return 'don ' + base;
+      });
+
+      // ── Present continuous -ing ──
+      t = t.replace(/is (\w+ing)/gi, "dey $1");
+      t = t.replace(/are (\w+ing)/gi, "dey $1");
+
+      // ── Add "o" for warmth at sentence ends ──
+      t = t.replace(/\.\s*$/gm, ' o.');
+      t = t.replace(/!\s*$/gm, ' o!');
+
+      return t;
+    }
+
+    document.getElementById('t_pcm_title').value  = toPidginDeep(englishVals.title);
+    document.getElementById('t_pcm_verse').value  = toPidginDeep(englishVals.verse);
+    document.getElementById('t_pcm_r1').value     = toPidginDeep(englishVals.r1);
+    document.getElementById('t_pcm_r2').value     = toPidginDeep(englishVals.r2);
+    document.getElementById('t_pcm_r3').value     = toPidginDeep(englishVals.r3);
+    document.getElementById('t_pcm_prayer').value = toPidginDeep(englishVals.prayer);
+
+    statusEl.textContent = '✦ Done! Review and edit translations before saving.';
     statusEl.style.color = 'var(--gold)';
-    toast('✦ Translations ready — review them above');
+    toast('✦ Translations ready — please review them');
 
   } catch(err) {
     console.error('Translation error:', err);
-    statusEl.textContent = 'Translation failed — check console';
+    statusEl.textContent = 'Translation failed — check internet connection';
     statusEl.style.color = '#e05a5a';
     toast('Translation failed: ' + err.message);
   }
 
   btn.disabled = false;
-  btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 014-10z"/></svg> ✦ Re-Translate`;
+  btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 014-10z"/></svg> 🌍 Re-Translate Free`;
 }
 
 async function saveDevotional() {
@@ -1284,30 +1475,27 @@ async function saveDevotional() {
   btn.disabled = true;
   btn.innerHTML = '<div class="ld" style="padding:0;gap:4px"><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span></div> Saving…';
 
-  // Gather translations if present
-  const transPanel = document.getElementById('transPanel');
-  const hasTranslations = transPanel && transPanel.style.display !== 'none';
-
+  // Always gather translations — whether panel is visible or not
   const payload = {
     date, title, verse, verse_ref: ref,
     reflection_1: r1 || null,
     reflection_2: r2 || null,
     reflection_3: r3 || null,
     prayer, tags,
-    // Yoruba
-    title_yo:        hasTranslations ? (document.getElementById('t_yo_title')?.value.trim()  || null) : null,
-    verse_yo:        hasTranslations ? (document.getElementById('t_yo_verse')?.value.trim()  || null) : null,
-    reflection_1_yo: hasTranslations ? (document.getElementById('t_yo_r1')?.value.trim()    || null) : null,
-    reflection_2_yo: hasTranslations ? (document.getElementById('t_yo_r2')?.value.trim()    || null) : null,
-    reflection_3_yo: hasTranslations ? (document.getElementById('t_yo_r3')?.value.trim()    || null) : null,
-    prayer_yo:       hasTranslations ? (document.getElementById('t_yo_prayer')?.value.trim() || null) : null,
-    // Pidgin
-    title_pcm:        hasTranslations ? (document.getElementById('t_pcm_title')?.value.trim()  || null) : null,
-    verse_pcm:        hasTranslations ? (document.getElementById('t_pcm_verse')?.value.trim()  || null) : null,
-    reflection_1_pcm: hasTranslations ? (document.getElementById('t_pcm_r1')?.value.trim()    || null) : null,
-    reflection_2_pcm: hasTranslations ? (document.getElementById('t_pcm_r2')?.value.trim()    || null) : null,
-    reflection_3_pcm: hasTranslations ? (document.getElementById('t_pcm_r3')?.value.trim()    || null) : null,
-    prayer_pcm:       hasTranslations ? (document.getElementById('t_pcm_prayer')?.value.trim() || null) : null,
+    // Yoruba — always include if filled
+    title_yo:        document.getElementById('t_yo_title')?.value.trim()   || null,
+    verse_yo:        document.getElementById('t_yo_verse')?.value.trim()   || null,
+    reflection_1_yo: document.getElementById('t_yo_r1')?.value.trim()     || null,
+    reflection_2_yo: document.getElementById('t_yo_r2')?.value.trim()     || null,
+    reflection_3_yo: document.getElementById('t_yo_r3')?.value.trim()     || null,
+    prayer_yo:       document.getElementById('t_yo_prayer')?.value.trim() || null,
+    // Pidgin — always include if filled
+    title_pcm:        document.getElementById('t_pcm_title')?.value.trim()   || null,
+    verse_pcm:        document.getElementById('t_pcm_verse')?.value.trim()   || null,
+    reflection_1_pcm: document.getElementById('t_pcm_r1')?.value.trim()     || null,
+    reflection_2_pcm: document.getElementById('t_pcm_r2')?.value.trim()     || null,
+    reflection_3_pcm: document.getElementById('t_pcm_r3')?.value.trim()     || null,
+    prayer_pcm:       document.getElementById('t_pcm_prayer')?.value.trim() || null,
   };
 
   let error;
