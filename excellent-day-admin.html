@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellent Day — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* ══ TOKENS ══ */
+:root {
+  --bg:        #0E1512;
+  --bg-2:      #141C18;
+  --bg-3:      #1A2520;
+  --surface:   #1E2D27;
+  --surface-2: #243530;
+  --border:    #2E4038;
+  --border-s:  #253530;
+
+  --text-1:    #EDE8DF;
+  --text-2:    #B0A898;
+  --text-3:    #6A6258;
+  --text-4:    #3E3830;
+
+  --gold:      #C8A84A;
+  --gold-l:    #E0C060;
+  --gold-bg:   rgba(200,168,74,0.1);
+  --gold-bd:   rgba(200,168,74,0.28);
+
+  --accent:    #5A8A78;
+  --accent-l:  #78A892;
+  --accent-bg: rgba(90,138,120,0.12);
+  --accent-bd: rgba(90,138,120,0.3);
+
+  --red:       #C0524A;
+  --red-bg:    rgba(192,82,74,0.12);
+  --red-bd:    rgba(192,82,74,0.3);
+
+  --sh-sm:     0 2px 8px rgba(0,0,0,0.4);
+  --sh-md:     0 6px 24px rgba(0,0,0,0.5);
+  --sh-lg:     0 16px 48px rgba(0,0,0,0.6);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100%;background:var(--bg);color:var(--text-1);font-family:'Source Serif 4',serif;-webkit-font-smoothing:antialiased;}
+
+/* ══ LOGIN PAGE ══ */
+#loginPage {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(90,138,120,0.12) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 80% 100%, rgba(200,168,74,0.07) 0%, transparent 65%),
+              var(--bg);
+  padding: 20px;
+}
+
+.login-box {
+  width: 100%; max-width: 420px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 40px 40px;
+  box-shadow: var(--sh-lg);
+  animation: fadeUp 0.6s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.login-emblem {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: linear-gradient(145deg, rgba(90,138,120,0.2), rgba(200,168,74,0.1));
+  border: 1px solid var(--gold-bd);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 24px;
+  position: relative;
+}
+.login-emblem::before, .login-emblem::after {
+  content:''; position:absolute; background:var(--gold); border-radius:2px;
+}
+.login-emblem::before { width:3px; height:24px; }
+.login-emblem::after  { width:20px; height:3px; top:9px; }
+
+.login-title {
+  font-family:'Cinzel',serif; font-size:1.3rem; font-weight:700;
+  color:var(--text-1); text-align:center; letter-spacing:0.04em;
+  margin-bottom:4px;
+}
+.login-sub {
+  font-style:italic; font-size:0.85rem; color:var(--text-3);
+  text-align:center; margin-bottom:32px;
+}
+
+.field { margin-bottom:16px; }
+.field label {
+  display:block; font-family:'Cinzel',serif; font-size:0.56rem;
+  letter-spacing:0.14em; text-transform:uppercase; color:var(--text-3);
+  margin-bottom:7px;
+}
+.field input {
+  width:100%; padding:13px 16px;
+  background:var(--bg-2); border:1px solid var(--border);
+  border-radius:12px; color:var(--text-1);
+  font-family:'Source Serif 4',serif; font-size:0.97rem;
+  outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.field input::placeholder { color:var(--text-4); }
+
+.btn-primary {
+  width:100%; padding:14px; border-radius:12px;
+  background:linear-gradient(135deg, #2A4A3A, #1E3628);
+  border:1px solid var(--accent-bd); color:var(--gold-l);
+  font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.1em;
+  text-transform:uppercase; font-weight:600; cursor:pointer;
+  transition:all 0.22s; box-shadow:var(--sh-sm);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:8px;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:var(--sh-md); border-color:var(--accent); }
+.btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+
+.login-err {
+  background:var(--red-bg); border:1px solid var(--red-bd);
+  border-radius:10px; padding:11px 14px; margin-bottom:16px;
+  font-size:0.84rem; color:#E08880; text-align:center;
+  display:none;
+}
+.login-err.show { display:block; }
+
+/* ══ ADMIN SHELL ══ */
+#adminShell { display:none; min-height:100vh; }
+#adminShell.show { display:flex; flex-direction:column; }
+
+/* Top bar */
+.adm-topbar {
+  height:60px; flex-shrink:0;
+  background:var(--surface); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 24px; box-shadow:var(--sh-sm);
+  position:sticky; top:0; z-index:100;
+}
+.adm-brand { display:flex; align-items:center; gap:10px; }
+.adm-brand-mark {
+  width:32px; height:32px; border-radius:8px;
+  background:var(--bg-3); border:1px solid var(--gold-bd);
+  display:flex; align-items:center; justify-content:center; position:relative;
+}
+.adm-brand-mark::before,.adm-brand-mark::after { content:''; position:absolute; background:var(--gold); border-radius:1.5px; }
+.adm-brand-mark::before { width:3px; height:16px; }
+.adm-brand-mark::after  { width:12px; height:3px; top:8px; }
+.adm-brand-name { font-family:'Cinzel',serif; font-size:0.88rem; font-weight:600; color:var(--text-1); }
+.adm-brand-pill {
+  padding:3px 9px; border-radius:20px;
+  background:var(--gold-bg); border:1px solid var(--gold-bd);
+  font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.12em;
+  color:var(--gold); text-transform:uppercase;
+}
+.adm-user {
+  display:flex; align-items:center; gap:12px;
+}
+.adm-user-email {
+  font-size:0.78rem; color:var(--text-3); font-style:italic;
+}
+.btn-logout {
+  padding:7px 14px; border-radius:8px;
+  background:transparent; border:1px solid var(--border);
+  font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em;
+  color:var(--text-3); cursor:pointer; transition:all 0.18s;
+}
+.btn-logout:hover { border-color:var(--red-bd); color:#E08880; background:var(--red-bg); }
+
+/* Main content */
+.adm-main {
+  flex:1; padding:32px 24px 60px;
+  max-width:900px; margin:0 auto; width:100%;
+}
+
+/* Page header */
+.adm-ph { margin-bottom:32px; }
+.adm-ph-label {
+  font-family:'Source Serif 4',serif; font-style:italic;
+  font-size:0.9rem; color:var(--text-3); margin-bottom:4px;
+}
+.adm-ph-title {
+  font-family:'Cinzel',serif; font-size:1.6rem; font-weight:700;
+  color:var(--text-1); letter-spacing:0.03em; margin-bottom:16px;
+}
+.adm-ph-divider {
+  display:flex; align-items:center; gap:10px;
+}
+.adm-ph-line {
+  flex:1; height:1px;
+  background:linear-gradient(90deg, var(--gold-bd), transparent);
+}
+.adm-ph-gem { color:var(--gold); font-size:0.7rem; }
+
+/* Tabs */
+.adm-tabs {
+  display:flex; gap:8px; margin-bottom:28px; flex-wrap:wrap;
+}
+.adm-tab {
+  padding:9px 18px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--border); background:var(--surface);
+  font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+  color:var(--text-3); transition:all 0.18s;
+}
+.adm-tab.active { background:var(--accent-bg); border-color:var(--accent-bd); color:var(--accent-l); }
+.adm-tab:hover:not(.active) { border-color:var(--border-s); color:var(--text-2); }
+
+/* Section heading */
+.adm-sh {
+  font-family:'Cinzel',serif; font-size:0.58rem; letter-spacing:0.16em;
+  text-transform:uppercase; color:var(--text-3); margin-bottom:12px;
+  display:flex; align-items:center; gap:8px;
+}
+.adm-sh::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* Card */
+.adm-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:16px; padding:24px; margin-bottom:20px;
+  box-shadow:var(--sh-sm);
+}
+
+/* Form grid */
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.form-row.full { grid-template-columns:1fr; }
+.form-row.three { grid-template-columns:1fr 1fr 1fr; }
+@media(max-width:600px) {
+  .form-row,.form-row.three { grid-template-columns:1fr; }
+}
+
+.fld { display:flex; flex-direction:column; gap:6px; }
+.fld label {
+  font-family:'Cinzel',serif; font-size:0.54rem; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--text-3);
+}
+.fld label span { color:var(--gold); margin-left:2px; }
+.fld input, .fld textarea, .fld select {
+  padding:11px 14px;
+  background:var(--bg-2); border:1px solid var(--border);
+  border-radius:10px; color:var(--text-1);
+  font-family:'Source Serif 4',serif; font-size:0.94rem;
+  outline:none; transition:border-color 0.2s, box-shadow 0.2s;
+  resize:vertical;
+}
+.fld input:focus, .fld textarea:focus, .fld select:focus {
+  border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg);
+}
+.fld input::placeholder, .fld textarea::placeholder { color:var(--text-4); }
+.fld textarea { min-height:110px; line-height:1.7; }
+.fld .hint {
+  font-size:0.74rem; color:var(--text-3); font-style:italic; margin-top:2px;
+}
+
+/* Tags input */
+.tags-wrap {
+  display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  padding:8px 12px; background:var(--bg-2); border:1px solid var(--border);
+  border-radius:10px; cursor:text; min-height:44px;
+  transition:border-color 0.2s;
+}
+.tags-wrap:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg); }
+.tag-chip {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:3px 9px; border-radius:20px;
+  background:var(--gold-bg); border:1px solid var(--gold-bd);
+  font-size:0.74rem; color:var(--gold); font-style:italic;
+}
+.tag-chip button {
+  background:none; border:none; color:var(--gold); cursor:pointer;
+  font-size:0.8rem; padding:0; line-height:1; opacity:0.7;
+  transition:opacity 0.15s;
+}
+.tag-chip button:hover { opacity:1; }
+.tags-input {
+  border:none; background:transparent; outline:none;
+  color:var(--text-1); font-family:'Source Serif 4',serif;
+  font-size:0.94rem; min-width:80px; flex:1;
+}
+.tags-input::placeholder { color:var(--text-4); }
+
+/* Preview panel */
+.preview-panel {
+  background:var(--bg-2); border:1px solid var(--border-s);
+  border-radius:14px; padding:22px; margin-top:20px;
+  display:none;
+}
+.preview-panel.show { display:block; animation:fadeUp 0.3s ease; }
+.preview-label {
+  font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--accent-l); margin-bottom:14px;
+  display:flex; align-items:center; gap:8px;
+}
+.preview-label::after { content:''; flex:1; height:1px; background:var(--accent-bd); }
+.preview-verse-card {
+  background:linear-gradient(145deg, #1A2E24, #141E1A);
+  border-radius:14px; padding:20px; margin-bottom:14px;
+  border:1px solid rgba(90,138,120,0.2);
+  position:relative; overflow:hidden;
+}
+.preview-verse-card::after {
+  content:'\201C'; position:absolute; top:-10px; left:12px;
+  font-family:Georgia,serif; font-size:80px;
+  color:rgba(200,168,74,0.06); pointer-events:none; line-height:1;
+}
+.preview-verse {
+  font-family:'Lora',serif; font-style:italic;
+  font-size:1.05rem; line-height:1.72; color:rgba(240,234,220,0.9);
+  margin-bottom:10px; position:relative; z-index:1;
+}
+.preview-ref {
+  font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em;
+  color:var(--gold); display:flex; align-items:center; gap:7px;
+}
+.preview-ref::before { content:''; width:16px; height:1px; background:rgba(200,168,74,0.5); }
+.preview-reflection {
+  font-size:0.95rem; line-height:1.8; color:var(--text-2); margin-bottom:10px;
+}
+.preview-prayer {
+  background:var(--surface-2); border:1px solid var(--border-s);
+  border-left:3px solid var(--accent); border-radius:0 10px 10px 0;
+  padding:14px 16px; margin-top:12px;
+  font-family:'Lora',serif; font-style:italic;
+  font-size:0.93rem; line-height:1.7; color:var(--text-2);
+}
+
+/* Action buttons */
+.adm-actions {
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;
+}
+.btn-save {
+  padding:12px 28px; border-radius:10px; cursor:pointer;
+  background:linear-gradient(135deg, #2A4A3A, #1E3628);
+  border:1px solid var(--accent-bd); color:var(--gold-l);
+  font-family:'Cinzel',serif; font-size:0.64rem; letter-spacing:0.1em;
+  text-transform:uppercase; font-weight:600;
+  display:flex; align-items:center; gap:7px;
+  transition:all 0.22s; box-shadow:var(--sh-sm);
+}
+.btn-save:hover { transform:translateY(-2px); box-shadow:var(--sh-md); }
+.btn-save:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.btn-preview {
+  padding:12px 22px; border-radius:10px; cursor:pointer;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-2); font-family:'Cinzel',serif; font-size:0.62rem;
+  letter-spacing:0.08em; text-transform:uppercase;
+  display:flex; align-items:center; gap:7px; transition:all 0.18s;
+}
+.btn-preview:hover { border-color:var(--accent-bd); color:var(--accent-l); background:var(--accent-bg); }
+.btn-clear {
+  padding:12px 18px; border-radius:10px; cursor:pointer;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-3); font-family:'Cinzel',serif; font-size:0.6rem;
+  letter-spacing:0.08em; text-transform:uppercase; transition:all 0.18s;
+}
+.btn-clear:hover { border-color:var(--red-bd); color:#E08880; background:var(--red-bg); }
+
+/* Status banner */
+.status-banner {
+  padding:12px 18px; border-radius:10px; margin-bottom:16px;
+  font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.07em;
+  display:none; align-items:center; gap:9px;
+}
+.status-banner.success { display:flex; background:var(--accent-bg); border:1px solid var(--accent-bd); color:var(--accent-l); }
+.status-banner.error   { display:flex; background:var(--red-bg); border:1px solid var(--red-bd); color:#E08880; }
+.status-banner.info    { display:flex; background:var(--gold-bg); border:1px solid var(--gold-bd); color:var(--gold); }
+
+/* Devotionals list */
+.dev-list { display:flex; flex-direction:column; gap:10px; }
+.dev-item {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:16px 20px;
+  display:flex; align-items:center; gap:14px;
+  transition:all 0.18s;
+}
+.dev-item:hover { border-color:var(--accent-bd); transform:translateX(3px); }
+.dev-date-badge {
+  flex-shrink:0; width:56px; text-align:center;
+  padding:8px 6px; border-radius:10px;
+  background:var(--gold-bg); border:1px solid var(--gold-bd);
+}
+.dev-date-day {
+  font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700;
+  color:var(--gold); line-height:1;
+}
+.dev-date-mon {
+  font-family:'Cinzel',serif; font-size:0.5rem; letter-spacing:0.1em;
+  color:var(--gold); text-transform:uppercase; margin-top:2px;
+}
+.dev-info { flex:1; min-width:0; }
+.dev-title {
+  font-family:'Cinzel',serif; font-size:0.78rem; font-weight:600;
+  color:var(--text-1); margin-bottom:3px; letter-spacing:0.02em;
+}
+.dev-ref {
+  font-size:0.78rem; color:var(--text-3); font-style:italic;
+}
+.dev-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
+.dev-tag {
+  padding:2px 7px; border-radius:8px;
+  background:var(--accent-bg); border:1px solid var(--accent-bd);
+  font-size:0.62rem; color:var(--accent-l); font-style:italic;
+}
+.dev-actions { display:flex; gap:7px; }
+.dev-act-btn {
+  width:32px; height:32px; border-radius:8px;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-3); cursor:pointer; font-size:0.85rem;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.18s;
+}
+.dev-act-btn:hover.edit { border-color:var(--accent-bd); color:var(--accent-l); background:var(--accent-bg); }
+.dev-act-btn:hover.del  { border-color:var(--red-bd); color:#E08880; background:var(--red-bg); }
+
+/* Stats row */
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+@media(max-width:500px) { .stats-row { grid-template-columns:1fr 1fr; } }
+.stat-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:12px; padding:18px 16px;
+}
+.stat-val {
+  font-family:'Cinzel',serif; font-size:1.8rem; font-weight:700;
+  color:var(--gold); line-height:1;
+}
+.stat-label {
+  font-family:'Cinzel',serif; font-size:0.52rem; letter-spacing:0.12em;
+  color:var(--text-3); text-transform:uppercase; margin-top:5px;
+}
+
+/* Loading dots */
+.ld { display:flex; gap:5px; justify-content:center; padding:32px; }
+.ld span {
+  width:7px; height:7px; border-radius:50%;
+  background:var(--accent); opacity:0.5;
+  animation:ld-dot 0.9s ease-in-out infinite;
+}
+.ld span:nth-child(2) { animation-delay:.15s; }
+.ld span:nth-child(3) { animation-delay:.3s; }
+@keyframes ld-dot {
+  0%,80%,100% { transform:scale(0.5); opacity:0.35; }
+  40%         { transform:scale(1); opacity:1; }
+}
+
+/* Empty state */
+.empty-state {
+  text-align:center; padding:48px 20px;
+}
+.empty-icon { font-size:2rem; color:var(--text-4); margin-bottom:12px; }
+.empty-title {
+  font-family:'Cinzel',serif; font-size:0.9rem; color:var(--text-3);
+  letter-spacing:0.04em; margin-bottom:6px;
+}
+.empty-sub {
+  font-size:0.85rem; color:var(--text-4); font-style:italic; line-height:1.6;
+}
+
+/* Toast */
+.toast {
+  position:fixed; bottom:28px; left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--surface); color:var(--gold-l);
+  padding:10px 22px; border-radius:50px;
+  font-family:'Cinzel',serif; font-size:0.62rem; letter-spacing:0.07em;
+  border:1px solid var(--gold-bd);
+  opacity:0; pointer-events:none; transition:all 0.28s;
+  z-index:9000; white-space:nowrap; box-shadow:var(--sh-lg);
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* Confirm modal */
+.modal-overlay {
+  position:fixed; inset:0; z-index:9000;
+  background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity 0.25s;
+  padding:20px;
+}
+.modal-overlay.show { opacity:1; pointer-events:all; }
+.modal-box {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:20px; padding:32px; max-width:400px; width:100%;
+  box-shadow:var(--sh-lg);
+  transform:scale(0.95); transition:transform 0.25s;
+}
+.modal-overlay.show .modal-box { transform:scale(1); }
+.modal-title {
+  font-family:'Cinzel',serif; font-size:1rem; font-weight:700;
+  color:var(--text-1); margin-bottom:8px;
+}
+.modal-sub {
+  font-size:0.88rem; color:var(--text-3); font-style:italic;
+  line-height:1.6; margin-bottom:24px;
+}
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; }
+.btn-modal-cancel {
+  padding:10px 20px; border-radius:8px; cursor:pointer;
+  background:transparent; border:1px solid var(--border);
+  color:var(--text-2); font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em;
+  transition:all 0.18s;
+}
+.btn-modal-cancel:hover { border-color:var(--accent-bd); color:var(--accent-l); }
+.btn-modal-delete {
+  padding:10px 20px; border-radius:8px; cursor:pointer;
+  background:var(--red-bg); border:1px solid var(--red-bd);
+  color:#E08880; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.07em;
+  transition:all 0.18s;
+}
+.btn-modal-delete:hover { background:rgba(192,82,74,0.22); }
+
+/* Bulk upload */
+.bulk-drop {
+  border:2px dashed var(--border); border-radius:14px;
+  padding:40px 24px; text-align:center; cursor:pointer;
+  transition:all 0.2s; margin-bottom:16px;
+}
+.bulk-drop:hover, .bulk-drop.drag { border-color:var(--accent); background:var(--accent-bg); }
+.bulk-drop-icon { font-size:2rem; margin-bottom:10px; opacity:0.5; }
+.bulk-drop-title {
+  font-family:'Cinzel',serif; font-size:0.8rem; color:var(--text-2);
+  letter-spacing:0.04em; margin-bottom:5px;
+}
+.bulk-drop-sub { font-size:0.8rem; color:var(--text-3); font-style:italic; }
+.bulk-results { margin-top:16px; }
+.bulk-row {
+  display:flex; align-items:center; gap:10px; padding:10px 14px;
+  border-radius:8px; margin-bottom:6px; background:var(--bg-2);
+  font-size:0.82rem; color:var(--text-2);
+}
+.bulk-row .ok  { color:var(--accent-l); }
+.bulk-row .err { color:#E08880; }
+
+/* SQL helper */
+.sql-box {
+  background:var(--bg-3); border:1px solid var(--border);
+  border-radius:12px; padding:18px 20px; margin-top:16px;
+  font-family:'Courier New', monospace; font-size:0.78rem;
+  line-height:1.7; color:var(--text-2); overflow-x:auto;
+  white-space:pre;
+}
+.sql-copy {
+  display:inline-flex; align-items:center; gap:6px;
+  margin-top:10px; padding:7px 14px; border-radius:8px;
+  border:1px solid var(--border); background:transparent;
+  font-family:'Cinzel',serif; font-size:0.56rem; letter-spacing:0.08em;
+  color:var(--text-3); cursor:pointer; transition:all 0.18s;
+}
+.sql-copy:hover { border-color:var(--accent-bd); color:var(--accent-l); background:var(--accent-bg); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ── AI Translation Panel ── */
+.trans-panel { margin-top: 18px; border: 1px solid var(--gold-bd); border-radius: 14px; overflow: hidden; background: var(--gold-bg); }
+.trans-header { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--gold-bd); }
+.trans-title { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+.trans-tabs { display: flex; gap: 6px; padding: 12px 18px 0; }
+.trans-tab { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 7px 14px; border-radius: 8px 8px 0 0; border: 1px solid var(--border); border-bottom: none; cursor: pointer; background: transparent; color: var(--text-3); transition: all 0.18s; }
+.trans-tab.active { background: var(--surface); color: var(--gold); border-color: var(--gold-bd); }
+.trans-body { background: var(--surface); border-top: 1px solid var(--gold-bd); padding: 16px 18px; }
+.trans-field { margin-bottom: 12px; }
+.trans-field label { display: block; font-family: 'Cinzel', serif; font-size: 0.56rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-3); margin-bottom: 5px; }
+.trans-field textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text-1); font-family: 'Source Serif 4', serif; font-size: 0.88rem; line-height: 1.6; resize: vertical; min-height: 72px; outline: none; box-sizing: border-box; }
+.trans-field textarea:focus { border-color: var(--accent); }
+.btn-translate { background: linear-gradient(135deg, var(--gold) 0%, #a07830 100%); color: #1a1008; border: none; border-radius: 10px; padding: 11px 20px; font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 700; transition: all 0.2s; }
+.btn-translate:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,168,74,0.35); }
+.btn-translate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.trans-status { font-family: 'Source Serif 4', serif; font-size: 0.78rem; color: var(--text-3); font-style: italic; margin-left: 10px; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN PAGE ══ -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-emblem"></div>
+    <div class="login-title">Admin Portal</div>
+    <div class="login-sub">Excellent Day Devotional</div>
+
+    <div class="login-err" id="loginErr"></div>
+
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="admin@yourdomain.com" autocomplete="email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••••" autocomplete="current-password"
+             onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Sign In
+    </button>
+  </div>
+</div>
+
+<!-- ══ ADMIN SHELL ══ -->
+<div id="adminShell">
+
+  <!-- Top bar -->
+  <header class="adm-topbar">
+    <div class="adm-brand">
+      <div class="adm-brand-mark"></div>
+      <div>
+        <span style="font-family:'Cinzel',serif;font-size:0.88rem;font-weight:600;color:var(--text-1);margin-right:8px">Excellent Day</span>
+        <span class="adm-brand-pill">Admin</span>
+      </div>
+    </div>
+    <div class="adm-user">
+      <span class="adm-user-email" id="adminEmail"></span>
+      <button class="btn-logout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="adm-main">
+    <div class="adm-ph">
+      <div class="adm-ph-label">Devotional Management</div>
+      <div class="adm-ph-title">Content Dashboard</div>
+      <div class="adm-ph-divider">
+        <div class="adm-ph-line"></div>
+        <div class="adm-ph-gem">✦</div>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-bd))"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card"><div class="stat-val" id="statTotal">—</div><div class="stat-label">Total Devotionals</div></div>
+      <div class="stat-card"><div class="stat-val" id="statUpcoming">—</div><div class="stat-label">Upcoming</div></div>
+      <div class="stat-card"><div class="stat-val" id="statToday">—</div><div class="stat-label">Today's Status</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="adm-tabs">
+      <button class="adm-tab active" onclick="switchTab('compose',this)">✦ Compose</button>
+      <button class="adm-tab" onclick="switchTab('library',this)">📖 Library</button>
+      <button class="adm-tab" onclick="switchTab('bulk',this)">⬆ Bulk Upload</button>
+      <button class="adm-tab" onclick="switchTab('setup',this)">⚙ Setup</button>
+    </div>
+
+    <!-- Status Banner -->
+    <div class="status-banner" id="statusBanner"></div>
+
+    <!-- ── TAB: COMPOSE ── -->
+    <div id="tab-compose">
+      <div class="adm-card">
+        <div class="adm-sh">Devotional Details</div>
+
+        <div class="form-row three">
+          <div class="fld">
+            <label>Date <span>*</span></label>
+            <input type="date" id="fDate">
+          </div>
+          <div class="fld" style="grid-column:span 2">
+            <label>Title <span>*</span></label>
+            <input type="text" id="fTitle" placeholder="e.g. His Mercies Are New">
+          </div>
+        </div>
+
+        <div class="form-row full">
+          <div class="fld">
+            <label>Verse Text <span>*</span></label>
+            <textarea id="fVerse" placeholder="Paste the full verse text here…" style="min-height:80px"></textarea>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="fld">
+            <label>Scripture Reference <span>*</span></label>
+            <input type="text" id="fRef" placeholder="e.g. Lamentations 3:22–23 · KJV">
+          </div>
+          <div class="fld">
+            <label>Tags <span title="Press Enter or comma to add">*</span></label>
+            <div class="tags-wrap" id="tagsWrap" onclick="document.getElementById('tagInput').focus()">
+              <input type="text" class="tags-input" id="tagInput" placeholder="Add tag, press Enter…"
+                     onkeydown="handleTagKey(event)">
+            </div>
+            <div class="hint">e.g. Faithfulness · Mercy · Morning Prayer</div>
+          </div>
+        </div>
+
+        <div class="adm-sh" style="margin-top:8px">Reflection</div>
+
+        <div class="form-row full">
+          <div class="fld">
+            <label>Paragraph 1 <span>*</span></label>
+            <textarea id="fR1" placeholder="Opening reflection — set the scene or context…"></textarea>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="fld">
+            <label>Paragraph 2</label>
+            <textarea id="fR2" placeholder="Deepen the theme — theological insight or story…"></textarea>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="fld">
+            <label>Paragraph 3</label>
+            <textarea id="fR3" placeholder="Application — how does this speak to daily life?"></textarea>
+          </div>
+        </div>
+
+        <div class="adm-sh" style="margin-top:8px">Morning Prayer</div>
+        <div class="form-row full">
+          <div class="fld">
+            <label>Prayer Text <span>*</span></label>
+            <textarea id="fPrayer" placeholder="Write the closing prayer in first person…" style="min-height:100px"></textarea>
+          </div>
+        </div>
+
+
+        <!-- ── AI Translation Panel ── -->
+        <div class="trans-panel" id="transPanel" style="display:none">
+          <div class="trans-header">
+            <div class="trans-title">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+              AI Translations — Review &amp; Edit Before Saving
+            </div>
+            <span class="trans-status" id="transStatus"></span>
+          </div>
+          <div class="trans-tabs">
+            <button class="trans-tab active" onclick="showTransTab('yo',this)">🇳🇬 Yorùbá</button>
+            <button class="trans-tab" onclick="showTransTab('pcm',this)">🇳🇬 Naija Pidgin</button>
+          </div>
+          <div class="trans-body">
+            <!-- Yoruba tab -->
+            <div id="trans-yo">
+              <div class="trans-field"><label>Title (Yorùbá)</label><textarea id="t_yo_title" rows="1" style="min-height:44px"></textarea></div>
+              <div class="trans-field"><label>Verse Text (Yorùbá)</label><textarea id="t_yo_verse"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 1</label><textarea id="t_yo_r1"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 2</label><textarea id="t_yo_r2"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 3</label><textarea id="t_yo_r3"></textarea></div>
+              <div class="trans-field"><label>Prayer (Yorùbá)</label><textarea id="t_yo_prayer"></textarea></div>
+            </div>
+            <!-- Pidgin tab -->
+            <div id="trans-pcm" style="display:none">
+              <div class="trans-field"><label>Title (Pidgin)</label><textarea id="t_pcm_title" rows="1" style="min-height:44px"></textarea></div>
+              <div class="trans-field"><label>Verse Text (Pidgin)</label><textarea id="t_pcm_verse"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 1</label><textarea id="t_pcm_r1"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 2</label><textarea id="t_pcm_r2"></textarea></div>
+              <div class="trans-field"><label>Reflection Paragraph 3</label><textarea id="t_pcm_r3"></textarea></div>
+              <div class="trans-field"><label>Prayer (Pidgin)</label><textarea id="t_pcm_prayer"></textarea></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- API Key for AI Translation -->
+        <div style="margin:0 0 14px 0;padding:14px 16px;background:rgba(200,168,74,0.06);border:1px solid rgba(200,168,74,0.2);border-radius:12px">
+          <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:8px">✦ Anthropic API Key (for AI Translation)</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="password" id="anthropicKey" placeholder="sk-ant-..." 
+              style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text-1);font-family:monospace;font-size:0.82rem;outline:none"
+              oninput="saveApiKey(this.value)">
+            <span id="keyStatus" style="font-size:0.72rem;color:var(--text-4)">Not set</span>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-4);margin-top:6px">Saved locally on this device only. Get your key at console.anthropic.com</div>
+        </div>
+
+        <!-- Actions -->
+        <div class="adm-actions">
+          <button class="btn-translate" id="translateBtn" onclick="translateDevotional()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            ✦ AI Translate
+          </button>
+          <button class="btn-save" id="saveBtn" onclick="saveDevotional()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Devotional
+          </button>
+          <button class="btn-preview" onclick="togglePreview()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Preview
+          </button>
+          <button class="btn-clear" onclick="clearForm()">Clear</button>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-panel" id="previewPanel">
+          <div class="preview-label">Live Preview</div>
+          <div class="preview-verse-card">
+            <div class="preview-verse" id="pvVerse"></div>
+            <div class="preview-ref" id="pvRef"></div>
+          </div>
+          <div style="font-family:'Cinzel',serif;font-size:0.54rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-3);margin-bottom:10px">Reflection</div>
+          <div class="preview-reflection" id="pvRefl"></div>
+          <div class="preview-prayer" id="pvPrayer"></div>
+        </div>
+      </div>
+
+      <!-- Editing banner (shown when editing an existing entry) -->
+      <div id="editBanner" style="display:none;background:var(--gold-bg);border:1px solid var(--gold-bd);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.07em;color:var(--gold);display:none;align-items:center;gap:10px;justify-content:space-between">
+        <span>✏️ Editing existing devotional — changes will overwrite the saved version</span>
+        <button onclick="clearForm()" style="background:none;border:1px solid var(--gold-bd);border-radius:6px;padding:5px 10px;color:var(--gold);font-family:'Cinzel',serif;font-size:0.55rem;cursor:pointer">Cancel Edit</button>
+      </div>
+    </div>
+
+    <!-- ── TAB: LIBRARY ── -->
+    <div id="tab-library" style="display:none">
+      <div class="adm-card">
+        <div class="adm-sh">All Devotionals</div>
+        <div id="devList">
+          <div class="ld"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: BULK UPLOAD ── -->
+    <div id="tab-bulk" style="display:none">
+      <div class="adm-card">
+        <div class="adm-sh">Upload JSON File</div>
+        <div class="bulk-drop" id="bulkDrop"
+             ondragover="event.preventDefault();this.classList.add('drag')"
+             ondragleave="this.classList.remove('drag')"
+             ondrop="handleFileDrop(event)"
+             onclick="document.getElementById('bulkFile').click()">
+          <div class="bulk-drop-icon">📄</div>
+          <div class="bulk-drop-title">Drop a JSON file or click to browse</div>
+          <div class="bulk-drop-sub">Format: array of devotional objects (see template below)</div>
+          <input type="file" id="bulkFile" accept=".json" style="display:none" onchange="handleFileSelect(event)">
+        </div>
+        <div id="bulkResults" class="bulk-results"></div>
+
+        <div class="adm-sh" style="margin-top:20px">JSON Template</div>
+        <div class="sql-box" id="jsonTemplate">[
+  {
+    "date": "2025-01-01",
+    "title": "His Mercies Are New",
+    "verse": "It is of the LORD's mercies that we are not consumed...",
+    "verse_ref": "Lamentations 3:22–23 · KJV",
+    "reflection_1": "Opening paragraph of reflection...",
+    "reflection_2": "Second paragraph (optional)...",
+    "reflection_3": "Third paragraph (optional)...",
+    "prayer": "Lord, I receive this new morning as a gift...",
+    "tags": ["Faithfulness", "Mercy", "Morning"],
+    "title_yo": "Àánú Rẹ̀ Tuntun Ni",
+    "verse_yo": "Àánú Oluwa kò parí…",
+    "reflection_1_yo": "Yoruba paragraph 1…",
+    "prayer_yo": "Oluwa, mo dúpẹ́…",
+    "title_pcm": "E Mercy Dey Fresh",
+    "verse_pcm": "Na because of di mercy…",
+    "reflection_1_pcm": "Pidgin paragraph 1…",
+    "prayer_pcm": "Father, thank you…"
+  }
+]</div>
+        <button class="sql-copy" onclick="copyTemplate()">📋 Copy Template</button>
+      </div>
+    </div>
+
+    <!-- ── TAB: SETUP ── -->
+    <div id="tab-setup" style="display:none">
+      <div class="adm-card">
+        <div class="adm-sh">Supabase Database Setup</div>
+        <div style="background:var(--gold-bg);border:1px solid var(--gold-bd);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-family:'Source Serif 4',serif;font-size:0.82rem;color:var(--text-2);line-height:1.6">
+          <strong style="color:var(--gold);font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase">⚡ Run this SQL in Supabase to enable translations</strong><br><br>
+          Go to <b>Supabase → SQL Editor</b> and run:
+        </div>
+        <div class="sql-box">-- Add multilingual translation columns
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS title_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS verse_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_1_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_2_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_3_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_yo text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS title_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS verse_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_1_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_2_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_3_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_pcm text;</div>
+        <button class="sql-copy" onclick="navigator.clipboard.writeText(document.querySelectorAll('.sql-box')[0].textContent).then(()=>toast('SQL copied!'))">📋 Copy Migration SQL</button>
+
+        <p style="font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:16px;font-style:italic">
+          Run this SQL in your Supabase project → SQL Editor → New Query to create the devotionals table and set up the admin write policy.
+        </p>
+        <div class="sql-box">-- 1. Create the devotionals table
+CREATE TABLE IF NOT EXISTS devotionals (
+  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  date          DATE UNIQUE NOT NULL,
+  title         TEXT NOT NULL,
+  verse         TEXT NOT NULL,
+  verse_ref     TEXT NOT NULL,
+  reflection_1  TEXT,
+  reflection_2  TEXT,
+  reflection_3  TEXT,
+  prayer        TEXT,
+  tags          TEXT[],
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  updated_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Enable Row Level Security
+ALTER TABLE devotionals ENABLE ROW LEVEL SECURITY;
+
+-- 3. Anyone can READ devotionals (public app)
+CREATE POLICY "Public read" ON devotionals
+  FOR SELECT USING (true);
+
+-- 4. Only authenticated admins can WRITE
+CREATE POLICY "Admin write" ON devotionals
+  FOR ALL USING (auth.role() = 'authenticated')
+  WITH CHECK (auth.role() = 'authenticated');
+
+-- 5. Auto-update updated_at on edits
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN NEW.updated_at = NOW(); RETURN NEW; END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER devotionals_updated_at
+  BEFORE UPDATE ON devotionals
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at();</div>
+        <button class="sql-copy" onclick="copySql()">📋 Copy SQL</button>
+
+        <div class="adm-sh" style="margin-top:28px">Create Admin Account</div>
+        <p style="font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:16px;font-style:italic">
+          Go to Supabase → Authentication → Users → Invite User and create your admin email/password account. Then log in above with those credentials.
+        </p>
+        <div style="background:var(--gold-bg);border:1px solid var(--gold-bd);border-radius:10px;padding:14px 16px">
+          <div style="font-family:'Cinzel',serif;font-size:0.6rem;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px">✦ SECURITY NOTE</div>
+          <div style="font-size:0.82rem;color:var(--text-2);line-height:1.6">This admin panel uses Supabase email/password authentication. Only users created through your Supabase dashboard can log in. The app's anonymous users cannot access this portal.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Confirm delete modal -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title">Delete Devotional?</div>
+    <div class="modal-sub" id="confirmModalSub"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-modal-delete" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══ CONFIG — same as main app ══
+const SUPABASE_URL  = 'https://gouiwpmidjomnhduphyr.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdvdWl3cG1pZGpvbW5oZHVwaHlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0ODY0ODIsImV4cCI6MjA4ODA2MjQ4Mn0.WfcRlcpEFvLmWkeqHtgnP2GK2tEl1Rp6BckPBckc1qM';
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ══ STATE ══
+let adminUser = null;
+let tags = [];
+let editingId = null;
+let deleteTarget = null;
+let activeTab = 'compose';
+
+// ══ INIT ══
+window.addEventListener('load', async () => {
+  const { data: { session } } = await db.auth.getSession();
+  if (session?.user) {
+    adminUser = session.user;
+    showAdminShell();
+  }
+  // Set today's date as default
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('fDate').value = today;
+});
+
+// ══ AUTH ══
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const errEl = document.getElementById('loginErr');
+  const btn   = document.getElementById('loginBtn');
+
+  errEl.classList.remove('show');
+  if (!email || !pass) { errEl.textContent = 'Please enter email and password.'; errEl.classList.add('show'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ld" style="padding:0;gap:4px"><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span></div>';
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password: pass });
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> Sign In`;
+
+  if (error) {
+    errEl.textContent = error.message.includes('Invalid login') ? 'Invalid email or password.' : error.message;
+    errEl.classList.add('show');
+    return;
+  }
+
+  adminUser = data.user;
+  showAdminShell();
+}
+
+async function doLogout() {
+  await db.auth.signOut();
+  adminUser = null;
+  document.getElementById('adminShell').classList.remove('show');
+  document.getElementById('loginPage').style.display = 'flex';
+  toast('Signed out');
+}
+
+
+// ── API KEY ─────────────────────────────────────────
+function saveApiKey(val) {
+  if (val.trim()) {
+    localStorage.setItem('edd_admin_api_key', val.trim());
+    const s = document.getElementById('keyStatus');
+    if (s) { s.textContent = '✦ Saved'; s.style.color = 'var(--gold)'; }
+  }
+}
+
+function loadApiKey() {
+  const key = localStorage.getItem('edd_admin_api_key') || '';
+  const inp = document.getElementById('anthropicKey');
+  const s = document.getElementById('keyStatus');
+  if (inp && key) {
+    inp.value = key;
+    if (s) { s.textContent = '✦ Key loaded'; s.style.color = 'var(--gold)'; }
+  }
+}
+
+function showAdminShell() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('adminShell').classList.add('show');
+  document.getElementById('adminEmail').textContent = adminUser.email;
+  loadStats();
+  loadApiKey();
+}
+
+// ══ TABS ══
+function switchTab(tab, btn) {
+  activeTab = tab;
+  document.querySelectorAll('.adm-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ['compose','library','bulk','setup'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
+  });
+  if (tab === 'library') loadLibrary();
+}
+
+// ══ STATS ══
+async function loadStats() {
+  const today = new Date().toISOString().split('T')[0];
+
+  const { data: all } = await db.from('devotionals').select('date');
+  const total = all?.length || 0;
+  const upcoming = all?.filter(d => d.date >= today).length || 0;
+  const hasToday = all?.some(d => d.date === today);
+
+  document.getElementById('statTotal').textContent    = total;
+  document.getElementById('statUpcoming').textContent = upcoming;
+  document.getElementById('statToday').textContent    = hasToday ? '✓' : '—';
+  document.getElementById('statToday').style.color    = hasToday ? 'var(--accent-l)' : 'var(--text-4)';
+}
+
+// ══ TAGS ══
+function handleTagKey(e) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const val = e.target.value.trim().replace(/,$/, '');
+    if (val && !tags.includes(val)) { tags.push(val); renderTags(); }
+    e.target.value = '';
+  }
+  if (e.key === 'Backspace' && !e.target.value && tags.length) {
+    tags.pop(); renderTags();
+  }
+}
+
+function renderTags() {
+  const wrap = document.getElementById('tagsWrap');
+  const input = document.getElementById('tagInput');
+  wrap.innerHTML = '';
+  tags.forEach((t, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.innerHTML = `${t}<button onclick="removeTag(${i})" title="Remove">×</button>`;
+    wrap.appendChild(chip);
+  });
+  wrap.appendChild(input);
+  input.focus();
+}
+
+function removeTag(i) { tags.splice(i, 1); renderTags(); }
+
+// ══ PREVIEW ══
+function togglePreview() {
+  const panel = document.getElementById('previewPanel');
+  const showing = panel.classList.toggle('show');
+  if (showing) updatePreview();
+}
+
+function updatePreview() {
+  const verse  = document.getElementById('fVerse').value.trim();
+  const ref    = document.getElementById('fRef').value.trim();
+  const r1     = document.getElementById('fR1').value.trim();
+  const r2     = document.getElementById('fR2').value.trim();
+  const r3     = document.getElementById('fR3').value.trim();
+  const prayer = document.getElementById('fPrayer').value.trim();
+
+  document.getElementById('pvVerse').textContent  = verse ? '\u201C' + verse + '\u201D' : '(verse text will appear here)';
+  document.getElementById('pvRef').textContent    = ref   || 'Scripture Reference';
+  document.getElementById('pvRefl').innerHTML     = [r1, r2, r3].filter(Boolean).map(p => `<p style="margin-bottom:10px">${p}</p>`).join('') || '<p style="color:var(--text-4);font-style:italic">Reflection paragraphs will appear here…</p>';
+  document.getElementById('pvPrayer').textContent = prayer ? '\u201C' + prayer + '\u201D' : '(prayer will appear here)';
+}
+
+// Auto-update preview when fields change
+['fVerse','fRef','fR1','fR2','fR3','fPrayer'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', () => {
+    if (document.getElementById('previewPanel').classList.contains('show')) updatePreview();
+  });
+});
+
+// ══ SAVE / UPDATE ══
+
+// ══════════════════════════════════════════════════════
+//  AI TRANSLATION — calls Claude API to generate Yoruba & Pidgin
+// ══════════════════════════════════════════════════════
+
+function showTransTab(lang, btn) {
+  document.querySelectorAll('.trans-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('trans-yo').style.display  = lang === 'yo'  ? 'block' : 'none';
+  document.getElementById('trans-pcm').style.display = lang === 'pcm' ? 'block' : 'none';
+}
+
+async function translateDevotional() {
+  const title  = document.getElementById('fTitle').value.trim();
+  const verse  = document.getElementById('fVerse').value.trim();
+  const ref    = document.getElementById('fRef').value.trim();
+  const r1     = document.getElementById('fR1').value.trim();
+  const r2     = document.getElementById('fR2').value.trim();
+  const r3     = document.getElementById('fR3').value.trim();
+  const prayer = document.getElementById('fPrayer').value.trim();
+
+  if (!title || !verse || !r1 || !prayer) {
+    toast('✦ Please fill in Title, Verse, Paragraph 1 and Prayer first');
+    return;
+  }
+
+  const btn = document.getElementById('translateBtn');
+  const statusEl = document.getElementById('transStatus');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ld" style="padding:0;gap:3px"><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span></div> Translating…';
+  statusEl.textContent = 'AI is generating translations…';
+
+  // Show panel
+  document.getElementById('transPanel').style.display = 'block';
+  document.getElementById('transPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  const devotionalText = `Title: ${title}
+Verse: ${verse}
+Verse Reference: ${ref}
+Reflection Paragraph 1: ${r1}
+${r2 ? 'Reflection Paragraph 2: ' + r2 : ''}
+${r3 ? 'Reflection Paragraph 3: ' + r3 : ''}
+Prayer: ${prayer}`;
+
+  const prompt = `You are a Christian devotional translator. Translate the following English devotional into BOTH Yoruba (Nigerian Yoruba with proper diacritics) AND Nigerian Pidgin English (natural, warm, church-appropriate Pidgin as spoken in Nigerian CAC churches).
+
+Return ONLY valid JSON with this exact structure, no extra text:
+{
+  "yo": {
+    "title": "",
+    "verse": "",
+    "reflection_1": "",
+    "reflection_2": "",
+    "reflection_3": "",
+    "prayer": ""
+  },
+  "pcm": {
+    "title": "",
+    "verse": "",
+    "reflection_1": "",
+    "reflection_2": "",
+    "reflection_3": "",
+    "prayer": ""
+  }
+}
+
+Rules:
+- Yoruba: use proper Yoruba diacritics, natural church language, warm tone
+- Pidgin: Nigerian Pidgin as spoken in everyday Nigerian Christian settings, not Creole
+- Keep the spiritual depth and meaning of the original
+- reflection_2 and reflection_3 can be empty string "" if original was empty
+- Do not add any explanation, only the JSON
+
+ENGLISH DEVOTIONAL TO TRANSLATE:
+${devotionalText}`;
+
+  try {
+    const apiKey = localStorage.getItem('edd_admin_api_key') || '';
+    if (!apiKey) {
+      toast('⚠️ Please enter your Anthropic API key first');
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 014-10z"/></svg> ✦ AI Translate`;
+      return;
+    }
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '';
+
+    // Strip any markdown fences
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    // Fill Yoruba fields
+    document.getElementById('t_yo_title').value  = result.yo.title  || '';
+    document.getElementById('t_yo_verse').value  = result.yo.verse  || '';
+    document.getElementById('t_yo_r1').value     = result.yo.reflection_1 || '';
+    document.getElementById('t_yo_r2').value     = result.yo.reflection_2 || '';
+    document.getElementById('t_yo_r3').value     = result.yo.reflection_3 || '';
+    document.getElementById('t_yo_prayer').value = result.yo.prayer || '';
+
+    // Fill Pidgin fields
+    document.getElementById('t_pcm_title').value  = result.pcm.title  || '';
+    document.getElementById('t_pcm_verse').value  = result.pcm.verse  || '';
+    document.getElementById('t_pcm_r1').value     = result.pcm.reflection_1 || '';
+    document.getElementById('t_pcm_r2').value     = result.pcm.reflection_2 || '';
+    document.getElementById('t_pcm_r3').value     = result.pcm.reflection_3 || '';
+    document.getElementById('t_pcm_prayer').value = result.pcm.prayer || '';
+
+    statusEl.textContent = '✦ Done — review and edit before saving';
+    statusEl.style.color = 'var(--gold)';
+    toast('✦ Translations ready — review them above');
+
+  } catch(err) {
+    console.error('Translation error:', err);
+    statusEl.textContent = 'Translation failed — check console';
+    statusEl.style.color = '#e05a5a';
+    toast('Translation failed: ' + err.message);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 014-10z"/></svg> ✦ Re-Translate`;
+}
+
+async function saveDevotional() {
+  const date   = document.getElementById('fDate').value;
+  const title  = document.getElementById('fTitle').value.trim();
+  const verse  = document.getElementById('fVerse').value.trim();
+  const ref    = document.getElementById('fRef').value.trim();
+  const r1     = document.getElementById('fR1').value.trim();
+  const r2     = document.getElementById('fR2').value.trim();
+  const r3     = document.getElementById('fR3').value.trim();
+  const prayer = document.getElementById('fPrayer').value.trim();
+
+  // Validation
+  if (!date || !title || !verse || !ref || !r1 || !prayer) {
+    showStatus('error', '✦ Please fill in all required fields (marked with *)');
+    return;
+  }
+
+  // Flush any typed tag
+  const tagInput = document.getElementById('tagInput');
+  if (tagInput.value.trim()) {
+    const v = tagInput.value.trim();
+    if (!tags.includes(v)) { tags.push(v); renderTags(); }
+    tagInput.value = '';
+  }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ld" style="padding:0;gap:4px"><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span></div> Saving…';
+
+  // Gather translations if present
+  const transPanel = document.getElementById('transPanel');
+  const hasTranslations = transPanel && transPanel.style.display !== 'none';
+
+  const payload = {
+    date, title, verse, verse_ref: ref,
+    reflection_1: r1 || null,
+    reflection_2: r2 || null,
+    reflection_3: r3 || null,
+    prayer, tags,
+    // Yoruba
+    title_yo:        hasTranslations ? (document.getElementById('t_yo_title')?.value.trim()  || null) : null,
+    verse_yo:        hasTranslations ? (document.getElementById('t_yo_verse')?.value.trim()  || null) : null,
+    reflection_1_yo: hasTranslations ? (document.getElementById('t_yo_r1')?.value.trim()    || null) : null,
+    reflection_2_yo: hasTranslations ? (document.getElementById('t_yo_r2')?.value.trim()    || null) : null,
+    reflection_3_yo: hasTranslations ? (document.getElementById('t_yo_r3')?.value.trim()    || null) : null,
+    prayer_yo:       hasTranslations ? (document.getElementById('t_yo_prayer')?.value.trim() || null) : null,
+    // Pidgin
+    title_pcm:        hasTranslations ? (document.getElementById('t_pcm_title')?.value.trim()  || null) : null,
+    verse_pcm:        hasTranslations ? (document.getElementById('t_pcm_verse')?.value.trim()  || null) : null,
+    reflection_1_pcm: hasTranslations ? (document.getElementById('t_pcm_r1')?.value.trim()    || null) : null,
+    reflection_2_pcm: hasTranslations ? (document.getElementById('t_pcm_r2')?.value.trim()    || null) : null,
+    reflection_3_pcm: hasTranslations ? (document.getElementById('t_pcm_r3')?.value.trim()    || null) : null,
+    prayer_pcm:       hasTranslations ? (document.getElementById('t_pcm_prayer')?.value.trim() || null) : null,
+  };
+
+  let error;
+
+  if (editingId) {
+    // Update existing
+    ({ error } = await db.from('devotionals').update(payload).eq('id', editingId));
+  } else {
+    // Insert new — use upsert so re-saving same date overwrites gracefully
+    ({ error } = await db.from('devotionals').upsert(payload, { onConflict: 'date' }));
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save Devotional`;
+
+  if (error) {
+    showStatus('error', '✦ Error: ' + (error.message || 'Could not save. Check Supabase setup.'));
+    return;
+  }
+
+  showStatus('success', '✦ Devotional for ' + date + ' saved successfully!');
+  toast('✦ Saved — ' + title);
+  clearForm();
+  loadStats();
+}
+
+// ══ CLEAR / EDIT ══
+function clearForm() {
+  editingId = null;
+  tags = [];
+  document.getElementById('fDate').value   = new Date().toISOString().split('T')[0];
+  document.getElementById('fTitle').value  = '';
+  document.getElementById('fVerse').value  = '';
+  document.getElementById('fRef').value    = '';
+  document.getElementById('fR1').value     = '';
+  document.getElementById('fR2').value     = '';
+  document.getElementById('fR3').value     = '';
+  document.getElementById('fPrayer').value = '';
+  renderTags();
+  document.getElementById('previewPanel').classList.remove('show');
+  document.getElementById('editBanner').style.display = 'none';
+  hideStatus();
+}
+
+function loadIntoForm(dev) {
+  editingId = dev.id;
+  tags = dev.tags || [];
+  document.getElementById('fDate').value   = dev.date;
+  document.getElementById('fTitle').value  = dev.title;
+  document.getElementById('fVerse').value  = dev.verse;
+  document.getElementById('fRef').value    = dev.verse_ref;
+  document.getElementById('fR1').value     = dev.reflection_1 || '';
+  document.getElementById('fR2').value     = dev.reflection_2 || '';
+  document.getElementById('fR3').value     = dev.reflection_3 || '';
+  document.getElementById('fPrayer').value = dev.prayer || '';
+  renderTags();
+  document.getElementById('editBanner').style.display = 'flex';
+  switchTab('compose', document.querySelector('.adm-tab'));
+  document.querySelector('.adm-main').scrollTop = 0;
+  window.scrollTo(0, 0);
+  toast('📝 Loaded for editing — ' + dev.title);
+}
+
+// ══ LIBRARY ══
+async function loadLibrary() {
+  const container = document.getElementById('devList');
+  container.innerHTML = '<div class="ld"><span></span><span></span><span></span></div>';
+
+  const { data, error } = await db
+    .from('devotionals')
+    .select('*')
+    .order('date', { ascending: false });
+
+  if (error || !data?.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📖</div>
+        <div class="empty-title">No devotionals yet</div>
+        <div class="empty-sub">Compose your first devotional in the Compose tab<br>and it will appear here.</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = '<div class="dev-list">' + data.map(dev => {
+    const d    = new Date(dev.date + 'T12:00:00');
+    const day  = d.getDate();
+    const mon  = d.toLocaleString('en', { month: 'short' }).toUpperCase();
+    const tagsHtml = (dev.tags || []).map(t => `<span class="dev-tag">${t}</span>`).join('');
+    const today = new Date().toISOString().split('T')[0];
+    const isToday = dev.date === today;
+    return `
+      <div class="dev-item" ${isToday ? 'style="border-color:var(--accent-bd)"' : ''}>
+        <div class="dev-date-badge">
+          <div class="dev-date-day">${day}</div>
+          <div class="dev-date-mon">${mon}</div>
+        </div>
+        <div class="dev-info">
+          <div class="dev-title">${dev.title} ${isToday ? '<span style="color:var(--accent-l);font-size:0.55rem">· TODAY</span>' : ''}</div>
+          <div class="dev-ref">${dev.verse_ref}</div>
+          ${tagsHtml ? `<div class="dev-tags">${tagsHtml}</div>` : ''}
+        </div>
+        <div class="dev-actions">
+          <button class="dev-act-btn edit" onclick='loadIntoForm(${JSON.stringify(dev).replace(/'/g,"&#39;")})' title="Edit">✏️</button>
+          <button class="dev-act-btn del"  onclick="confirmDelete('${dev.id}','${dev.date}','${dev.title.replace(/'/g,"\\'")}')" title="Delete">🗑️</button>
+        </div>
+      </div>`;
+  }).join('') + '</div>';
+}
+
+// ══ DELETE ══
+function confirmDelete(id, date, title) {
+  deleteTarget = id;
+  document.getElementById('confirmModalSub').textContent = `Delete "${title}" (${date})? This cannot be undone.`;
+  document.getElementById('confirmModal').classList.add('show');
+  document.getElementById('confirmDeleteBtn').onclick = async () => {
+    const { error } = await db.from('devotionals').delete().eq('id', deleteTarget);
+    closeModal();
+    if (error) { toast('❌ Delete failed'); return; }
+    toast('🗑️ Deleted');
+    loadLibrary();
+    loadStats();
+  };
+}
+
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('show');
+  deleteTarget = null;
+}
+
+// ══ BULK UPLOAD ══
+function handleFileDrop(e) {
+  e.preventDefault();
+  document.getElementById('bulkDrop').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) processBulkFile(file);
+}
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processBulkFile(file);
+}
+
+async function processBulkFile(file) {
+  const container = document.getElementById('bulkResults');
+  container.innerHTML = '<div class="ld"><span></span><span></span><span></span></div>';
+
+  let json;
+  try {
+    const text = await file.text();
+    json = JSON.parse(text);
+  } catch (e) {
+    container.innerHTML = `<div class="bulk-row"><span class="err">❌ Invalid JSON: ${e.message}</span></div>`;
+    return;
+  }
+
+  if (!Array.isArray(json)) {
+    container.innerHTML = `<div class="bulk-row"><span class="err">❌ JSON must be an array of devotional objects</span></div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="bulk-row" style="color:var(--gold)">📄 Processing ${json.length} devotional${json.length !== 1 ? 's' : ''}…</div>`;
+
+  let ok = 0, errs = 0;
+  const results = [];
+
+  for (const item of json) {
+    // Validate required fields
+    if (!item.date || !item.title || !item.verse || !item.verse_ref) {
+      results.push({ ok: false, date: item.date || '?', msg: 'Missing required field (date/title/verse/verse_ref)' });
+      errs++; continue;
+    }
+
+    const { error } = await db.from('devotionals').upsert({
+      date: item.date, title: item.title,
+      verse: item.verse, verse_ref: item.verse_ref,
+      reflection_1: item.reflection_1 || null,
+      reflection_2: item.reflection_2 || null,
+      reflection_3: item.reflection_3 || null,
+      prayer: item.prayer || null,
+      tags: Array.isArray(item.tags) ? item.tags : []
+    }, { onConflict: 'date' });
+
+    if (error) {
+      results.push({ ok: false, date: item.date, msg: error.message });
+      errs++;
+    } else {
+      results.push({ ok: true, date: item.date, title: item.title });
+      ok++;
+    }
+  }
+
+  container.innerHTML = `
+    <div class="bulk-row" style="font-family:'Cinzel',serif;font-size:0.62rem;letter-spacing:0.07em;color:${errs ? 'var(--gold)' : 'var(--accent-l)'}">
+      ${ok > 0 ? `<span class="ok">✅ ${ok} uploaded</span>` : ''}
+      ${errs > 0 ? `<span class="err" style="margin-left:8px">❌ ${errs} failed</span>` : ''}
+    </div>
+    ${results.map(r => `
+      <div class="bulk-row">
+        ${r.ok
+          ? `<span class="ok">✅</span> <span>${r.date}</span> <span style="color:var(--text-3)">${r.title}</span>`
+          : `<span class="err">❌</span> <span>${r.date}</span> <span style="color:var(--text-4);font-style:italic">${r.msg}</span>`
+        }
+      </div>`).join('')}`;
+
+  if (ok > 0) {
+    loadStats();
+    toast(`✦ ${ok} devotional${ok !== 1 ? 's' : ''} uploaded`);
+  }
+}
+
+// ══ STATUS BANNER ══
+function showStatus(type, msg) {
+  const el = document.getElementById('statusBanner');
+  el.className = 'status-banner ' + type;
+  el.textContent = msg;
+  el.style.display = 'flex';
+  if (type === 'success') setTimeout(hideStatus, 4000);
+}
+function hideStatus() {
+  const el = document.getElementById('statusBanner');
+  el.style.display = 'none';
+}
+
+// ══ TOAST ══
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ══ COPY HELPERS ══
+function copySql() {
+  const sql = document.querySelector('.sql-box').textContent;
+  navigator.clipboard.writeText(sql).then(() => toast('📋 SQL copied'));
+}
+function copyTemplate() {
+  const txt = document.getElementById('jsonTemplate').textContent;
+  navigator.clipboard.writeText(txt).then(() => toast('📋 Template copied'));
+}
+</script>
+</body>
+</html>
