@@ -1663,6 +1663,57 @@ button.brand:active { transform: scale(0.97); }
   max-width: 110px;
 }
 
+
+/* ═══════════════════════════════════════════════════
+   PRAYER WALL
+═══════════════════════════════════════════════════ */
+.pw-header { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.pw-header-icon { width:38px; height:38px; background:rgba(90,138,120,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.pw-compose { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:20px; }
+.pw-compose-top { display:flex; gap:10px; margin-bottom:12px; }
+.pw-category-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+.pw-cat-btn { padding:5px 12px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text-3); font-family:var(--serif); font-size:0.72rem; cursor:pointer; transition:all 0.2s; }
+.pw-cat-btn.active { background:var(--accent-bg); border-color:var(--accent); color:var(--accent); }
+.pw-textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:10px 12px; color:var(--text-1); font-family:var(--serif); font-size:0.9rem; resize:none; outline:none; min-height:80px; box-sizing:border-box; transition:border-color 0.2s; line-height:1.6; }
+.pw-textarea:focus { border-color:var(--accent); }
+.pw-compose-footer { display:flex; align-items:center; justify-content:space-between; }
+.pw-anon-toggle { display:flex; align-items:center; gap:7px; font-size:0.75rem; color:var(--text-3); cursor:pointer; }
+.pw-anon-toggle input { accent-color:var(--accent); }
+.pw-submit-btn { background:var(--accent); border:none; border-radius:10px; padding:9px 20px; color:white; font-family:var(--serif); font-size:0.78rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+.pw-submit-btn:hover { opacity:0.88; transform:translateY(-1px); }
+.pw-submit-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+.pw-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+.pw-filter-btn { padding:5px 14px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text-3); font-family:var(--serif); font-size:0.72rem; cursor:pointer; transition:all 0.2s; }
+.pw-filter-btn.active { background:var(--gold-bg); border-color:var(--gold); color:var(--gold); }
+.pw-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:15px 16px; margin-bottom:12px; transition:border-color 0.2s; }
+.pw-card:hover { border-color:var(--accent-bd); }
+.pw-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.pw-card-left { display:flex; align-items:center; gap:8px; }
+.pw-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--gold)); display:flex; align-items:center; justify-content:center; font-size:13px; color:white; font-weight:700; flex-shrink:0; }
+.pw-name { font-family:var(--serif); font-size:0.82rem; font-weight:600; color:var(--text-1); }
+.pw-time { font-size:0.68rem; color:var(--text-4); }
+.pw-cat-pill { padding:2px 9px; border-radius:20px; font-size:0.65rem; font-family:var(--serif); border:1px solid var(--border); color:var(--text-3); }
+.pw-text { font-family:var(--serif); font-size:0.88rem; color:var(--text-2); line-height:1.65; margin-bottom:12px; }
+.pw-actions { display:flex; align-items:center; gap:12px; }
+.pw-pray-btn { display:flex; align-items:center; gap:5px; padding:6px 14px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text-3); font-family:var(--serif); font-size:0.75rem; cursor:pointer; transition:all 0.2s; }
+.pw-pray-btn.prayed { background:rgba(90,138,120,0.12); border-color:var(--accent); color:var(--accent); }
+.pw-pray-btn:hover:not(.prayed) { border-color:var(--accent); color:var(--accent); }
+.pw-pray-count { font-weight:700; font-size:0.8rem; }
+.pw-answered-btn { display:flex; align-items:center; gap:5px; padding:5px 10px; border-radius:20px; border:1px solid transparent; background:transparent; color:var(--text-4); font-size:0.72rem; font-family:var(--serif); cursor:pointer; transition:all 0.2s; }
+.pw-answered-btn.answered { color:var(--gold); background:rgba(200,168,74,0.1); border-color:rgba(200,168,74,0.3); }
+.pw-answered-btn:hover { color:var(--gold); }
+.pw-delete-btn { margin-left:auto; background:transparent; border:none; color:var(--text-4); cursor:pointer; font-size:0.75rem; padding:4px 6px; border-radius:6px; transition:color 0.2s; }
+.pw-delete-btn:hover { color:#e05a5a; }
+.pw-answered-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(200,168,74,0.12); border:1px solid rgba(200,168,74,0.3); border-radius:20px; padding:3px 10px; font-size:0.68rem; color:var(--gold); font-family:var(--serif); margin-bottom:8px; }
+.pw-empty { text-align:center; padding:48px 20px; color:var(--text-4); font-family:var(--serif); font-size:0.9rem; font-style:italic; }
+.pw-empty-icon { font-size:2.5rem; margin-bottom:12px; opacity:0.5; }
+.pw-stats-row { display:flex; gap:10px; margin-bottom:18px; }
+.pw-stat { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px; text-align:center; }
+.pw-stat-num { font-family:var(--serif); font-size:1.4rem; font-weight:700; color:var(--accent); }
+.pw-stat-label { font-size:0.68rem; color:var(--text-4); margin-top:2px; }
+.pw-load-more { width:100%; padding:10px; background:transparent; border:1px solid var(--border); border-radius:10px; color:var(--text-3); font-family:var(--serif); font-size:0.78rem; cursor:pointer; transition:all 0.2s; margin-top:6px; }
+.pw-load-more:hover { border-color:var(--accent); color:var(--accent); }
+
 </style>
 </head>
 <body>
@@ -2042,6 +2093,59 @@ button.brand:active { transform: scale(0.97); }
   </main>
 
   <!-- Bottom Nav -->
+
+    <!-- PRAYER WALL PAGE -->
+    <div class="page" id="page-prayer">
+      <div class="ph" style="margin-bottom:16px">
+        <div class="ph-label">Lift Each Other Up</div>
+        <h2 class="ph-title" style="font-size:1.32rem" id="prayer-page-title">Prayer Wall</h2>
+        <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
+      </div>
+
+      <!-- Stats -->
+      <div class="pw-stats-row">
+        <div class="pw-stat"><div class="pw-stat-num" id="pwStatPrayers">0</div><div class="pw-stat-label">Requests</div></div>
+        <div class="pw-stat"><div class="pw-stat-num" id="pwStatPrayed">0</div><div class="pw-stat-label">Prayers Prayed</div></div>
+        <div class="pw-stat"><div class="pw-stat-num" id="pwStatAnswered">0</div><div class="pw-stat-label">Answered</div></div>
+      </div>
+
+      <!-- Compose -->
+      <div class="pw-compose">
+        <div class="sh" style="margin-bottom:12px"><div class="sh-gem">🙏</div><div class="sh-label">Share a Prayer Request</div><div class="sh-line"></div></div>
+        <div class="pw-category-row" id="pwCatRow">
+          <button class="pw-cat-btn active" onclick="selectPwCat('General',this)">General</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Healing',this)">Healing</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Family',this)">Family</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Finance',this)">Finance</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Guidance',this)">Guidance</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Salvation',this)">Salvation</button>
+          <button class="pw-cat-btn" onclick="selectPwCat('Thanksgiving',this)">Thanksgiving</button>
+        </div>
+        <textarea class="pw-textarea" id="pwInput" placeholder="Type your prayer request… be as open as you feel comfortable. The community will pray with you." maxlength="500"></textarea>
+        <div style="text-align:right;font-size:0.65rem;color:var(--text-4);margin:4px 2px 10px" id="pwCharCount">0 / 500</div>
+        <div class="pw-compose-footer">
+          <label class="pw-anon-toggle">
+            <input type="checkbox" id="pwAnonCheck"> Post anonymously
+          </label>
+          <button class="pw-submit-btn" id="pwSubmitBtn" onclick="submitPrayerRequest()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+            Post Request
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="pw-filters">
+        <button class="pw-filter-btn active" id="pwFilter-all" onclick="filterPrayerWall('all',this)">All Requests</button>
+        <button class="pw-filter-btn" id="pwFilter-mine" onclick="filterPrayerWall('mine',this)">My Requests</button>
+        <button class="pw-filter-btn" id="pwFilter-answered" onclick="filterPrayerWall('answered',this)">Answered 🙌</button>
+      </div>
+
+      <!-- Prayer cards -->
+      <div id="pwList"></div>
+      <button class="pw-load-more" id="pwLoadMore" style="display:none" onclick="loadMorePrayers()">Load more requests…</button>
+    </div>
+
   <nav class="bnav">
     <button class="nb active" id="nb-today" onclick="nav('today')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -2179,6 +2283,16 @@ button.brand:active { transform: scale(0.97); }
         <div class="sm-item-text">
           <div class="sm-item-name" id="menu-lbl-plan">Reading Plan</div>
           <div class="sm-item-sub">NT in 90 days</div>
+        </div>
+        <div class="sm-arrow">›</div>
+      </li>
+      <li class="sm-item" id="sm-prayer" onclick="menuNav('prayer')">
+        <div class="sm-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2V4a2 2 0 00-2-2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="12" y2="13"/></svg>
+        </div>
+        <div class="sm-item-text">
+          <div class="sm-item-name" id="menu-lbl-prayer">Prayer Wall</div>
+          <div class="sm-item-sub">Lift each other up</div>
         </div>
         <div class="sm-arrow">›</div>
       </li>
@@ -3159,6 +3273,273 @@ function setText(id, text) {
   const el = document.getElementById(id);
   if (el) el.textContent = text;
 }
+
+
+// ══════════════════════════════════════════════════════
+//  PRAYER WALL
+// ══════════════════════════════════════════════════════
+let pwCategory = 'General';
+let pwFilter = 'all';
+let pwOffset = 0;
+const PW_PAGE_SIZE = 10;
+let pwAllLoaded = false;
+let pwPrayedSet = new Set(JSON.parse(localStorage.getItem('edd_prayed') || '[]'));
+
+function selectPwCat(cat, btn) {
+  pwCategory = cat;
+  document.querySelectorAll('.pw-cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function filterPrayerWall(filter, btn) {
+  pwFilter = filter;
+  pwOffset = 0;
+  pwAllLoaded = false;
+  document.querySelectorAll('.pw-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  loadPrayerWall(true);
+}
+
+// Character counter
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('pwInput');
+  if (inp) {
+    inp.addEventListener('input', () => {
+      const cc = document.getElementById('pwCharCount');
+      if (cc) cc.textContent = inp.value.length + ' / 500';
+    });
+  }
+});
+
+async function submitPrayerRequest() {
+  const text = document.getElementById('pwInput')?.value.trim();
+  if (!text) { toast('Please write your prayer request first'); return; }
+  if (text.length < 10) { toast('Please write a bit more...'); return; }
+
+  const anon = document.getElementById('pwAnonCheck')?.checked;
+  const btn = document.getElementById('pwSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ld" style="padding:0;gap:3px"><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span><span style="width:5px;height:5px"></span></div>';
+
+  try {
+    const { data: { user } } = await _db.auth.getUser();
+    const userId = user?.id || 'anonymous';
+
+    const { error } = await _db.from('prayer_requests').insert({
+      text,
+      category: pwCategory,
+      anonymous: anon,
+      user_id: userId,
+      pray_count: 0,
+      answered: false,
+    });
+
+    if (error) throw error;
+
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwCharCount').textContent = '0 / 500';
+    document.getElementById('pwAnonCheck').checked = false;
+    // Reset category
+    selectPwCat('General', document.querySelector('.pw-cat-btn'));
+    toast('🙏 Prayer request posted — the community will pray with you');
+    pwOffset = 0;
+    pwAllLoaded = false;
+    loadPrayerWall(true);
+    updatePwStats();
+  } catch(e) {
+    console.error('Prayer submit error:', e);
+    toast('Could not post — check your connection');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> Post Request';
+}
+
+async function loadPrayerWall(reset = false) {
+  if (!_db) return;
+  if (reset) { pwOffset = 0; pwAllLoaded = false; }
+
+  const list = document.getElementById('pwList');
+  if (reset) list.innerHTML = '<div class="pw-empty"><div class="pw-empty-icon">🙏</div>Loading prayers…</div>';
+
+  try {
+    const { data: { user } } = await _db.auth.getUser();
+    const userId = user?.id;
+
+    let query = _db.from('prayer_requests')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .range(pwOffset, pwOffset + PW_PAGE_SIZE - 1);
+
+    if (pwFilter === 'mine' && userId) query = query.eq('user_id', userId);
+    if (pwFilter === 'answered') query = query.eq('answered', true);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    if (reset) list.innerHTML = '';
+
+    if (!data || data.length === 0) {
+      if (reset) list.innerHTML = '<div class="pw-empty"><div class="pw-empty-icon">🙏</div>' +
+        (pwFilter === 'mine' ? "You haven't posted any requests yet." :
+         pwFilter === 'answered' ? "No answered prayers yet — keep believing!" :
+         "No prayer requests yet. Be the first to share.") + '</div>';
+      document.getElementById('pwLoadMore').style.display = 'none';
+      return;
+    }
+
+    data.forEach(req => {
+      list.appendChild(buildPrayerCard(req, userId));
+    });
+
+    pwOffset += data.length;
+    pwAllLoaded = data.length < PW_PAGE_SIZE;
+    document.getElementById('pwLoadMore').style.display = pwAllLoaded ? 'none' : 'block';
+
+  } catch(e) {
+    console.error('Load prayers error:', e);
+    if (reset) list.innerHTML = '<div class="pw-empty"><div class="pw-empty-icon">📡</div>Could not load prayers — check your connection.</div>';
+  }
+}
+
+function loadMorePrayers() {
+  loadPrayerWall(false);
+}
+
+function buildPrayerCard(req, currentUserId) {
+  const card = document.createElement('div');
+  card.className = 'pw-card';
+  card.id = 'pw-card-' + req.id;
+
+  const isAnon = req.anonymous;
+  const isOwner = req.user_id === currentUserId;
+  const hasPrayed = pwPrayedSet.has(req.id);
+  const initials = isAnon ? '🙏' : (req.user_id || '?').substring(0, 2).toUpperCase();
+  const displayName = isAnon ? 'Anonymous' : (isOwner ? 'You' : 'Community Member');
+  const timeAgo = formatTimeAgo(req.created_at);
+
+  const catColors = {
+    'General': 'var(--accent)', 'Healing': '#e05a5a', 'Family': '#c8a84a',
+    'Finance': '#5a8aac', 'Guidance': '#8a5ab0', 'Salvation': '#4aac6b', 'Thanksgiving': '#c87a3a'
+  };
+  const catColor = catColors[req.category] || 'var(--accent)';
+
+  card.innerHTML = `
+    ${req.answered ? '<div class="pw-answered-badge">🙌 Prayer Answered!</div>' : ''}
+    <div class="pw-card-top">
+      <div class="pw-card-left">
+        <div class="pw-avatar" style="background:linear-gradient(135deg,${catColor},var(--gold))">${initials}</div>
+        <div>
+          <div class="pw-name">${displayName}</div>
+          <div class="pw-time">${timeAgo} · ${req.category || 'General'}</div>
+        </div>
+      </div>
+      <span class="pw-cat-pill" style="border-color:${catColor};color:${catColor}">${req.category || 'General'}</span>
+    </div>
+    <div class="pw-text">${escapeHtml(req.text)}</div>
+    <div class="pw-actions">
+      <button class="pw-pray-btn ${hasPrayed ? 'prayed' : ''}" id="pw-pray-${req.id}" onclick="togglePrayed('${req.id}', ${req.pray_count || 0}, this)">
+        🙏 <span class="pw-pray-count">${req.pray_count || 0}</span> ${hasPrayed ? 'Praying' : 'Pray'}
+      </button>
+      ${isOwner ? `
+        <button class="pw-answered-btn ${req.answered ? 'answered' : ''}" onclick="markAnswered('${req.id}', ${!req.answered}, this)">
+          ${req.answered ? '🙌 Answered' : '✓ Mark Answered'}
+        </button>
+        <button class="pw-delete-btn" onclick="deletePrayerRequest('${req.id}')">✕</button>
+      ` : ''}
+    </div>
+  `;
+  return card;
+}
+
+async function togglePrayed(id, currentCount, btn) {
+  const hasPrayed = pwPrayedSet.has(id);
+  const newCount = hasPrayed ? Math.max(0, currentCount - 1) : currentCount + 1;
+
+  if (hasPrayed) {
+    pwPrayedSet.delete(id);
+    btn.classList.remove('prayed');
+    btn.innerHTML = '🙏 <span class="pw-pray-count">' + newCount + '</span> Pray';
+  } else {
+    pwPrayedSet.add(id);
+    btn.classList.add('prayed');
+    btn.innerHTML = '🙏 <span class="pw-pray-count">' + newCount + '</span> Praying';
+    toast('🙏 Amen — your prayer is counted');
+  }
+
+  localStorage.setItem('edd_prayed', JSON.stringify([...pwPrayedSet]));
+
+  try {
+    await _db.from('prayer_requests').update({ pray_count: newCount }).eq('id', id);
+    updatePwStats();
+  } catch(e) { console.error('Pray toggle error:', e); }
+}
+
+async function markAnswered(id, answered, btn) {
+  try {
+    await _db.from('prayer_requests').update({ answered }).eq('id', id);
+    btn.classList.toggle('answered', answered);
+    btn.textContent = answered ? '🙌 Answered' : '✓ Mark Answered';
+    const card = document.getElementById('pw-card-' + id);
+    if (card) {
+      const badge = card.querySelector('.pw-answered-badge');
+      if (answered && !badge) {
+        const b = document.createElement('div');
+        b.className = 'pw-answered-badge';
+        b.textContent = '🙌 Prayer Answered!';
+        card.insertBefore(b, card.querySelector('.pw-card-top'));
+      } else if (!answered && badge) {
+        badge.remove();
+      }
+    }
+    toast(answered ? '🙌 Praise God! Marked as answered' : 'Unmarked as answered');
+    updatePwStats();
+  } catch(e) { toast('Could not update — check connection'); }
+}
+
+async function deletePrayerRequest(id) {
+  if (!confirm('Delete this prayer request?')) return;
+  try {
+    await _db.from('prayer_requests').delete().eq('id', id);
+    const card = document.getElementById('pw-card-' + id);
+    if (card) card.remove();
+    toast('Request deleted');
+    updatePwStats();
+  } catch(e) { toast('Could not delete — check connection'); }
+}
+
+async function updatePwStats() {
+  if (!_db) return;
+  try {
+    const [total, answered, prayed] = await Promise.all([
+      _db.from('prayer_requests').select('id', { count: 'exact', head: true }),
+      _db.from('prayer_requests').select('id', { count: 'exact', head: true }).eq('answered', true),
+      _db.from('prayer_requests').select('pray_count'),
+    ]);
+    const totalPrayed = (prayed.data || []).reduce((s, r) => s + (r.pray_count || 0), 0);
+    setText('pwStatPrayers', total.count || 0);
+    setText('pwStatAnswered', answered.count || 0);
+    setText('pwStatPrayed', totalPrayed);
+  } catch(e) { console.error('Stats error:', e); }
+}
+
+function formatTimeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days < 7) return days + 'd ago';
+  return new Date(dateStr).toLocaleDateString();
+}
+
+function escapeHtml(text) {
+  return (text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 
 //  DAILY DEVOTIONAL ROTATION — 30 entries, cycles by day of year
 //  Used when Supabase has no entry for today
@@ -5139,6 +5520,7 @@ const _origNav = nav;
 // Override nav to also update side menu active state
 function nav(p) {
   if (p !== 'today') stopAudioIfPlaying();
+  if (p === 'prayer') { loadPrayerWall(true); updatePwStats(); }
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
   const page = document.getElementById('page-' + p);

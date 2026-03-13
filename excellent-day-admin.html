@@ -888,6 +888,40 @@ ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_3_fr text;
 ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_fr text;</div>
         <button class="sql-copy" onclick="navigator.clipboard.writeText(document.querySelectorAll('.sql-box')[0].textContent).then(()=>toast('SQL copied!'))">📋 Copy Migration SQL</button>
 
+        <div style="margin:24px 0 8px;font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold)">✦ Prayer Wall Table</div>
+        <div class="sql-box">-- Prayer Wall table
+CREATE TABLE IF NOT EXISTS prayer_requests (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id     TEXT NOT NULL,
+  text        TEXT NOT NULL,
+  category    TEXT DEFAULT 'General',
+  anonymous   BOOLEAN DEFAULT false,
+  pray_count  INTEGER DEFAULT 0,
+  answered    BOOLEAN DEFAULT false,
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Allow anyone to read all prayer requests
+CREATE POLICY "Public read prayer_requests" ON prayer_requests
+  FOR SELECT USING (true);
+
+-- Allow authenticated users to insert their own
+CREATE POLICY "Insert own prayer_requests" ON prayer_requests
+  FOR INSERT WITH CHECK (true);
+
+-- Allow users to update their own (for answered + pray_count)
+CREATE POLICY "Update prayer_requests" ON prayer_requests
+  FOR UPDATE USING (true);
+
+-- Allow users to delete their own
+CREATE POLICY "Delete own prayer_requests" ON prayer_requests
+  FOR DELETE USING (auth.uid()::text = user_id OR user_id = 'anonymous');
+
+-- Enable RLS
+ALTER TABLE prayer_requests ENABLE ROW LEVEL SECURITY;</div>
+        <button class="sql-copy" onclick="navigator.clipboard.writeText(document.querySelectorAll('.sql-box')[1].textContent).then(()=>toast('SQL copied!'))">📋 Copy Prayer Wall SQL</button>
+
+
         <p style="font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:16px;font-style:italic">
           Run this SQL in your Supabase project → SQL Editor → New Query to create the devotionals table and set up the admin write policy.
         </p>
