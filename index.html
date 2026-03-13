@@ -1719,7 +1719,8 @@ button.brand:active { transform: scale(0.97); }
         <div id="langTopPicker" style="display:none;position:absolute;right:0;top:36px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;z-index:999;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.4)">
           <div onclick="setLang('en');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text);border-bottom:1px solid var(--border)">🇬🇧 English</div>
           <div onclick="setLang('yo');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text);border-bottom:1px solid var(--border)">🇳🇬 Yorùbá</div>
-          <div onclick="setLang('pcm');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text)">🇳🇬 Pidgin</div>
+          <div onclick="setLang('pcm');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text);border-bottom:1px solid var(--border)">🇳🇬 Pidgin</div>
+          <div onclick="setLang('fr');toggleTopLangPicker()" style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--serif);font-size:0.85rem;color:var(--text)">🇫🇷 Français</div>
         </div>
       </div>
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
@@ -2250,6 +2251,10 @@ button.brand:active { transform: scale(0.97); }
           <button class="lang-btn" id="lang-btn-pcm" onclick="setLang('pcm')"
             style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:var(--serif);font-size:0.75rem;cursor:pointer;transition:all 0.2s">
             🇳🇬 Pidgin
+          </button>
+          <button class="lang-btn" id="lang-btn-fr" onclick="setLang('fr')"
+            style="flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text-2);font-family:var(--serif);font-size:0.75rem;cursor:pointer;transition:all 0.2s">
+            🇫🇷 Français
           </button>
         </div>
       </li>
@@ -2940,6 +2945,49 @@ const LANGS = {
     prayer_label: 'Prayer',
     share_label: 'Share',
     lang_label: 'Language',
+  },
+  fr: {
+    label: 'Français', flag: '🇫🇷',
+    greeting_morning: 'Bonjour',
+    greeting_afternoon: 'Bon après-midi',
+    greeting_evening: 'Bonsoir',
+    todays_reflection: "Réflexion du Jour",
+    todays_entry: "Entrée du Jour",
+    devotional_streak: 'Série de Dévotion',
+    open_bible: 'Ouvrir la Bible',
+    journal: 'Journal',
+    bible_title: 'Sainte Bible — KJV',
+    journal_title: 'Mon Journal',
+    reading_plan_title: 'Plan de Lecture',
+    search_title: 'Chercher dans la Bible',
+    hymns_placeholder: 'Chercher cantique, numéro, thème…',
+    nav_today: "Aujourd'hui",
+    nav_bible: 'Bible',
+    nav_journal: 'Journal',
+    menu_today: "Dévotion du Jour",
+    menu_bible: 'Sainte Bible',
+    menu_search: 'Chercher la Bible',
+    menu_journal: 'Mon Journal',
+    menu_plan: 'Plan de Lecture',
+    menu_hymns: 'Cantiques CAC',
+    menu_theme: 'Mode Clair / Sombre',
+    menu_notif: 'Notifications Quotidiennes',
+    menu_notif_sub: 'Rappel dévotionnel 5h30',
+    notif_time_label: "Heure de Notification",
+    streak_days: 'jours consécutifs',
+    write_placeholder: 'Écrivez vos pensées, prières, réflexions…',
+    save_btn: 'Enregistrer',
+    saved_toast: 'Entrée du journal enregistrée',
+    notif_on: '🔔 Notifications activées',
+    notif_off: '🔕 Notifications désactivées',
+    dark_mode: '☾ Mode sombre',
+    light_mode: '☀ Mode clair',
+    offline_title: 'Pas de Connexion',
+    offline_sub: 'Vérifiez votre internet et réessayez',
+    retry_btn: 'Réessayer',
+    prayer_label: 'Prière',
+    share_label: 'Partager',
+    lang_label: 'Langue',
   }
 };
 
@@ -2969,7 +3017,7 @@ function setLang(lang) {
   localStorage.setItem('edd_lang', lang);
   applyLanguage();
   // Highlight active language button in side menu
-  ['en','yo','pcm'].forEach(l => {
+  ['en','yo','pcm','fr'].forEach(l => {
     const btn = document.getElementById('lang-btn-' + l);
     if (btn) {
       if (l === lang) {
@@ -2984,8 +3032,8 @@ function setLang(lang) {
     }
   });
   // Update topbar lang button
-  const flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬'};
-  const codes = {en:'EN', yo:'YO', pcm:'PCM'};
+  const flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬', fr:'🇫🇷'};
+  const codes = {en:'EN', yo:'YO', pcm:'PCM', fr:'FR'};
   const flagEl = document.getElementById('langTopFlag');
   const codeEl = document.getElementById('langTopCode');
   if (flagEl) flagEl.textContent = flags[lang] || '🇬🇧';
@@ -3084,7 +3132,7 @@ function applyLanguage() {
   setText('save-entry-btn', t('save_btn'));
 
   // Highlight active language button
-  ['en','yo','pcm'].forEach(l => {
+  ['en','yo','pcm','fr'].forEach(l => {
     const btn = document.getElementById('lang-btn-' + l);
     if (btn) {
       if (l === currentLang) {
@@ -3099,8 +3147,8 @@ function applyLanguage() {
     }
   });
   // Sync topbar lang button
-  const _flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬'};
-  const _codes = {en:'EN', yo:'YO', pcm:'PCM'};
+  const _flags = {en:'🇬🇧', yo:'🇳🇬', pcm:'🇳🇬', fr:'🇫🇷'};
+  const _codes = {en:'EN', yo:'YO', pcm:'PCM', fr:'FR'};
   const _f = document.getElementById('langTopFlag');
   const _c = document.getElementById('langTopCode');
   if (_f) _f.textContent = _flags[currentLang] || '🇬🇧';
@@ -3412,6 +3460,18 @@ const DAILY_DEVOTIONALS_PCM = [
 { title:"Complete Trust", verse:"Trust in di LORD with all your heart; in all your ways know am, and Him go make your paths straight.", verse_ref:"Proverbs 3:5-6", reflection_1:"Trusting God no mean you go understand everything — e mean say you believe He knows everything.", reflection_2:"Give God that thing wey you no understand today. Him road always dey lead to good place.", prayer:"Father, in what I no understand, I trust you. Lead me on your path today. Amen." },
 ];
 
+
+// ── FRENCH DEVOTIONALS ──────────────────────────────────────────────
+const DAILY_DEVOTIONALS_FR = [
+{ title:"Ses Miséricordes Sont Nouvelles", verse:"Les bontés de l'Éternel ne sont pas épuisées, ses compassions ne sont pas à leur terme. Elles se renouvellent chaque matin. Grande est ta fidélité!", verse_ref:"Lamentations 3:22-23", reflection_1:"Chaque matin, Dieu vous offre une miséricorde toute fraîche. Ce qui s'est passé hier est révolu — Sa grâce couvre tout. Aujourd'hui est un nouveau départ.", reflection_2:"Ne portez pas le fardeau d'hier jusqu'à aujourd'hui. La miséricorde de Dieu l'a déjà couvert. Recevez-la simplement et avancez dans Sa paix.", prayer:"Père, merci pour cette miséricorde nouvelle que Tu m'accordes ce matin. Aide-moi à marcher dans Ta bonté aujourd'hui. Amen." },
+{ title:"Fais Confiance de Tout Ton Cœur", verse:"Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta propre sagesse.", verse_ref:"Proverbes 3:5", reflection_1:"Parfois, ce qui nous semble logique n'est pas le plan de Dieu. Il voit bien au-delà de notre compréhension.", reflection_2:"Aujourd'hui, avant toute décision, consulte Dieu en premier. Sa direction est toujours meilleure que la nôtre.", prayer:"Seigneur, je Te remets mes plans aujourd'hui. Guide-moi, car Ton chemin surpasse le mien. Amen." },
+{ title:"Je Peux Tout par Christ", verse:"Je puis tout par celui qui me fortifie.", verse_ref:"Philippiens 4:13", reflection_1:"Ce n'est pas de la vantardise — c'est une profonde confiance que la puissance de Dieu agit en vous.", reflection_2:"Quelle est l'épreuve qui vous semble impossible aujourd'hui? Souvenez-vous que c'est par Christ que vous la surmonterez.", prayer:"Jésus, que Ta force agisse en moi aujourd'hui pour Ta gloire. Amen." },
+{ title:"L'Amour Parfait Chasse la Crainte", verse:"L'amour parfait bannit la crainte, car la crainte suppose un châtiment, et celui qui craint n'est pas parfait dans l'amour.", verse_ref:"1 Jean 4:18", reflection_1:"L'amour de Dieu pour vous est sans condition. Il ne dépend pas de vos actions ou de vos manquements.", reflection_2:"La foi et la peur ne peuvent cohabiter. Choisissez aujourd'hui de croire en l'amour de Dieu.", prayer:"Père, chasse toute crainte de mon cœur aujourd'hui. Que Ton amour soit ma force. Amen." },
+{ title:"Vous Êtes Nouvelle Créature", verse:"Si quelqu'un est en Christ, il est une nouvelle créature. Les choses anciennes sont passées; voici, toutes choses sont devenues nouvelles.", verse_ref:"2 Corinthiens 5:17", reflection_1:"Dieu ne vous voit pas tel que vous étiez. Il vous voit tel que vous êtes devenu en Christ — pur, nouveau, pardonné.", reflection_2:"Cessez de porter d'anciennes étiquettes. Aux yeux de Dieu, vous êtes une nouvelle personne dès aujourd'hui.", prayer:"Seigneur, merci de m'avoir renouvelé. Aide-moi à vivre selon la nouvelle identité que Tu m'as donnée. Amen." },
+{ title:"La Paix de Dieu", verse:"La paix de Dieu, qui surpasse toute intelligence, gardera vos cœurs et vos esprits en Jésus-Christ.", verse_ref:"Philippiens 4:7", reflection_1:"Cette paix ne signifie pas l'absence de problèmes — c'est un calme profond au milieu de la tempête.", reflection_2:"Le secret est de confier vos soucis à Dieu et de recevoir Sa paix en échange.", prayer:"Père, je Te remets toutes mes inquiétudes. Accorde-moi Ta paix qui surpasse toute intelligence aujourd'hui. Amen." },
+{ title:"Confiance Totale", verse:"Confie-toi en l'Éternel de tout ton cœur; reconnais-le dans toutes tes voies, et il aplanira tes sentiers.", verse_ref:"Proverbes 3:5-6", reflection_1:"Faire confiance à Dieu ne signifie pas tout comprendre — cela signifie croire qu'Il sait tout.", reflection_2:"Remets à Dieu ce que tu ne comprends pas aujourd'hui. Ses chemins mènent toujours à un bon endroit.", prayer:"Père, dans ce que je ne comprends pas, je Te fais confiance. Guide-moi sur Ton chemin aujourd'hui. Amen." },
+];
+
 function getTodayLocalDevotional() {
   const d = new Date();
   const dayOfYear = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
@@ -3421,6 +3481,8 @@ function getTodayLocalDevotional() {
     arr = DAILY_DEVOTIONALS_YO;
   else if (currentLang === 'pcm' && typeof DAILY_DEVOTIONALS_PCM !== 'undefined' && DAILY_DEVOTIONALS_PCM.length)
     arr = DAILY_DEVOTIONALS_PCM;
+  else if (currentLang === 'fr' && typeof DAILY_DEVOTIONALS_FR !== 'undefined' && DAILY_DEVOTIONALS_FR.length)
+    arr = DAILY_DEVOTIONALS_FR;
   return arr[dayOfYear % arr.length];
 }
 
