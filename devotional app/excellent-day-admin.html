@@ -728,6 +728,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text-1);font-family:'
           <div class="trans-tabs">
             <button class="trans-tab active" onclick="showTransTab('yo',this)">🇳🇬 Yorùbá</button>
             <button class="trans-tab" onclick="showTransTab('pcm',this)">🇳🇬 Naija Pidgin</button>
+            <button class="trans-tab" onclick="showTransTab('fr',this)">🇫🇷 Français</button>
           </div>
           <div class="trans-body">
             <!-- Yoruba tab -->
@@ -748,6 +749,15 @@ html,body{min-height:100%;background:var(--bg);color:var(--text-1);font-family:'
               <div class="trans-field"><label>Reflection Paragraph 3</label><textarea id="t_pcm_r3"></textarea></div>
               <div class="trans-field"><label>Prayer (Pidgin)</label><textarea id="t_pcm_prayer"></textarea></div>
             </div>
+            <!-- French tab -->
+            <div id="trans-fr" style="display:none">
+              <div class="trans-field"><label>Titre (Français)</label><textarea id="t_fr_title" rows="1" style="min-height:44px"></textarea></div>
+              <div class="trans-field"><label>Verset (Français)</label><textarea id="t_fr_verse"></textarea></div>
+              <div class="trans-field"><label>Réflexion 1</label><textarea id="t_fr_r1"></textarea></div>
+              <div class="trans-field"><label>Réflexion 2</label><textarea id="t_fr_r2"></textarea></div>
+              <div class="trans-field"><label>Réflexion 3</label><textarea id="t_fr_r3"></textarea></div>
+              <div class="trans-field"><label>Prière (Français)</label><textarea id="t_fr_prayer"></textarea></div>
+            </div>
           </div>
         </div>
 
@@ -756,7 +766,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text-1);font-family:'
           <span style="font-size:1.2rem">🆓</span>
           <div>
             <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);margin-bottom:3px">Free Auto-Translation</div>
-            <div style="font-size:0.72rem;color:var(--text-3)">Yorùbá via MyMemory · Pidgin auto-generated · No account needed</div>
+            <div style="font-size:0.72rem;color:var(--text-3)">Yorùbá · Français via MyMemory · Pidgin auto-generated · No account needed</div>
           </div>
         </div>
 
@@ -869,7 +879,13 @@ ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS verse_pcm text;
 ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_1_pcm text;
 ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_2_pcm text;
 ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_3_pcm text;
-ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_pcm text;</div>
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_pcm text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS title_fr text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS verse_fr text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_1_fr text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_2_fr text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS reflection_3_fr text;
+ALTER TABLE devotionals ADD COLUMN IF NOT EXISTS prayer_fr text;</div>
         <button class="sql-copy" onclick="navigator.clipboard.writeText(document.querySelectorAll('.sql-box')[0].textContent).then(()=>toast('SQL copied!'))">📋 Copy Migration SQL</button>
 
         <p style="font-size:0.88rem;color:var(--text-2);line-height:1.7;margin-bottom:16px;font-style:italic">
@@ -1126,6 +1142,7 @@ function showTransTab(lang, btn) {
   btn.classList.add('active');
   document.getElementById('trans-yo').style.display  = lang === 'yo'  ? 'block' : 'none';
   document.getElementById('trans-pcm').style.display = lang === 'pcm' ? 'block' : 'none';
+  document.getElementById('trans-fr').style.display  = lang === 'fr'  ? 'block' : 'none';
 }
 
 async function translateDevotional() {
@@ -1432,6 +1449,25 @@ ${devotionalText}`;
     document.getElementById('t_pcm_r3').value     = toPidginDeep(englishVals.r3);
     document.getElementById('t_pcm_prayer').value = toPidginDeep(englishVals.prayer);
 
+    // Translate to French using MyMemory API
+    statusEl.textContent = 'Translating to Français…';
+    const frResults = {};
+    for (const f of fields) {
+      if (englishVals[f]) {
+        statusEl.textContent = `Translating to Français (${f})…`;
+        frResults[f] = await translateField(englishVals[f], 'fr');
+        await new Promise(r => setTimeout(r, 300));
+      } else {
+        frResults[f] = '';
+      }
+    }
+    document.getElementById('t_fr_title').value  = frResults.title;
+    document.getElementById('t_fr_verse').value  = frResults.verse;
+    document.getElementById('t_fr_r1').value     = frResults.r1;
+    document.getElementById('t_fr_r2').value     = frResults.r2;
+    document.getElementById('t_fr_r3').value     = frResults.r3;
+    document.getElementById('t_fr_prayer').value = frResults.prayer;
+
     statusEl.textContent = '✦ Done! Review and edit translations before saving.';
     statusEl.style.color = 'var(--gold)';
     toast('✦ Translations ready — please review them');
@@ -1496,6 +1532,13 @@ async function saveDevotional() {
     reflection_2_pcm: document.getElementById('t_pcm_r2')?.value.trim()     || null,
     reflection_3_pcm: document.getElementById('t_pcm_r3')?.value.trim()     || null,
     prayer_pcm:       document.getElementById('t_pcm_prayer')?.value.trim() || null,
+    // French — always include if filled
+    title_fr:        document.getElementById('t_fr_title')?.value.trim()   || null,
+    verse_fr:        document.getElementById('t_fr_verse')?.value.trim()   || null,
+    reflection_1_fr: document.getElementById('t_fr_r1')?.value.trim()     || null,
+    reflection_2_fr: document.getElementById('t_fr_r2')?.value.trim()     || null,
+    reflection_3_fr: document.getElementById('t_fr_r3')?.value.trim()     || null,
+    prayer_fr:       document.getElementById('t_fr_prayer')?.value.trim() || null,
   };
 
   let error;
