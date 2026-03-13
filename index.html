@@ -2698,7 +2698,7 @@ function startAudio() {
     audioState.paused = false;
     setAudioIcon('play');
     document.getElementById('audioStatus').textContent = 'Finished — tap to replay';
-    document.getElementById('audioTitle').textContent = 'Listen to Today's Devotional';
+    document.getElementById('audioTitle').textContent = "Listen to Today's Devotional";
     const fill = document.getElementById('audioProgressFill');
     if (fill) fill.style.width = '100%';
     setTimeout(() => { if (fill) fill.style.width = '0%'; }, 1500);
@@ -2745,7 +2745,7 @@ function playSection(section, btn) {
   setAudioIcon('play');
   document.getElementById('audioProgressFill').style.width = '0%';
   document.getElementById('audioStatus').textContent = 'Tap play to listen';
-  document.getElementById('audioTitle').textContent = 'Listen to Today's Devotional';
+  document.getElementById('audioTitle').textContent = "Listen to Today's Devotional";
 
   // Update active button
   document.querySelectorAll('.audio-sec-btn').forEach(b => b.classList.remove('active'));
@@ -3471,7 +3471,7 @@ function applyDevotionalToPage(data) {
   }
   // Update audio player title
   const _audioTitleEl = document.getElementById('audioTitle');
-  if (_audioTitleEl && !audioState.playing) _audioTitleEl.textContent = 'Listen to Today\'s Devotional';
+  if (_audioTitleEl && !audioState.playing) _audioTitleEl.textContent = "Listen to Today's Devotional";
 
   if (Array.isArray(data.tags) && data.tags.length) {
     const el = document.getElementById('devotionalTags');
