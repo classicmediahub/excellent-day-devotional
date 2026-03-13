@@ -1565,6 +1565,104 @@ button.brand:active { transform: scale(0.97); }
 .lang-opt:hover { background: rgba(90,138,120,0.12) !important; }
 .lang-opt.active { background: rgba(200,168,74,0.12) !important; color: var(--gold) !important; font-weight:600; }
 
+
+/* ── AUDIO PLAYER ─────────────────────────────────── */
+.audio-player {
+  margin: 0 0 24px 0;
+  background: linear-gradient(135deg, rgba(90,138,120,0.12) 0%, rgba(200,168,74,0.08) 100%);
+  border: 1px solid rgba(90,138,120,0.25);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+.audio-player-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.audio-play-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  box-shadow: 0 3px 12px rgba(90,138,120,0.35);
+}
+.audio-play-btn:hover { transform: scale(1.07); box-shadow: 0 4px 16px rgba(90,138,120,0.5); }
+.audio-play-btn:active { transform: scale(0.96); }
+.audio-play-btn svg { width: 18px; height: 18px; }
+.audio-info { flex: 1; min-width: 0; }
+.audio-title { font-family: var(--serif); font-size: 0.82rem; color: var(--text-1); font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.audio-status { font-size: 0.68rem; color: var(--text-3); letter-spacing: 0.04em; }
+.audio-speed-btn {
+  background: rgba(200,168,74,0.1);
+  border: 1px solid rgba(200,168,74,0.3);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-family: var(--serif);
+  font-size: 0.7rem;
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.audio-speed-btn:hover { background: rgba(200,168,74,0.2); }
+.audio-progress-wrap {
+  position: relative;
+  height: 4px;
+  background: rgba(90,138,120,0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.audio-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 4px;
+  width: 0%;
+  transition: width 0.3s linear;
+  pointer-events: none;
+}
+.audio-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.audio-section-btns {
+  display: flex;
+  gap: 6px;
+}
+.audio-sec-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: var(--serif);
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.audio-sec-btn:hover, .audio-sec-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(90,138,120,0.08); }
+.audio-voice-select {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 0.65rem;
+  color: var(--text-3);
+  cursor: pointer;
+  font-family: var(--serif);
+  outline: none;
+  max-width: 110px;
+}
+
 </style>
 </head>
 <body>
@@ -1666,6 +1764,34 @@ button.brand:active { transform: scale(0.97); }
 
       <div class="sh"><div class="sh-gem">✦</div><div class="sh-label" id="sh-reflection">Today's Reflection</div><div class="sh-line"></div></div>
       <div class="card">
+      <!-- Audio Player -->
+      <div class="audio-player" id="audioPlayer">
+        <div class="audio-player-top">
+          <button class="audio-play-btn" id="audioPlayBtn" onclick="toggleAudio()">
+            <svg id="audioPlayIcon" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <div class="audio-info">
+            <div class="audio-title" id="audioTitle">Listen to Today's Devotional</div>
+            <div class="audio-status" id="audioStatus">Tap play to listen</div>
+          </div>
+          <button class="audio-speed-btn" id="audioSpeedBtn" onclick="cycleSpeed()">1×</button>
+        </div>
+        <div class="audio-progress-wrap" onclick="seekAudio(event)" id="audioProgressWrap">
+          <div class="audio-progress-fill" id="audioProgressFill"></div>
+        </div>
+        <div class="audio-controls-row">
+          <div class="audio-section-btns">
+            <button class="audio-sec-btn active" id="secBtnAll" onclick="playSection('all',this)">Full</button>
+            <button class="audio-sec-btn" id="secBtnVerse" onclick="playSection('verse',this)">Verse</button>
+            <button class="audio-sec-btn" id="secBtnReflection" onclick="playSection('reflection',this)">Reflection</button>
+            <button class="audio-sec-btn" id="secBtnPrayer" onclick="playSection('prayer',this)">Prayer</button>
+          </div>
+          <select class="audio-voice-select" id="audioVoiceSelect" onchange="changeVoice(this.value)">
+            <option value="">Default voice</option>
+          </select>
+        </div>
+      </div>
+
         <div class="rtext" id="devotionalReflection">
           <p>Each sunrise is a covenant renewed. Before the noise of the day finds you, God has already gone before — His mercy not diminished by yesterday's failures, not strained by tomorrow's unknowns.</p>
           <p>Jeremiah penned these words in the ruins of Jerusalem, surrounded by devastation. Yet he anchored his soul to one unshakeable truth: God's compassions are not depleted. They are replenished with every dawn.</p>
@@ -2454,6 +2580,232 @@ window.addEventListener('load', () => {
 
 
 // ══════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════
+//  AUDIO DEVOTIONAL READER — Web Speech API (free, built-in)
+// ══════════════════════════════════════════════════════
+const audioState = {
+  synth: window.speechSynthesis,
+  utterance: null,
+  playing: false,
+  paused: false,
+  speed: 1,
+  speeds: [0.8, 1, 1.2, 1.5],
+  speedIdx: 1,
+  voices: [],
+  selectedVoice: null,
+  section: 'all',
+  totalChars: 0,
+  spokenChars: 0,
+};
+
+function getDevotionalText(section) {
+  const title      = document.getElementById('devotionalTitle')?.innerText || '';
+  const verse      = document.getElementById('votdVerse')?.innerText || '';
+  const ref        = document.getElementById('votdRef')?.innerText || '';
+  const reflection = document.getElementById('devotionalReflection')?.innerText || '';
+  const prayer     = document.getElementById('devotionalPrayer')?.innerText || '';
+
+  switch(section) {
+    case 'verse':      return `${verse}. ${ref}.`;
+    case 'reflection': return reflection;
+    case 'prayer':     return `Prayer. ${prayer}`;
+    case 'all':
+    default:
+      return `${title}. ${verse}. ${ref}. ${reflection}. Prayer. ${prayer}`;
+  }
+}
+
+function initAudioVoices() {
+  const loadVoices = () => {
+    audioState.voices = audioState.synth.getVoices();
+    const sel = document.getElementById('audioVoiceSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Default voice</option>';
+    audioState.voices.forEach((v, i) => {
+      // Prefer English voices
+      if (v.lang.startsWith('en') || v.lang.startsWith('yo')) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = v.name.replace('Google ', '').replace('Microsoft ', '').substring(0, 22);
+        sel.appendChild(opt);
+      }
+    });
+  };
+  loadVoices();
+  if (audioState.synth.onvoiceschanged !== undefined) {
+    audioState.synth.onvoiceschanged = loadVoices;
+  }
+}
+
+function toggleAudio() {
+  if (audioState.playing && !audioState.paused) {
+    // Pause
+    audioState.synth.pause();
+    audioState.paused = true;
+    audioState.playing = false;
+    setAudioIcon('play');
+    document.getElementById('audioStatus').textContent = 'Paused';
+  } else if (audioState.paused) {
+    // Resume
+    audioState.synth.resume();
+    audioState.paused = false;
+    audioState.playing = true;
+    setAudioIcon('pause');
+    document.getElementById('audioStatus').textContent = 'Playing…';
+  } else {
+    // Start fresh
+    startAudio();
+  }
+}
+
+function startAudio() {
+  audioState.synth.cancel();
+  const text = getDevotionalText(audioState.section);
+  if (!text.trim()) return;
+
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = audioState.speeds[audioState.speedIdx];
+  utt.pitch = 1;
+  utt.volume = 1;
+
+  // Set voice
+  if (audioState.selectedVoice !== null && audioState.voices[audioState.selectedVoice]) {
+    utt.voice = audioState.voices[audioState.selectedVoice];
+  }
+
+  // Update title
+  const titleMap = { all: "Full Devotional", verse: "Verse", reflection: "Reflection", prayer: "Prayer" };
+  document.getElementById('audioTitle').textContent = "🔊 " + (titleMap[audioState.section] || "Devotional");
+  document.getElementById('audioStatus').textContent = 'Playing…';
+  setAudioIcon('pause');
+
+  audioState.totalChars = text.length;
+  audioState.spokenChars = 0;
+
+  // Progress tracking via word boundaries
+  utt.onboundary = (e) => {
+    if (e.name === 'word') {
+      audioState.spokenChars = e.charIndex;
+      const pct = Math.min(100, (audioState.spokenChars / audioState.totalChars) * 100);
+      const fill = document.getElementById('audioProgressFill');
+      if (fill) fill.style.width = pct + '%';
+    }
+  };
+
+  utt.onend = () => {
+    audioState.playing = false;
+    audioState.paused = false;
+    setAudioIcon('play');
+    document.getElementById('audioStatus').textContent = 'Finished — tap to replay';
+    document.getElementById('audioTitle').textContent = 'Listen to Today's Devotional';
+    const fill = document.getElementById('audioProgressFill');
+    if (fill) fill.style.width = '100%';
+    setTimeout(() => { if (fill) fill.style.width = '0%'; }, 1500);
+  };
+
+  utt.onerror = (e) => {
+    audioState.playing = false;
+    setAudioIcon('play');
+    document.getElementById('audioStatus').textContent = 'Audio not supported on this browser';
+  };
+
+  audioState.utterance = utt;
+  audioState.playing = true;
+  audioState.paused = false;
+  audioState.synth.speak(utt);
+}
+
+function setAudioIcon(type) {
+  const icon = document.getElementById('audioPlayIcon');
+  if (!icon) return;
+  if (type === 'pause') {
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  } else {
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+  }
+}
+
+function cycleSpeed() {
+  audioState.synth.cancel();
+  audioState.speedIdx = (audioState.speedIdx + 1) % audioState.speeds.length;
+  const speed = audioState.speeds[audioState.speedIdx];
+  document.getElementById('audioSpeedBtn').textContent = speed + '×';
+  audioState.playing = false;
+  audioState.paused = false;
+  setAudioIcon('play');
+  document.getElementById('audioStatus').textContent = 'Speed: ' + speed + '× — tap play';
+}
+
+function playSection(section, btn) {
+  audioState.section = section;
+  audioState.synth.cancel();
+  audioState.playing = false;
+  audioState.paused = false;
+  setAudioIcon('play');
+  document.getElementById('audioProgressFill').style.width = '0%';
+  document.getElementById('audioStatus').textContent = 'Tap play to listen';
+  document.getElementById('audioTitle').textContent = 'Listen to Today's Devotional';
+
+  // Update active button
+  document.querySelectorAll('.audio-sec-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function changeVoice(val) {
+  audioState.selectedVoice = val === '' ? null : parseInt(val);
+  if (audioState.playing || audioState.paused) {
+    audioState.synth.cancel();
+    audioState.playing = false;
+    audioState.paused = false;
+    setAudioIcon('play');
+    document.getElementById('audioStatus').textContent = 'Voice changed — tap play';
+  }
+}
+
+function seekAudio(e) {
+  // Basic seek — restart from ~position
+  const wrap = document.getElementById('audioProgressWrap');
+  const pct = e.offsetX / wrap.offsetWidth;
+  const text = getDevotionalText(audioState.section);
+  const charPos = Math.floor(pct * text.length);
+
+  audioState.synth.cancel();
+  const utt = new SpeechSynthesisUtterance(text.substring(charPos));
+  utt.rate = audioState.speeds[audioState.speedIdx];
+  if (audioState.selectedVoice !== null && audioState.voices[audioState.selectedVoice]) {
+    utt.voice = audioState.voices[audioState.selectedVoice];
+  }
+  utt.onend = () => {
+    audioState.playing = false;
+    setAudioIcon('play');
+    document.getElementById('audioStatus').textContent = 'Finished — tap to replay';
+    document.getElementById('audioProgressFill').style.width = '100%';
+    setTimeout(() => { document.getElementById('audioProgressFill').style.width = '0%'; }, 1500);
+  };
+
+  const fill = document.getElementById('audioProgressFill');
+  if (fill) fill.style.width = (pct * 100) + '%';
+
+  audioState.utterance = utt;
+  audioState.playing = true;
+  audioState.paused = false;
+  setAudioIcon('pause');
+  document.getElementById('audioStatus').textContent = 'Playing…';
+  audioState.synth.speak(utt);
+}
+
+// Stop audio when navigating away from today page
+function stopAudioIfPlaying() {
+  if (audioState.synth && audioState.playing) {
+    audioState.synth.cancel();
+    audioState.playing = false;
+    audioState.paused = false;
+    setAudioIcon('play');
+  }
+}
+
+
 // ══════════════════════════════════════════════════════
 //  MULTILINGUAL SYSTEM — English, Yoruba, Nigerian Pidgin
 // ══════════════════════════════════════════════════════
@@ -3117,6 +3469,10 @@ function applyDevotionalToPage(data) {
     const el = document.getElementById('devotionalPrayer');
     if (el) el.textContent = '\u201C' + prayer + '\u201D';
   }
+  // Update audio player title
+  const _audioTitleEl = document.getElementById('audioTitle');
+  if (_audioTitleEl && !audioState.playing) _audioTitleEl.textContent = 'Listen to Today\'s Devotional';
+
   if (Array.isArray(data.tags) && data.tags.length) {
     const el = document.getElementById('devotionalTags');
     if (el) {
@@ -3235,6 +3591,7 @@ async function boot() {
   tick(); setInterval(tick, 30000);
   setGreeting();
   applyLanguage();
+  initAudioVoices();
   // Set initial language label
   const lbl = document.getElementById('langCurrentLabel');
   if (lbl && LANGS[currentLang]) lbl.textContent = LANGS[currentLang].flag + ' ' + LANGS[currentLang].label;
@@ -4719,6 +5076,7 @@ document.addEventListener('keydown', e => {
 const _origNav = nav;
 // Override nav to also update side menu active state
 function nav(p) {
+  if (p !== 'today') stopAudioIfPlaying();
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
   const page = document.getElementById('page-' + p);
