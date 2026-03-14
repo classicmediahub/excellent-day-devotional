@@ -3,7 +3,7 @@
 //  Full offline support with background sync
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME    = 'excellent-day-v12';
+const CACHE_NAME    = 'excellent-day-v13';
 const APP_SHELL     = [
   '/',
   '/index.html',
