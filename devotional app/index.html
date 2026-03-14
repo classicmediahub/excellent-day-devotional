@@ -1716,47 +1716,117 @@ button.brand:active { transform: scale(0.97); }
 
 
 /* ═══════════════════════════════════════════════════
-   BIBLE QUIZ
+   BIBLE QUIZ — LEVELLED REDESIGN
 ═══════════════════════════════════════════════════ */
-.quiz-hero { background:linear-gradient(135deg, var(--accent) 0%, #1a3a22 100%); border-radius:18px; padding:22px 20px; margin-bottom:20px; text-align:center; position:relative; overflow:hidden; }
-.quiz-hero::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; background:rgba(200,168,74,0.1); border-radius:50%; }
-.quiz-hero-label { font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:6px; }
-.quiz-hero-title { font-family:var(--serif); font-size:1.5rem; font-weight:700; color:#fff; margin-bottom:4px; }
-.quiz-hero-sub { font-size:0.78rem; color:rgba(255,255,255,0.65); }
-.quiz-stats-row { display:flex; gap:10px; margin-bottom:20px; }
-.quiz-stat { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:12px 8px; text-align:center; }
-.quiz-stat-num { font-family:var(--serif); font-size:1.4rem; font-weight:700; color:var(--gold); }
-.quiz-stat-label { font-size:0.65rem; color:var(--text-4); margin-top:2px; }
-.quiz-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:22px 20px; margin-bottom:16px; }
-.quiz-progress-bar-wrap { height:5px; background:var(--border); border-radius:5px; margin-bottom:18px; overflow:hidden; }
-.quiz-progress-bar { height:100%; background:linear-gradient(90deg, var(--accent), var(--gold)); border-radius:5px; transition:width 0.4s ease; }
-.quiz-q-num { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-4); margin-bottom:8px; }
-.quiz-q-cat { display:inline-block; padding:3px 10px; border-radius:20px; background:var(--gold-bg); border:1px solid rgba(200,168,74,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--serif); margin-bottom:14px; }
-.quiz-question { font-family:var(--serif); font-size:1.05rem; color:var(--text-1); line-height:1.6; margin-bottom:20px; font-weight:600; }
-.quiz-options { display:flex; flex-direction:column; gap:10px; }
-.quiz-opt { padding:13px 16px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-1); font-family:var(--serif); font-size:0.92rem; cursor:pointer; text-align:left; transition:all 0.2s; display:flex; align-items:center; gap:10px; }
-.quiz-opt:hover:not(:disabled) { border-color:var(--accent); background:var(--accent-bg); }
-.quiz-opt:disabled { cursor:default; }
-.quiz-opt.correct { border-color:#3aaa5a; background:rgba(58,170,90,0.12); color:#3aaa5a; }
-.quiz-opt.wrong { border-color:#e05a5a; background:rgba(224,90,90,0.10); color:#e05a5a; }
-.quiz-opt.reveal { border-color:#3aaa5a; background:rgba(58,170,90,0.08); color:#3aaa5a; opacity:0.7; }
-.quiz-opt-letter { width:26px; height:26px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:700; flex-shrink:0; transition:all 0.2s; }
-.quiz-opt.correct .quiz-opt-letter { background:#3aaa5a; border-color:#3aaa5a; color:#fff; }
-.quiz-opt.wrong .quiz-opt-letter { background:#e05a5a; border-color:#e05a5a; color:#fff; }
-.quiz-opt.reveal .quiz-opt-letter { background:#3aaa5a; border-color:#3aaa5a; color:#fff; }
-.quiz-feedback { margin-top:16px; padding:14px 16px; border-radius:12px; font-family:var(--serif); font-size:0.88rem; line-height:1.55; display:none; }
-.quiz-feedback.correct { background:rgba(58,170,90,0.1); border:1px solid rgba(58,170,90,0.3); color:#3aaa5a; }
-.quiz-feedback.wrong { background:rgba(224,90,90,0.08); border:1px solid rgba(224,90,90,0.25); color:#e05a5a; }
-.quiz-next-btn { width:100%; margin-top:16px; padding:13px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
-.quiz-next-btn:hover { opacity:0.88; transform:translateY(-1px); }
-.quiz-result-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:28px 20px; text-align:center; }
-.quiz-result-emoji { font-size:3.5rem; margin-bottom:10px; }
-.quiz-result-score { font-family:var(--serif); font-size:2.5rem; font-weight:700; color:var(--gold); margin-bottom:4px; }
-.quiz-result-label { font-size:0.85rem; color:var(--text-3); margin-bottom:16px; }
-.quiz-result-msg { font-family:var(--serif); font-size:0.95rem; color:var(--text-2); line-height:1.6; margin-bottom:20px; font-style:italic; }
-.quiz-restart-btn { padding:12px 32px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
-.quiz-restart-btn:hover { opacity:0.88; }
-.quiz-streak-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(200,168,74,0.12); border:1px solid rgba(200,168,74,0.3); border-radius:20px; padding:5px 14px; font-size:0.78rem; color:var(--gold); font-family:var(--serif); margin-top:12px; }
+/* Level badge */
+.qz-level-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; font-family:var(--serif); font-size:0.75rem; font-weight:700; letter-spacing:0.04em; }
+.qz-lvl-beginner    { background:rgba(90,138,120,0.15); color:#5a8a78; border:1px solid rgba(90,138,120,0.3); }
+.qz-lvl-intermediate{ background:rgba(90,138,200,0.15); color:#5a78c8; border:1px solid rgba(90,138,200,0.3); }
+.qz-lvl-advanced    { background:rgba(168,90,200,0.15); color:#a85ac8; border:1px solid rgba(168,90,200,0.3); }
+.qz-lvl-expert      { background:rgba(200,100,60,0.15); color:#c8643c; border:1px solid rgba(200,100,60,0.3); }
+.qz-lvl-scholar     { background:rgba(200,168,74,0.18); color:var(--gold); border:1px solid rgba(200,168,74,0.4); }
+/* XP bar */
+.qz-xp-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:16px; }
+.qz-xp-top  { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.qz-xp-bar-bg { height:8px; background:var(--border); border-radius:8px; overflow:hidden; }
+.qz-xp-bar-fill { height:100%; border-radius:8px; background:linear-gradient(90deg, var(--accent), var(--gold)); transition:width 0.6s cubic-bezier(.4,0,.2,1); }
+.qz-xp-label { font-size:0.68rem; color:var(--text-4); font-family:var(--serif); }
+.qz-xp-pts  { font-family:var(--serif); font-size:0.82rem; font-weight:700; color:var(--gold); }
+/* Stats row */
+.qz-stats { display:flex; gap:8px; margin-bottom:16px; }
+.qz-stat  { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:10px 6px; text-align:center; }
+.qz-stat-n { font-family:var(--serif); font-size:1.25rem; font-weight:700; color:var(--accent); }
+.qz-stat-l { font-size:0.62rem; color:var(--text-4); margin-top:1px; }
+/* Level cards on home screen */
+.qz-levels-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:16px; }
+.qz-level-card { background:var(--surface); border:1.5px solid var(--border); border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:all 0.2s; }
+.qz-level-card:hover { border-color:var(--accent); transform:translateX(3px); }
+.qz-level-card.locked { opacity:0.45; cursor:not-allowed; }
+.qz-level-card.locked:hover { transform:none; border-color:var(--border); }
+.qz-level-card.active-level { border-color:var(--gold); background:var(--gold-bg); }
+.qz-lc-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.qz-lc-info { flex:1; }
+.qz-lc-name { font-family:var(--serif); font-size:0.95rem; font-weight:700; color:var(--text-1); margin-bottom:2px; }
+.qz-lc-desc { font-size:0.72rem; color:var(--text-4); }
+.qz-lc-right { text-align:right; }
+.qz-lc-unlock { font-size:0.68rem; color:var(--text-4); font-family:var(--serif); }
+.qz-lc-check { font-size:1.1rem; }
+/* Playing screen */
+.qz-play-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.qz-back-btn { background:transparent; border:1px solid var(--border); border-radius:10px; padding:6px 12px; font-family:var(--serif); font-size:0.75rem; color:var(--text-3); cursor:pointer; transition:all 0.2s; }
+.qz-back-btn:hover { border-color:var(--accent); color:var(--accent); }
+.qz-q-meta { display:flex; align-items:center; gap:8px; }
+/* Timer */
+.qz-timer-wrap { display:flex; align-items:center; gap:6px; }
+.qz-timer-ring { position:relative; width:38px; height:38px; }
+.qz-timer-svg { transform:rotate(-90deg); }
+.qz-timer-bg { fill:none; stroke:var(--border); stroke-width:3; }
+.qz-timer-arc { fill:none; stroke:var(--accent); stroke-width:3; stroke-linecap:round; transition:stroke-dashoffset 1s linear, stroke 0.3s; }
+.qz-timer-num { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:var(--serif); font-size:0.78rem; font-weight:700; color:var(--text-1); }
+.qz-timer-arc.urgent { stroke:#e05a5a; }
+/* Combo badge */
+.qz-combo { display:inline-flex; align-items:center; gap:4px; background:rgba(200,168,74,0.15); border:1px solid rgba(200,168,74,0.4); border-radius:20px; padding:3px 10px; font-size:0.72rem; color:var(--gold); font-family:var(--serif); font-weight:700; animation:qzComboIn 0.3s ease; }
+@keyframes qzComboIn { from { transform:scale(0.7); opacity:0; } to { transform:scale(1); opacity:1; } }
+/* Progress bar */
+.qz-prog-wrap { height:6px; background:var(--border); border-radius:6px; margin-bottom:16px; overflow:hidden; }
+.qz-prog-fill { height:100%; background:linear-gradient(90deg, var(--accent), var(--gold)); border-radius:6px; transition:width 0.4s ease; }
+/* Question card */
+.qz-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:18px 16px; margin-bottom:12px; }
+.qz-q-cat-pill { display:inline-block; padding:3px 10px; border-radius:20px; background:var(--gold-bg); border:1px solid rgba(200,168,74,0.3); color:var(--gold); font-size:0.65rem; font-family:var(--serif); margin-bottom:12px; }
+.qz-question { font-family:var(--serif); font-size:1rem; font-weight:600; color:var(--text-1); line-height:1.6; margin-bottom:18px; }
+/* Options */
+.qz-opts { display:flex; flex-direction:column; gap:9px; }
+.qz-opt { padding:12px 15px; border-radius:12px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-1); font-family:var(--serif); font-size:0.9rem; cursor:pointer; text-align:left; transition:all 0.18s; display:flex; align-items:center; gap:10px; }
+.qz-opt:hover:not(:disabled) { border-color:var(--accent); background:var(--accent-bg); transform:translateX(3px); }
+.qz-opt:disabled { cursor:default; }
+.qz-opt.correct  { border-color:#3aaa5a; background:rgba(58,170,90,0.12); color:#3aaa5a; }
+.qz-opt.wrong    { border-color:#e05a5a; background:rgba(224,90,90,0.10); color:#e05a5a; }
+.qz-opt.reveal   { border-color:#3aaa5a; background:rgba(58,170,90,0.08); color:#3aaa5a; opacity:0.75; }
+.qz-opt-letter { width:28px; height:28px; border-radius:50%; border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; flex-shrink:0; transition:all 0.18s; }
+.qz-opt.correct .qz-opt-letter { background:#3aaa5a; border-color:#3aaa5a; color:#fff; }
+.qz-opt.wrong   .qz-opt-letter { background:#e05a5a; border-color:#e05a5a; color:#fff; }
+.qz-opt.reveal  .qz-opt-letter { background:#3aaa5a; border-color:#3aaa5a; color:#fff; }
+/* Crossed-out for 50/50 */
+.qz-opt.eliminated { opacity:0.22; pointer-events:none; }
+/* Feedback */
+.qz-feedback { margin-top:12px; padding:12px 14px; border-radius:10px; font-family:var(--serif); font-size:0.85rem; line-height:1.55; display:none; }
+.qz-feedback.correct { background:rgba(58,170,90,0.1); border:1px solid rgba(58,170,90,0.3); color:#3aaa5a; }
+.qz-feedback.wrong   { background:rgba(224,90,90,0.08); border:1px solid rgba(224,90,90,0.25); color:#e05a5a; }
+.qz-xp-pop { font-size:0.78rem; font-weight:700; color:var(--gold); margin-left:8px; animation:qzXpPop 0.5s ease forwards; }
+@keyframes qzXpPop { 0%{opacity:0;transform:translateY(4px)} 40%{opacity:1;transform:translateY(-4px)} 100%{opacity:0;transform:translateY(-10px)} }
+/* Next btn */
+.qz-next-btn { width:100%; margin-top:14px; padding:13px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.qz-next-btn:hover { opacity:0.88; transform:translateY(-1px); }
+/* Lifelines */
+.qz-lifelines { display:flex; gap:8px; margin-bottom:14px; }
+.qz-ll-btn { flex:1; padding:9px 6px; border-radius:12px; border:1.5px solid var(--border); background:var(--surface); color:var(--text-2); font-family:var(--serif); font-size:0.75rem; cursor:pointer; transition:all 0.2s; text-align:center; }
+.qz-ll-btn:hover:not(:disabled) { border-color:var(--gold); color:var(--gold); background:var(--gold-bg); }
+.qz-ll-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.qz-ll-icon { font-size:1.1rem; display:block; margin-bottom:2px; }
+/* Result screen */
+.qz-result { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:26px 18px; text-align:center; }
+.qz-result-trophy { font-size:3.5rem; margin-bottom:8px; }
+.qz-result-score  { font-family:var(--serif); font-size:2.4rem; font-weight:700; color:var(--gold); }
+.qz-result-sub    { font-size:0.82rem; color:var(--text-3); margin-bottom:14px; }
+.qz-result-verse  { font-family:var(--serif); font-size:0.9rem; color:var(--text-2); line-height:1.6; font-style:italic; margin-bottom:18px; padding:12px 14px; background:var(--bg); border-radius:10px; }
+.qz-result-xp-gained { display:inline-flex; align-items:center; gap:6px; background:rgba(200,168,74,0.12); border:1px solid rgba(200,168,74,0.3); border-radius:20px; padding:5px 14px; font-size:0.8rem; color:var(--gold); font-family:var(--serif); font-weight:700; margin-bottom:16px; }
+.qz-badges-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:16px; }
+.qz-badge { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:12px; min-width:72px; }
+.qz-badge-icon { font-size:1.6rem; }
+.qz-badge-name { font-size:0.62rem; color:var(--text-3); font-family:var(--serif); text-align:center; }
+.qz-badge.new-badge { border-color:var(--gold); background:var(--gold-bg); animation:qzBadgeIn 0.5s ease; }
+.qz-badge.new-badge .qz-badge-name { color:var(--gold); font-weight:700; }
+@keyframes qzBadgeIn { from{transform:scale(0);opacity:0} 70%{transform:scale(1.15)} to{transform:scale(1);opacity:1} }
+.qz-result-btns { display:flex; gap:10px; justify-content:center; }
+.qz-play-again-btn { padding:11px 28px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.qz-play-again-btn:hover { opacity:0.88; }
+.qz-back-home-btn  { padding:11px 22px; background:transparent; border:1.5px solid var(--border); border-radius:12px; color:var(--text-2); font-family:var(--serif); font-size:0.88rem; cursor:pointer; transition:all 0.2s; }
+.qz-back-home-btn:hover { border-color:var(--accent); color:var(--accent); }
+/* Level up banner */
+.qz-levelup-banner { background:linear-gradient(135deg,var(--accent),#1a3a22); border-radius:14px; padding:16px; text-align:center; margin-bottom:14px; animation:qzBadgeIn 0.4s ease; }
+.qz-levelup-banner h3 { font-family:var(--serif); color:var(--gold); font-size:1.1rem; margin-bottom:4px; }
+.qz-levelup-banner p { font-size:0.8rem; color:rgba(255,255,255,0.75); }
+
 
 
 /* ═══════════════════════════════════════════════════
@@ -2214,30 +2284,16 @@ button.brand:active { transform: scale(0.97); }
   <!-- Bottom Nav -->
 
 
-    <!-- BIBLE QUIZ PAGE -->
+    <!-- BIBLE QUIZ PAGE — LEVELLED -->
     <div class="page" id="page-quiz">
-      <div class="ph" style="margin-bottom:16px">
+      <div class="ph" style="margin-bottom:14px">
         <div class="ph-label">Test Your Knowledge</div>
         <h2 class="ph-title" style="font-size:1.32rem">Bible Quiz</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
-
-      <!-- Hero -->
-      <div class="quiz-hero">
-        <div class="quiz-hero-label">Daily Bible Trivia</div>
-        <div class="quiz-hero-title" id="quizHeroTitle">10 Questions</div>
-        <div class="quiz-hero-sub" id="quizHeroSub">New set every day — how many can you get?</div>
-      </div>
-
-      <!-- Stats -->
-      <div class="quiz-stats-row">
-        <div class="quiz-stat"><div class="quiz-stat-num" id="qzBestScore">0%</div><div class="quiz-stat-label">Best Score</div></div>
-        <div class="quiz-stat"><div class="quiz-stat-num" id="qzStreak">0</div><div class="quiz-stat-label">Day Streak</div></div>
-        <div class="quiz-stat"><div class="quiz-stat-num" id="qzPlayed">0</div><div class="quiz-stat-label">Quizzes Done</div></div>
-      </div>
-
-      <!-- Quiz area -->
       <div id="quizArea"></div>
+    </div>
+
     </div>
 
     <!-- PRAYER WALL PAGE -->
@@ -3432,263 +3488,578 @@ function setText(id, text) {
 
 
 // ══════════════════════════════════════════════════════
-//  BIBLE QUIZ GAME
+//  BIBLE QUIZ — LEVELLED GAME (v2)
+//  Levels: Beginner → Intermediate → Advanced → Expert → Scholar
+//  Features: Timer, Lifelines (50/50, Skip), Combo XP, Badges
 // ══════════════════════════════════════════════════════
-const QUIZ_QUESTIONS = [
-  // Old Testament
-  { q:"How many days and nights did it rain during Noah's flood?", opts:["20 days","40 days","60 days","7 days"], ans:1, cat:"Old Testament", ref:"Genesis 7:12" },
-  { q:"What was the name of the garden where Adam and Eve lived?", opts:["Garden of Gethsemane","Garden of Eden","Garden of Olives","Garden of Babylon"], ans:1, cat:"Old Testament", ref:"Genesis 2:8" },
-  { q:"How many brothers did Joseph have?", opts:["10","11","12","9"], ans:1, cat:"Old Testament", ref:"Genesis 42:3" },
-  { q:"Which river did Moses part to lead Israel out of Egypt?", opts:["Jordan","Nile","Red Sea","Euphrates"], ans:2, cat:"Old Testament", ref:"Exodus 14:21" },
-  { q:"What weapon did David use to defeat Goliath?", opts:["Sword","Spear","Sling and stone","Bow and arrow"], ans:2, cat:"Old Testament", ref:"1 Samuel 17:50" },
-  { q:"How many commandments did God give Moses on Mount Sinai?", opts:["5","7","10","12"], ans:2, cat:"Old Testament", ref:"Exodus 20" },
-  { q:"Who was swallowed by a great fish?", opts:["Elijah","Jonah","Ezekiel","Isaiah"], ans:1, cat:"Old Testament", ref:"Jonah 1:17" },
-  { q:"What did God use to guide Israel in the wilderness at night?", opts:["A star","A pillar of fire","An angel","The moon"], ans:1, cat:"Old Testament", ref:"Exodus 13:21" },
-  { q:"Who killed Samson's 1,000 Philistine enemies?", opts:["A sword","His bare hands","A donkey's jawbone","A stone"], ans:2, cat:"Old Testament", ref:"Judges 15:15" },
-  { q:"What did Solomon ask God for when he became king?", opts:["Long life","Wealth","Wisdom","Victory in battle"], ans:2, cat:"Old Testament", ref:"1 Kings 3:9" },
-  { q:"In which city was King David born?", opts:["Jerusalem","Bethlehem","Hebron","Nazareth"], ans:1, cat:"Old Testament", ref:"1 Samuel 17:12" },
-  { q:"Who interpreted Pharaoh's dreams in Egypt?", opts:["Moses","Abraham","Joseph","Daniel"], ans:2, cat:"Old Testament", ref:"Genesis 41:15" },
-  { q:"How many plagues did God send on Egypt?", opts:["7","10","12","9"], ans:1, cat:"Old Testament", ref:"Exodus 7-12" },
-  { q:"Who was the first king of Israel?", opts:["David","Solomon","Saul","Samuel"], ans:2, cat:"Old Testament", ref:"1 Samuel 10:1" },
-  { q:"What did Elijah do before going to heaven?", opts:["He died peacefully","He was taken up in a whirlwind","He walked into the sea","He ascended a mountain"], ans:1, cat:"Old Testament", ref:"2 Kings 2:11" },
-  { q:"How many days was Jonah inside the fish?", opts:["1 day","2 days","3 days","7 days"], ans:2, cat:"Old Testament", ref:"Jonah 1:17" },
-  { q:"Who was thrown into the lions' den?", opts:["Shadrach","Daniel","Nehemiah","Ezra"], ans:1, cat:"Old Testament", ref:"Daniel 6:16" },
-  { q:"What was the name of Abraham's son of promise?", opts:["Ishmael","Isaac","Jacob","Esau"], ans:1, cat:"Old Testament", ref:"Genesis 21:3" },
-  { q:"Which psalm begins 'The LORD is my shepherd'?", opts:["Psalm 1","Psalm 23","Psalm 91","Psalm 100"], ans:1, cat:"Psalms & Proverbs", ref:"Psalm 23:1" },
-  { q:"How many books are in the Old Testament?", opts:["27","33","39","46"], ans:2, cat:"Bible Knowledge", ref:"Bible" },
 
-  // New Testament
-  { q:"In which town was Jesus born?", opts:["Nazareth","Jerusalem","Bethlehem","Capernaum"], ans:2, cat:"New Testament", ref:"Luke 2:4-7" },
-  { q:"How many disciples did Jesus choose?", opts:["7","10","12","14"], ans:2, cat:"New Testament", ref:"Luke 6:13" },
-  { q:"What was Jesus' first miracle?", opts:["Healing a blind man","Turning water to wine","Walking on water","Raising Lazarus"], ans:1, cat:"New Testament", ref:"John 2:1-11" },
-  { q:"Who baptised Jesus?", opts:["Peter","Paul","John the Baptist","Elijah"], ans:2, cat:"New Testament", ref:"Matthew 3:13-17" },
-  { q:"How many days was Jesus in the wilderness being tempted?", opts:["3 days","7 days","30 days","40 days"], ans:3, cat:"New Testament", ref:"Matthew 4:2" },
-  { q:"Who denied Jesus three times?", opts:["Judas","Thomas","Peter","James"], ans:2, cat:"New Testament", ref:"Matthew 26:75" },
-  { q:"Who betrayed Jesus for 30 pieces of silver?", opts:["Pilate","Peter","Judas Iscariot","Herod"], ans:2, cat:"New Testament", ref:"Matthew 26:15" },
-  { q:"How many days was Lazarus in the tomb before Jesus raised him?", opts:["1 day","2 days","3 days","4 days"], ans:3, cat:"New Testament", ref:"John 11:39" },
-  { q:"On which day did Jesus rise from the dead?", opts:["First day","Second day","Third day","Fourth day"], ans:2, cat:"New Testament", ref:"Luke 24:7" },
-  { q:"Who wrote the most books in the New Testament?", opts:["Peter","John","Luke","Paul"], ans:3, cat:"New Testament", ref:"Bible" },
-  { q:"What did the wise men follow to find Jesus?", opts:["A cloud","A star","An angel","A pillar of fire"], ans:1, cat:"New Testament", ref:"Matthew 2:2" },
-  { q:"Which disciple walked on water with Jesus?", opts:["John","James","Peter","Andrew"], ans:2, cat:"New Testament", ref:"Matthew 14:29" },
-  { q:"How many fish and loaves did Jesus use to feed 5,000?", opts:["5 loaves 2 fish","3 loaves 5 fish","7 loaves 2 fish","2 loaves 5 fish"], ans:0, cat:"New Testament", ref:"John 6:9" },
-  { q:"What is the shortest verse in the Bible?", opts:["God is love","Pray without ceasing","Jesus wept","Trust in God"], ans:2, cat:"Bible Knowledge", ref:"John 11:35" },
-  { q:"Who was the first martyr of the Christian church?", opts:["Paul","James","Peter","Stephen"], ans:3, cat:"New Testament", ref:"Acts 7:59" },
-  { q:"How many books are in the New Testament?", opts:["24","27","30","33"], ans:1, cat:"Bible Knowledge", ref:"Bible" },
-  { q:"On the Day of Pentecost, how many were added to the church?", opts:["1,000","2,000","3,000","5,000"], ans:2, cat:"New Testament", ref:"Acts 2:41" },
-  { q:"What was Paul's name before his conversion?", opts:["Simon","Saul","Silas","Sosthenes"], ans:1, cat:"New Testament", ref:"Acts 13:9" },
-
-  // CAC & Worship
-  { q:"What does CAC stand for?", opts:["Christ Assembly Church","Christ Apostolic Church","Christian Apostolic Community","Church of Almighty Christ"], ans:1, cat:"CAC Knowledge", ref:"CAC History" },
-  { q:"Which book of the Bible contains the Ten Commandments?", opts:["Leviticus","Numbers","Exodus","Deuteronomy"], ans:2, cat:"Bible Knowledge", ref:"Exodus 20" },
-  { q:"What does the word 'Gospel' mean?", opts:["Holy scripture","Good news","God's word","Sacred text"], ans:1, cat:"Bible Knowledge", ref:"Greek: euangelion" },
-  { q:"In the Lord's Prayer, what do we ask to be forgiven of?", opts:["Sins","Trespasses","Debts","All of the above"], ans:3, cat:"New Testament", ref:"Matthew 6:12" },
-  { q:"What fruit did the Holy Spirit NOT produce according to Galatians 5?", opts:["Love","Wealth","Peace","Kindness"], ans:1, cat:"New Testament", ref:"Galatians 5:22-23" },
-  { q:"How many times should we forgive according to Jesus?", opts:["7 times","49 times","70 times 7","As many as needed"], ans:2, cat:"New Testament", ref:"Matthew 18:22" },
-  { q:"What is the golden rule Jesus taught?", opts:["Love God only","Love your neighbour as yourself","Pray without ceasing","Give to the poor"], ans:1, cat:"New Testament", ref:"Matthew 22:39" },
-  { q:"Which prophet predicted Jesus' birth in Bethlehem?", opts:["Isaiah","Jeremiah","Micah","Ezekiel"], ans:2, cat:"Old Testament", ref:"Micah 5:2" },
-  { q:"What did Jesus say is the greatest commandment?", opts:["Keep the Sabbath","Love the LORD your God with all your heart","Do not murder","Honour your parents"], ans:1, cat:"New Testament", ref:"Matthew 22:37" },
-  { q:"How many times is 'fear not' or 'do not be afraid' found in the Bible?", opts:["66 times","100 times","365 times","200 times"], ans:2, cat:"Bible Knowledge", ref:"Bible" },
-  { q:"What is the last book of the Bible?", opts:["Jude","Hebrews","Revelation","Acts"], ans:2, cat:"Bible Knowledge", ref:"Bible" },
-  { q:"Which book of the Bible has the most chapters?", opts:["Genesis","Isaiah","Psalms","Proverbs"], ans:2, cat:"Bible Knowledge", ref:"Psalms — 150 chapters" },
+// ── LEVEL CONFIG ────────────────────────────────────
+const QZ_LEVELS = [
+  { id:'beginner',     name:'Beginner',     icon:'🌱', color:'#5a8a78', xpNeeded:0,    questions:8,  timePerQ:30, desc:'Foundation of faith — start here' },
+  { id:'intermediate', name:'Intermediate', icon:'📖', color:'#5a78c8', xpNeeded:150,  questions:10, timePerQ:25, desc:'Growing in the Word' },
+  { id:'advanced',     name:'Advanced',     icon:'⚔️', color:'#a85ac8', xpNeeded:400,  questions:10, timePerQ:20, desc:'Deep Bible knowledge' },
+  { id:'expert',       name:'Expert',       icon:'🏛️', color:'#c8643c', xpNeeded:800,  questions:12, timePerQ:18, desc:'Walk by faith not by sight' },
+  { id:'scholar',      name:'Scholar',      icon:'👑', color:'#C8A84A', xpNeeded:1500, questions:15, timePerQ:15, desc:'The crown of wisdom' },
 ];
 
-// ── Quiz State ──────────────────────────────────────
-let qzState = {
-  questions: [],
-  current: 0,
-  score: 0,
-  answered: false,
-  finished: false,
-  todayKey: '',
+// ── QUESTION BANK ────────────────────────────────────
+// difficulty: 1=Beginner, 2=Intermediate, 3=Advanced, 4=Expert, 5=Scholar
+const QZ_BANK = [
+  // ── BEGINNER (1) ────────────────────────────────
+  { q:"How many days did God take to create the world?", opts:["5 days","6 days","7 days","8 days"], ans:1, cat:"Creation", ref:"Genesis 1", diff:1 },
+  { q:"What was the name of the garden where Adam and Eve lived?", opts:["Gethsemane","Eden","Babylon","Nazareth"], ans:1, cat:"Old Testament", ref:"Genesis 2:8", diff:1 },
+  { q:"How many books are in the entire Bible?", opts:["60","66","72","78"], ans:1, cat:"Bible Knowledge", ref:"39 OT + 27 NT", diff:1 },
+  { q:"In which town was Jesus born?", opts:["Nazareth","Jerusalem","Bethlehem","Capernaum"], ans:2, cat:"New Testament", ref:"Luke 2:4-7", diff:1 },
+  { q:"Who built the ark?", opts:["Moses","Abraham","Noah","David"], ans:2, cat:"Old Testament", ref:"Genesis 6:14", diff:1 },
+  { q:"How many disciples did Jesus choose?", opts:["7","10","12","14"], ans:2, cat:"New Testament", ref:"Luke 6:13", diff:1 },
+  { q:"Which psalm begins 'The LORD is my shepherd'?", opts:["Psalm 1","Psalm 23","Psalm 91","Psalm 100"], ans:1, cat:"Psalms", ref:"Psalm 23:1", diff:1 },
+  { q:"Who was swallowed by a great fish?", opts:["Elijah","Jonah","Ezekiel","Isaiah"], ans:1, cat:"Prophets", ref:"Jonah 1:17", diff:1 },
+  { q:"How many commandments did God give Moses?", opts:["5","7","10","12"], ans:2, cat:"Law", ref:"Exodus 20", diff:1 },
+  { q:"Who baptised Jesus?", opts:["Peter","Paul","John the Baptist","Elijah"], ans:2, cat:"New Testament", ref:"Matthew 3:13", diff:1 },
+  { q:"What was Jesus' first miracle?", opts:["Healing blind man","Turning water to wine","Walking on water","Raising Lazarus"], ans:1, cat:"Miracles", ref:"John 2:1-11", diff:1 },
+  { q:"Who denied Jesus three times?", opts:["Judas","Thomas","Peter","James"], ans:2, cat:"New Testament", ref:"Matthew 26:75", diff:1 },
+  { q:"What is the last book of the Bible?", opts:["Jude","Hebrews","Revelation","Acts"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:1 },
+  { q:"What did God promise after Noah's flood as a sign?", opts:["A dove","The rainbow","The sun","A star"], ans:1, cat:"Old Testament", ref:"Genesis 9:13", diff:1 },
+  { q:"How many books are in the New Testament?", opts:["24","27","30","33"], ans:1, cat:"Bible Knowledge", ref:"Bible", diff:1 },
+
+  // ── INTERMEDIATE (2) ───────────────────────────
+  { q:"How many days and nights did it rain in Noah's flood?", opts:["20 days","40 days","60 days","7 days"], ans:1, cat:"Old Testament", ref:"Genesis 7:12", diff:2 },
+  { q:"Who interpreted Pharaoh's dreams in Egypt?", opts:["Moses","Abraham","Joseph","Daniel"], ans:2, cat:"Old Testament", ref:"Genesis 41:15", diff:2 },
+  { q:"How many brothers did Joseph have?", opts:["10","11","12","9"], ans:1, cat:"Old Testament", ref:"Genesis 42:3", diff:2 },
+  { q:"How many plagues did God send on Egypt?", opts:["7","10","12","9"], ans:1, cat:"Old Testament", ref:"Exodus 7-12", diff:2 },
+  { q:"Which weapon did David use to defeat Goliath?", opts:["Sword","Spear","Sling and stone","Bow and arrow"], ans:2, cat:"Old Testament", ref:"1 Samuel 17:50", diff:2 },
+  { q:"Who was the first king of Israel?", opts:["David","Solomon","Saul","Samuel"], ans:2, cat:"Old Testament", ref:"1 Samuel 10:1", diff:2 },
+  { q:"What did Solomon ask God for?", opts:["Long life","Wealth","Wisdom","Victory"], ans:2, cat:"Old Testament", ref:"1 Kings 3:9", diff:2 },
+  { q:"Which disciple walked on water with Jesus?", opts:["John","James","Peter","Andrew"], ans:2, cat:"New Testament", ref:"Matthew 14:29", diff:2 },
+  { q:"How many days was Lazarus in the tomb?", opts:["1 day","2 days","3 days","4 days"], ans:3, cat:"Miracles", ref:"John 11:39", diff:2 },
+  { q:"Who betrayed Jesus for 30 pieces of silver?", opts:["Pilate","Peter","Judas Iscariot","Herod"], ans:2, cat:"New Testament", ref:"Matthew 26:15", diff:2 },
+  { q:"On which day did Jesus rise from the dead?", opts:["First","Second","Third","Fourth"], ans:2, cat:"New Testament", ref:"Luke 24:7", diff:2 },
+  { q:"What was Paul's name before his conversion?", opts:["Simon","Saul","Silas","Sosthenes"], ans:1, cat:"New Testament", ref:"Acts 13:9", diff:2 },
+  { q:"How many fish and loaves did Jesus use to feed 5,000?", opts:["5 loaves 2 fish","3 loaves 5 fish","7 loaves 2 fish","2 loaves 5 fish"], ans:0, cat:"Miracles", ref:"John 6:9", diff:2 },
+  { q:"What is the shortest verse in the Bible?", opts:["God is love","Pray without ceasing","Jesus wept","Trust in God"], ans:2, cat:"Bible Knowledge", ref:"John 11:35", diff:2 },
+  { q:"Who was the first martyr of the Christian church?", opts:["Paul","James","Peter","Stephen"], ans:3, cat:"New Testament", ref:"Acts 7:59", diff:2 },
+
+  // ── ADVANCED (3) ──────────────────────────────
+  { q:"How many days was Jonah inside the fish?", opts:["1 day","2 days","3 days","7 days"], ans:2, cat:"Prophets", ref:"Jonah 1:17", diff:3 },
+  { q:"Who was thrown into the lions' den?", opts:["Shadrach","Daniel","Nehemiah","Ezra"], ans:1, cat:"Prophets", ref:"Daniel 6:16", diff:3 },
+  { q:"Which prophet predicted Jesus' birth in Bethlehem?", opts:["Isaiah","Jeremiah","Micah","Ezekiel"], ans:2, cat:"Prophets", ref:"Micah 5:2", diff:3 },
+  { q:"How many times should we forgive according to Jesus?", opts:["7 times","49 times","70 times 7","As many as needed"], ans:2, cat:"Teaching", ref:"Matthew 18:22", diff:3 },
+  { q:"On the Day of Pentecost, how many joined the church?", opts:["1,000","2,000","3,000","5,000"], ans:2, cat:"New Testament", ref:"Acts 2:41", diff:3 },
+  { q:"What fruit of the Spirit is NOT in Galatians 5?", opts:["Love","Wealth","Peace","Kindness"], ans:1, cat:"Epistles", ref:"Galatians 5:22-23", diff:3 },
+  { q:"What did Elijah do before going to heaven?", opts:["He died peacefully","He was taken in a whirlwind","He walked into the sea","He ascended a mountain"], ans:1, cat:"Old Testament", ref:"2 Kings 2:11", diff:3 },
+  { q:"How many times is 'fear not' found in the Bible?", opts:["66","100","365","200"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:3 },
+  { q:"Which book of the Bible has the most chapters?", opts:["Genesis","Isaiah","Psalms","Proverbs"], ans:2, cat:"Bible Knowledge", ref:"Psalms — 150 chapters", diff:3 },
+  { q:"Who wrote the most books in the New Testament?", opts:["Peter","John","Luke","Paul"], ans:3, cat:"New Testament", ref:"Bible", diff:3 },
+  { q:"What weapon did Samson use to kill 1,000 Philistines?", opts:["Sword","Bare hands","Donkey's jawbone","Stone"], ans:2, cat:"Old Testament", ref:"Judges 15:15", diff:3 },
+  { q:"What did God use to guide Israel in the wilderness at night?", opts:["A star","A pillar of fire","An angel","The moon"], ans:1, cat:"Old Testament", ref:"Exodus 13:21", diff:3 },
+  { q:"Where was Jesus when He was transfigured?", opts:["Mount Sinai","Mount of Olives","A high mountain","Mount Zion"], ans:2, cat:"New Testament", ref:"Matthew 17:1", diff:3 },
+  { q:"How many years did Israel wander in the wilderness?", opts:["20 years","30 years","40 years","50 years"], ans:2, cat:"Old Testament", ref:"Numbers 14:33", diff:3 },
+
+  // ── EXPERT (4) ────────────────────────────────
+  { q:"Who was Abraham's first son?", opts:["Isaac","Jacob","Ishmael","Esau"], ans:2, cat:"Patriarchs", ref:"Genesis 16:15", diff:4 },
+  { q:"How many years did Jacob work for Rachel?", opts:["7 years","14 years","21 years","Both 7 and 14 years"], ans:3, cat:"Patriarchs", ref:"Genesis 29:20-30", diff:4 },
+  { q:"Who was Moses' father-in-law?", opts:["Jethro","Caleb","Eleazar","Hobab"], ans:0, cat:"Old Testament", ref:"Exodus 3:1", diff:4 },
+  { q:"In what city did Paul and Silas get thrown in prison and worship?", opts:["Corinth","Philippi","Ephesus","Thessalonica"], ans:1, cat:"Acts", ref:"Acts 16:24-25", diff:4 },
+  { q:"What was the name of the valley where David fought Goliath?", opts:["Jezreel","Elah","Kidron","Berachah"], ans:1, cat:"Old Testament", ref:"1 Samuel 17:2", diff:4 },
+  { q:"How many chapters are in the Psalms?", opts:["100","120","150","175"], ans:2, cat:"Psalms", ref:"Psalms", diff:4 },
+  { q:"Who was the first judge of Israel?", opts:["Samuel","Gideon","Othniel","Deborah"], ans:2, cat:"Judges", ref:"Judges 3:9", diff:4 },
+  { q:"What tree did Zacchaeus climb to see Jesus?", opts:["Fig tree","Olive tree","Sycamore tree","Cedar tree"], ans:2, cat:"New Testament", ref:"Luke 19:4", diff:4 },
+  { q:"How many letters did Paul write in the New Testament?", opts:["11","13","15","17"], ans:1, cat:"Epistles", ref:"Bible", diff:4 },
+  { q:"Which apostle was a tax collector before following Jesus?", opts:["Peter","James","Matthew","Bartholomew"], ans:2, cat:"New Testament", ref:"Matthew 9:9", diff:4 },
+
+  // ── SCHOLAR (5) ───────────────────────────────
+  { q:"What is the Hebrew word for 'the LORD' used in the Old Testament?", opts:["Adonai","Elohim","YHWH / Yahweh","El Shaddai"], ans:2, cat:"Hebrew", ref:"Exodus 3:14", diff:5 },
+  { q:"How many elders surround the throne in Revelation 4?", opts:["12","24","48","72"], ans:1, cat:"Revelation", ref:"Revelation 4:4", diff:5 },
+  { q:"Who was the king of Salem who blessed Abraham?", opts:["Melchizedek","Abimelech","Bera","Balak"], ans:0, cat:"Patriarchs", ref:"Genesis 14:18", diff:5 },
+  { q:"What are the first words of the book of John?", opts:["In the beginning was the Word","God so loved the world","The Spirit of the Lord","Grace and peace to you"], ans:0, cat:"Gospel of John", ref:"John 1:1", diff:5 },
+  { q:"Who were the parents of John the Baptist?", opts:["Joseph and Mary","Zechariah and Elizabeth","Simeon and Anna","Joachim and Anne"], ans:1, cat:"New Testament", ref:"Luke 1:5-13", diff:5 },
+  { q:"In which prison was Paul held before going to Rome?", opts:["Jerusalem prison","Caesarea — in Herod's palace","Antioch jail","The Mamertine"], ans:1, cat:"Acts", ref:"Acts 23:35", diff:5 },
+  { q:"What does the name 'Emmanuel' mean?", opts:["Son of God","God saves","God with us","Holy One"], ans:2, cat:"Names of Jesus", ref:"Matthew 1:23", diff:5 },
+  { q:"How many seals are opened in the book of Revelation?", opts:["4","6","7","12"], ans:2, cat:"Revelation", ref:"Revelation 6-8", diff:5 },
+  { q:"What was the Sanhedrin?", opts:["A synagogue","Jewish supreme court & council","A Roman court","A Pharisee school"], ans:1, cat:"History", ref:"John 11:47", diff:5 },
+  { q:"Who wrote the book of Hebrews?", opts:["Paul","Barnabas","Apollos","Unknown — disputed"], ans:3, cat:"Epistles", ref:"Hebrews — authorship debated", diff:5 },
+];
+
+// ── BADGE DEFINITIONS ───────────────────────────────
+const QZ_BADGES = [
+  { id:'first_quiz',   icon:'🎉', name:'First Step',     desc:'Complete your first quiz',           check: s => s.totalGames >= 1 },
+  { id:'perfect',      icon:'💯', name:'Perfect Score',  desc:'Get 100% on any quiz',               check: s => s.perfectCount >= 1 },
+  { id:'combo5',       icon:'🔥', name:'On Fire',        desc:'Get a 5x combo streak',              check: s => s.maxCombo >= 5 },
+  { id:'streak7',      icon:'📅', name:'Week Warrior',   desc:'Play 7 days in a row',               check: s => s.dayStreak >= 7 },
+  { id:'scholar_lvl',  icon:'👑', name:'Bible Scholar',  desc:'Unlock Scholar level',               check: s => s.totalXP >= 1500 },
+  { id:'speed',        icon:'⚡', name:'Lightning Fast', desc:'Answer 5 questions under 5 seconds', check: s => s.speedAnswers >= 5 },
+  { id:'nt_master',    icon:'✝️', name:'NT Master',       desc:'Get 10 NT questions right',          check: s => s.catCorrect?.NT >= 10 },
+  { id:'ot_master',    icon:'🏺', name:'OT Master',      desc:'Get 10 OT questions right',          check: s => s.catCorrect?.OT >= 10 },
+  { id:'psalm_master', icon:'🎵', name:'Psalm Master',   desc:'Get 5 Psalms questions right',       check: s => s.catCorrect?.Psalms >= 5 },
+  { id:'noah',         icon:'🌊', name:'Noah Scholar',   desc:'Answer 3 creation/flood questions',  check: s => s.catCorrect?.Creation >= 3 },
+  { id:'prophet',      icon:'📜', name:'Prophet\'s Voice',desc:'Get 5 Prophets questions right',    check: s => s.catCorrect?.Prophets >= 5 },
+  { id:'centurion',    icon:'🎖️', name:'Centurion',      desc:'Answer 100 questions total',         check: s => s.totalAnswered >= 100 },
+  { id:'xp500',        icon:'⭐', name:'Rising Star',    desc:'Earn 500 XP',                        check: s => s.totalXP >= 500 },
+  { id:'xp1000',       icon:'🌟', name:'Shining Light',  desc:'Earn 1,000 XP',                      check: s => s.totalXP >= 1000 },
+];
+
+// ── QUIZ STATE ───────────────────────────────────────
+const QZS_KEY = 'edd_qzstate';
+let qz = {
+  // Persistent
+  totalXP: 0, totalGames: 0, totalAnswered: 0, totalCorrect: 0,
+  dayStreak: 0, lastPlayedDate: '', speedAnswers: 0, maxCombo: 0,
+  perfectCount: 0, earnedBadges: [],
+  catCorrect: { OT:0, NT:0, Psalms:0, Creation:0, Prophets:0 },
+  // Session
+  level: null, questions: [], current: 0, score: 0,
+  combo: 0, sessionXP: 0, answered: false, finished: false,
+  lifelines: { fifty: true, skip: true },
+  timerVal: 30, timerInterval: null,
+  newBadges: [], speedCount: 0,
 };
 
-function getTodayQuizKey() {
-  return 'edd_quiz_' + new Date().toISOString().split('T')[0];
-}
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function loadQuizStats() {
-  const best = parseInt(localStorage.getItem('edd_quiz_best') || '0');
-  const played = parseInt(localStorage.getItem('edd_quiz_played') || '0');
-  const streak = parseInt(localStorage.getItem('edd_quiz_streak') || '0');
-  setText('qzBestScore', best + '%');
-  setText('qzStreak', streak);
-  setText('qzPlayed', played);
-}
-
-function initQuiz() {
-  loadQuizStats();
-  const todayKey = getTodayQuizKey();
-  const saved = localStorage.getItem(todayKey);
-
-  if (saved) {
-    // Already played today — show result
-    const result = JSON.parse(saved);
-    qzState = { questions: [], current: 0, score: result.score, answered: false, finished: true, todayKey };
-    showQuizResult(result.score, result.total, true);
-    return;
-  }
-
-  // Pick 10 random questions for today using date as seed
-  const dateNum = parseInt(new Date().toISOString().split('T')[0].replace(/-/g, ''));
-  const seeded = [...QUIZ_QUESTIONS].sort((a, b) => {
-    const ha = (a.q.charCodeAt(0) * dateNum) % 997;
-    const hb = (b.q.charCodeAt(0) * dateNum) % 997;
-    return ha - hb;
-  });
-  qzState = {
-    questions: seeded.slice(0, 10),
-    current: 0, score: 0, answered: false, finished: false, todayKey
+function qzSave() {
+  const persist = {
+    totalXP: qz.totalXP, totalGames: qz.totalGames, totalAnswered: qz.totalAnswered,
+    totalCorrect: qz.totalCorrect, dayStreak: qz.dayStreak, lastPlayedDate: qz.lastPlayedDate,
+    speedAnswers: qz.speedAnswers, maxCombo: qz.maxCombo, perfectCount: qz.perfectCount,
+    earnedBadges: qz.earnedBadges, catCorrect: qz.catCorrect,
   };
+  localStorage.setItem(QZS_KEY, JSON.stringify(persist));
+}
+
+function qzLoad() {
+  try {
+    const s = JSON.parse(localStorage.getItem(QZS_KEY) || '{}');
+    Object.assign(qz, s);
+    if (!qz.catCorrect) qz.catCorrect = { OT:0, NT:0, Psalms:0, Creation:0, Prophets:0 };
+    if (!qz.earnedBadges) qz.earnedBadges = [];
+  } catch(e) {}
+}
+
+function qzCurrentLevelIdx() {
+  let idx = 0;
+  QZ_LEVELS.forEach((l, i) => { if (qz.totalXP >= l.xpNeeded) idx = i; });
+  return idx;
+}
+
+function qzIsUnlocked(levelId) {
+  const l = QZ_LEVELS.find(x => x.id === levelId);
+  return l && qz.totalXP >= l.xpNeeded;
+}
+
+// ── INIT & HOME SCREEN ──────────────────────────────
+function initQuiz() {
+  qzLoad();
+  qzUpdateStreak();
+  renderQuizHome();
+}
+
+function qzUpdateStreak() {
+  const today = new Date().toISOString().split('T')[0];
+  if (qz.lastPlayedDate === today) return; // already played today, streak stands
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  if (qz.lastPlayedDate === yStr) {
+    // streak continues — will increment after game
+  } else if (qz.lastPlayedDate !== today) {
+    // broke streak
+    qz.dayStreak = 0;
+  }
+}
+
+function renderQuizHome() {
+  qzLoad();
+  const area = document.getElementById('quizArea');
+  if (!area) return;
+  const curLevelIdx = qzCurrentLevelIdx();
+  const curLevel = QZ_LEVELS[curLevelIdx];
+  const nextLevel = QZ_LEVELS[curLevelIdx + 1];
+  const xpToNext = nextLevel ? nextLevel.xpNeeded - qz.totalXP : 0;
+  const xpPct = nextLevel
+    ? Math.min(100, ((qz.totalXP - curLevel.xpNeeded) / (nextLevel.xpNeeded - curLevel.xpNeeded)) * 100)
+    : 100;
+
+  let levelsHtml = QZ_LEVELS.map((l, i) => {
+    const unlocked = qz.totalXP >= l.xpNeeded;
+    const isCurrent = i === curLevelIdx;
+    return `
+      <div class="qz-level-card ${!unlocked ? 'locked' : ''} ${isCurrent ? 'active-level' : ''}"
+           onclick="${unlocked ? `startQuizLevel('${l.id}')` : `toast('Earn ${l.xpNeeded - qz.totalXP} more XP to unlock ${l.name}')`}">
+        <div class="qz-lc-icon" style="background:${unlocked ? l.color + '22' : 'var(--border)'}">${l.icon}</div>
+        <div class="qz-lc-info">
+          <div class="qz-lc-name">${l.name} ${isCurrent ? '<span style="font-size:0.65rem;color:var(--gold)">◀ YOUR LEVEL</span>' : ''}</div>
+          <div class="qz-lc-desc">${l.desc} · ${l.questions} questions · ${l.timePerQ}s each</div>
+        </div>
+        <div class="qz-lc-right">
+          ${unlocked ? '<span class="qz-lc-check">✅</span>' : `<span class="qz-lc-unlock">🔒 ${l.xpNeeded} XP</span>`}
+        </div>
+      </div>`;
+  }).join('');
+
+  let badgesHtml = '';
+  if (qz.earnedBadges.length > 0) {
+    const badges = qz.earnedBadges.slice(-6).map(id => {
+      const b = QZ_BADGES.find(x => x.id === id);
+      return b ? `<div class="qz-badge"><span class="qz-badge-icon">${b.icon}</span><span class="qz-badge-name">${b.name}</span></div>` : '';
+    }).join('');
+    badgesHtml = `<div class="sh" style="margin-bottom:10px"><div class="sh-gem">🏅</div><div class="sh-label">My Badges</div><div class="sh-line"></div></div><div class="qz-badges-row" style="margin-bottom:16px">${badges}</div>`;
+  }
+
+  area.innerHTML = `
+    <div class="qz-xp-wrap">
+      <div class="qz-xp-top">
+        <span class="qz-level-badge qz-lvl-${curLevel.id}">${curLevel.icon} ${curLevel.name}</span>
+        <span class="qz-xp-pts">${qz.totalXP} XP</span>
+      </div>
+      <div class="qz-xp-bar-bg">
+        <div class="qz-xp-bar-fill" style="width:${xpPct}%"></div>
+      </div>
+      <div class="qz-xp-label" style="margin-top:5px">${nextLevel ? xpToNext + ' XP to ' + nextLevel.name : '👑 Maximum level reached!'}</div>
+    </div>
+    <div class="qz-stats">
+      <div class="qz-stat"><div class="qz-stat-n">${qz.totalGames}</div><div class="qz-stat-l">Played</div></div>
+      <div class="qz-stat"><div class="qz-stat-n">${qz.dayStreak}</div><div class="qz-stat-l">Day Streak</div></div>
+      <div class="qz-stat"><div class="qz-stat-n">${qz.totalAnswered > 0 ? Math.round((qz.totalCorrect/qz.totalAnswered)*100) : 0}%</div><div class="qz-stat-l">Accuracy</div></div>
+      <div class="qz-stat"><div class="qz-stat-n">${qz.earnedBadges.length}</div><div class="qz-stat-l">Badges</div></div>
+    </div>
+    ${badgesHtml}
+    <div class="sh" style="margin-bottom:10px"><div class="sh-gem">✦</div><div class="sh-label">Choose Your Level</div><div class="sh-line"></div></div>
+    <div class="qz-levels-grid">${levelsHtml}</div>
+  `;
+}
+
+// ── START A LEVEL ───────────────────────────────────
+function startQuizLevel(levelId) {
+  qzLoad();
+  const level = QZ_LEVELS.find(l => l.id === levelId);
+  if (!level) return;
+  const diff = QZ_LEVELS.indexOf(level) + 1;
+
+  // Pick questions for this difficulty
+  const pool = QZ_BANK.filter(q => q.diff === diff);
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const chosen = shuffled.slice(0, Math.min(level.questions, shuffled.length));
+
+  qz.level = level;
+  qz.questions = chosen;
+  qz.current = 0;
+  qz.score = 0;
+  qz.combo = 0;
+  qz.sessionXP = 0;
+  qz.answered = false;
+  qz.finished = false;
+  qz.lifelines = { fifty: true, skip: true };
+  qz.newBadges = [];
+  qz.speedCount = 0;
 
   renderQuizQuestion();
 }
 
+// ── RENDER QUESTION ─────────────────────────────────
 function renderQuizQuestion() {
-  const area = document.getElementById('quizArea');
-  if (!area) return;
-  const { questions, current } = qzState;
+  qzStopTimer();
+  const { questions, current, level, lifelines, combo } = qz;
   const q = questions[current];
   const total = questions.length;
   const pct = (current / total) * 100;
-  const letters = ['A', 'B', 'C', 'D'];
+  const letters = ['A','B','C','D'];
+
+  const area = document.getElementById('quizArea');
+  if (!area) return;
 
   area.innerHTML = `
-    <div class="quiz-card">
-      <div class="quiz-progress-bar-wrap">
-        <div class="quiz-progress-bar" style="width:${pct}%"></div>
+    <div class="qz-play-header">
+      <button class="qz-back-btn" onclick="renderQuizHome()">← Levels</button>
+      <div class="qz-q-meta">
+        ${combo >= 2 ? `<span class="qz-combo">🔥 ${combo}x Combo!</span>` : ''}
+        <div class="qz-timer-wrap">
+          <div class="qz-timer-ring">
+            <svg class="qz-timer-svg" width="38" height="38" viewBox="0 0 38 38">
+              <circle class="qz-timer-bg" cx="19" cy="19" r="16"/>
+              <circle class="qz-timer-arc" id="qzTimerArc" cx="19" cy="19" r="16"
+                stroke-dasharray="100.5" stroke-dashoffset="0"/>
+            </svg>
+            <span class="qz-timer-num" id="qzTimerNum">${level.timePerQ}</span>
+          </div>
+        </div>
       </div>
-      <div class="quiz-q-num">Question ${current + 1} of ${total}</div>
-      <div class="quiz-q-cat">${q.cat}</div>
-      <div class="quiz-question">${q.q}</div>
-      <div class="quiz-options" id="qzOpts">
+    </div>
+    <div class="qz-prog-wrap">
+      <div class="qz-prog-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="qz-lifelines">
+      <button class="qz-ll-btn" id="qzLL50" onclick="useLifeline50()" ${!lifelines.fifty ? 'disabled' : ''}>
+        <span class="qz-ll-icon">✂️</span> 50/50 ${!lifelines.fifty ? '(used)' : ''}
+      </button>
+      <button class="qz-ll-btn" id="qzLLSkip" onclick="useLifelineSkip()" ${!lifelines.skip ? 'disabled' : ''}>
+        <span class="qz-ll-icon">⏭️</span> Skip ${!lifelines.skip ? '(used)' : ''}
+      </button>
+      <div style="flex:2;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;text-align:center;font-size:0.72rem;color:var(--text-4);font-family:var(--serif)">
+        Q${current+1}/${total} · ${qz.sessionXP} XP earned
+      </div>
+    </div>
+    <div class="qz-card">
+      <span class="qz-q-cat-pill">${q.cat}</span>
+      <div class="qz-question">${q.q}</div>
+      <div class="qz-opts" id="qzOpts">
         ${q.opts.map((opt, i) => `
-          <button class="quiz-opt" onclick="answerQuiz(${i})" id="qzOpt${i}">
-            <span class="quiz-opt-letter">${letters[i]}</span>
-            ${opt}
-          </button>
-        `).join('')}
+          <button class="qz-opt" onclick="answerQuiz(${i})" id="qzOpt${i}">
+            <span class="qz-opt-letter">${letters[i]}</span>${opt}
+          </button>`).join('')}
       </div>
-      <div class="quiz-feedback" id="qzFeedback"></div>
-      <button class="quiz-next-btn" id="qzNextBtn" onclick="nextQuizQuestion()" style="display:none">
-        ${current + 1 < total ? 'Next Question →' : 'See Results 🎉'}
+      <div class="qz-feedback" id="qzFeedback"></div>
+      <button class="qz-next-btn" id="qzNextBtn" onclick="nextQuizQuestion()" style="display:none">
+        ${current + 1 < total ? 'Next Question →' : 'See My Results 🎉'}
       </button>
     </div>
   `;
 
-  // Update hero
-  setText('quizHeroTitle', `Question ${current + 1} / ${total}`);
-  setText('quizHeroSub', `Score: ${qzState.score} correct so far`);
+  qzStartTimer(level.timePerQ);
 }
 
+// ── TIMER ────────────────────────────────────────────
+function qzStartTimer(seconds) {
+  qz.timerVal = seconds;
+  const circumference = 100.5;
+  const arc = document.getElementById('qzTimerArc');
+  const num = document.getElementById('qzTimerNum');
+
+  qz.timerInterval = setInterval(() => {
+    qz.timerVal--;
+    if (num) num.textContent = qz.timerVal;
+    const offset = circumference * (1 - qz.timerVal / seconds);
+    if (arc) arc.style.strokeDashoffset = offset;
+    if (qz.timerVal <= 5 && arc) arc.classList.add('urgent');
+    if (qz.timerVal <= 0) {
+      qzStopTimer();
+      timeOutAnswer();
+    }
+  }, 1000);
+}
+
+function qzStopTimer() {
+  if (qz.timerInterval) { clearInterval(qz.timerInterval); qz.timerInterval = null; }
+}
+
+function timeOutAnswer() {
+  if (qz.answered) return;
+  qz.answered = true;
+  qz.combo = 0;
+  const q = qz.questions[qz.current];
+  document.querySelectorAll('.qz-opt').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.ans) btn.classList.add('reveal');
+  });
+  const fb = document.getElementById('qzFeedback');
+  if (fb) {
+    fb.style.display = 'block';
+    fb.className = 'qz-feedback wrong';
+    fb.innerHTML = `⏱️ <strong>Time's up!</strong> The answer was: <strong>${q.opts[q.ans]}</strong><br><span style="font-size:0.78rem;opacity:0.8">${q.ref}</span>`;
+  }
+  setTimeout(() => {
+    const nb = document.getElementById('qzNextBtn');
+    if (nb) nb.style.display = 'block';
+  }, 50);
+}
+
+// ── ANSWER ───────────────────────────────────────────
 function answerQuiz(selectedIdx) {
-  if (qzState.answered) return;
-  qzState.answered = true;
+  if (qz.answered) return;
+  qzStopTimer();
+  qz.answered = true;
 
-  const q = qzState.questions[qzState.current];
+  const timeBonus = qz.timerVal >= 25 ? 3 : qz.timerVal >= 15 ? 2 : qz.timerVal >= 5 ? 1 : 0;
+  if (qz.timerVal >= 25) qz.speedCount++;
+
+  const q = qz.questions[qz.current];
   const correct = selectedIdx === q.ans;
-  if (correct) qzState.score++;
 
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts.forEach((btn, i) => {
+  // XP calculation
+  const baseXP = { 1:5, 2:8, 3:12, 4:18, 5:25 }[q.diff] || 10;
+  let xpGained = 0;
+
+  if (correct) {
+    qz.score++;
+    qz.combo++;
+    if (qz.combo > qz.maxCombo) qz.maxCombo = qz.combo;
+    const comboBonus = qz.combo >= 5 ? 3 : qz.combo >= 3 ? 2 : 1;
+    xpGained = baseXP * comboBonus + timeBonus;
+    qz.sessionXP += xpGained;
+
+    // Category tracking
+    const catMap = { 'Old Testament':'OT', 'New Testament':'NT', 'Psalms':'Psalms', 'Creation':'Creation', 'Prophets':'Prophets' };
+    const cat = catMap[q.cat];
+    if (cat) { qz.catCorrect[cat] = (qz.catCorrect[cat] || 0) + 1; }
+  } else {
+    qz.combo = 0;
+  }
+
+  qz.totalAnswered++;
+  if (correct) qz.totalCorrect++;
+
+  // Style options
+  document.querySelectorAll('.qz-opt').forEach((btn, i) => {
     btn.disabled = true;
     if (i === q.ans) btn.classList.add(i === selectedIdx ? 'correct' : 'reveal');
     else if (i === selectedIdx) btn.classList.add('wrong');
   });
 
+  // Feedback
   const fb = document.getElementById('qzFeedback');
-  fb.style.display = 'block';
-  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
-  fb.innerHTML = correct
-    ? `✅ <strong>Correct!</strong> ${q.ref}`
-    : `❌ <strong>The answer is: ${q.opts[q.ans]}</strong><br><span style="font-size:0.8rem;opacity:0.8">${q.ref}</span>`;
+  if (fb) {
+    fb.style.display = 'block';
+    fb.className = 'qz-feedback ' + (correct ? 'correct' : 'wrong');
+    const comboTxt = correct && qz.combo >= 3 ? ` 🔥 ${qz.combo}x Combo!` : '';
+    const xpTxt = correct ? ` <span class="qz-xp-pop">+${xpGained} XP</span>` : '';
+    fb.innerHTML = correct
+      ? `✅ <strong>Correct!${comboTxt}</strong>${xpTxt}<br><span style="font-size:0.78rem;opacity:0.75">${q.ref}</span>`
+      : `❌ <strong>The answer is: ${q.opts[q.ans]}</strong><br><span style="font-size:0.78rem;opacity:0.8">${q.ref}</span>`;
+  }
 
-  // Show next button — use setTimeout to ensure DOM is ready after innerHTML set
   setTimeout(() => {
     const nb = document.getElementById('qzNextBtn');
-    if (nb) {
-      nb.style.display = 'block';
-      nb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    if (nb) { nb.style.display = 'block'; nb.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+  }, 80);
+}
+
+// ── LIFELINES ────────────────────────────────────────
+function useLifeline50() {
+  if (!qz.lifelines.fifty || qz.answered) return;
+  qz.lifelines.fifty = false;
+  document.getElementById('qzLL50').disabled = true;
+
+  const q = qz.questions[qz.current];
+  // Remove 2 wrong options
+  const wrongIdxs = [0,1,2,3].filter(i => i !== q.ans);
+  const toRemove = wrongIdxs.sort(() => Math.random()-0.5).slice(0, 2);
+  toRemove.forEach(i => {
+    const btn = document.getElementById('qzOpt' + i);
+    if (btn) btn.classList.add('eliminated');
+  });
+  toast('50/50 used — two wrong answers removed');
+}
+
+function useLifelineSkip() {
+  if (!qz.lifelines.skip || qz.answered) return;
+  qzStopTimer();
+  qz.lifelines.skip = false;
+  qz.answered = true;
+  qz.combo = 0;
+  document.getElementById('qzLLSkip').disabled = true;
+  document.querySelectorAll('.qz-opt').forEach(btn => btn.disabled = true);
+
+  const fb = document.getElementById('qzFeedback');
+  if (fb) {
+    fb.style.display = 'block';
+    fb.className = 'qz-feedback wrong';
+    fb.innerHTML = `⏭️ <strong>Question skipped</strong> — no XP gained this round`;
+  }
+
+  setTimeout(() => {
+    const nb = document.getElementById('qzNextBtn');
+    if (nb) nb.style.display = 'block';
   }, 50);
 }
 
+// ── NEXT ─────────────────────────────────────────────
 function nextQuizQuestion() {
-  const { current, questions } = qzState;
-  if (current + 1 >= questions.length) {
-    finishQuiz();
-    return;
-  }
-  qzState.current++;
-  qzState.answered = false;
+  const { current, questions } = qz;
+  if (current + 1 >= questions.length) { finishQuiz(); return; }
+  qz.current++;
+  qz.answered = false;
   renderQuizQuestion();
 }
 
+// ── FINISH ───────────────────────────────────────────
 function finishQuiz() {
-  qzState.finished = true;
-  const { score, questions, todayKey } = qzState;
+  qzStopTimer();
+  qz.finished = true;
+  const { score, questions, level, sessionXP } = qz;
   const total = questions.length;
   const pct = Math.round((score / total) * 100);
 
-  // Save result
-  localStorage.setItem(todayKey, JSON.stringify({ score, total, pct }));
+  // Update persistent stats
+  const prevXP = qz.totalXP;
+  qz.totalXP += sessionXP;
+  qz.totalGames++;
+  if (pct === 100) qz.perfectCount++;
+  if (qz.speedCount >= 5) qz.speedAnswers = (qz.speedAnswers || 0) + qz.speedCount;
 
-  // Update stats
-  const prevBest = parseInt(localStorage.getItem('edd_quiz_best') || '0');
-  if (pct > prevBest) localStorage.setItem('edd_quiz_best', pct);
+  // Day streak
+  const today = new Date().toISOString().split('T')[0];
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  if (qz.lastPlayedDate === yStr || qz.lastPlayedDate === today) {
+    if (qz.lastPlayedDate !== today) qz.dayStreak++;
+  } else {
+    qz.dayStreak = 1;
+  }
+  qz.lastPlayedDate = today;
 
-  const played = parseInt(localStorage.getItem('edd_quiz_played') || '0') + 1;
-  localStorage.setItem('edd_quiz_played', played);
+  // Check for new badges
+  qz.newBadges = [];
+  QZ_BADGES.forEach(b => {
+    if (!qz.earnedBadges.includes(b.id) && b.check(qz)) {
+      qz.earnedBadges.push(b.id);
+      qz.newBadges.push(b);
+    }
+  });
 
-  // Update streak
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  const yKey = 'edd_quiz_' + yesterday.toISOString().split('T')[0];
-  const streak = parseInt(localStorage.getItem('edd_quiz_streak') || '0');
-  const newStreak = localStorage.getItem(yKey) ? streak + 1 : 1;
-  localStorage.setItem('edd_quiz_streak', newStreak);
+  // Level up check
+  const prevLevelIdx = QZ_LEVELS.findIndex(l => prevXP >= l.xpNeeded);
+  const newLevelIdx = qzCurrentLevelIdx();
+  const leveledUp = newLevelIdx > prevLevelIdx;
 
-  loadQuizStats();
-  showQuizResult(score, total, false);
+  qzSave();
+  renderQuizResult(score, total, pct, sessionXP, leveledUp ? QZ_LEVELS[newLevelIdx] : null);
 }
 
-function showQuizResult(score, total, alreadyPlayed) {
-  const pct = Math.round((score / total) * 100);
-  const streak = parseInt(localStorage.getItem('edd_quiz_streak') || '0');
-
-  let emoji, msg;
-  if (pct === 100) { emoji = '🏆'; msg = '"Well done, good and faithful servant!" — Matthew 25:21'; }
-  else if (pct >= 80) { emoji = '🌟'; msg = '"Study to show thyself approved unto God." — 2 Timothy 2:15'; }
-  else if (pct >= 60) { emoji = '📖'; msg = '"Your word is a lamp to my feet and a light to my path." — Psalm 119:105'; }
-  else if (pct >= 40) { emoji = '🙏'; msg = '"Blessed are those who hunger and thirst for righteousness." — Matthew 5:6'; }
-  else { emoji = '✝️'; msg = '"As newborn babes, desire the sincere milk of the word." — 1 Peter 2:2'; }
-
+// ── RESULT SCREEN ────────────────────────────────────
+function renderQuizResult(score, total, pct, xpGained, newLevel) {
   const area = document.getElementById('quizArea');
+  if (!area) return;
+
+  const { level } = qz;
+  let trophy, verse;
+  if (pct === 100) { trophy='🏆'; verse='"Well done, good and faithful servant!" — Matthew 25:21'; }
+  else if (pct >= 80) { trophy='🌟'; verse='"Study to show thyself approved unto God." — 2 Timothy 2:15'; }
+  else if (pct >= 60) { trophy='📖'; verse='"Your word is a lamp to my feet." — Psalm 119:105'; }
+  else if (pct >= 40) { trophy='🙏'; verse='"Blessed are those who hunger for righteousness." — Matthew 5:6'; }
+  else               { trophy='✝️'; verse='"As newborn babes, desire the sincere milk of the word." — 1 Peter 2:2'; }
+
+  const levelUpHtml = newLevel ? `
+    <div class="qz-levelup-banner">
+      <h3>🎉 Level Up! You reached ${newLevel.icon} ${newLevel.name}!</h3>
+      <p>New harder questions and faster timer await you</p>
+    </div>` : '';
+
+  const newBadgesHtml = qz.newBadges.length ? `
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.72rem;color:var(--gold);font-family:var(--serif);margin-bottom:8px;letter-spacing:0.08em;text-transform:uppercase">🏅 New Badge${qz.newBadges.length>1?'s':''} Earned!</div>
+      <div class="qz-badges-row">
+        ${qz.newBadges.map(b=>`<div class="qz-badge new-badge"><span class="qz-badge-icon">${b.icon}</span><span class="qz-badge-name">${b.name}</span></div>`).join('')}
+      </div>
+    </div>` : '';
+
   area.innerHTML = `
-    <div class="quiz-result-card">
-      <div class="quiz-result-emoji">${emoji}</div>
-      <div class="quiz-result-score">${score}/${total}</div>
-      <div class="quiz-result-label">${pct}% correct${alreadyPlayed ? " — today's quiz done" : " — great effort!"}</div>
-      <div class="quiz-result-msg">${msg}</div>
-      ${streak > 1 ? `<div class="quiz-streak-badge">🔥 ${streak}-day quiz streak!</div>` : ''}
-      <br><br>
-      <button class="quiz-restart-btn" onclick="initQuiz()">
-        ${alreadyPlayed ? '📊 View My Stats' : '🔄 Try Again'}
-      </button>
-      <p style="font-size:0.72rem;color:var(--text-4);margin-top:12px">New questions tomorrow!</p>
+    ${levelUpHtml}
+    <div class="qz-result">
+      <div class="qz-result-trophy">${trophy}</div>
+      <div class="qz-result-score">${score}/${total}</div>
+      <div class="qz-result-sub">${pct}% correct · ${level.icon} ${level.name} level</div>
+      <div class="qz-result-xp-gained">+${xpGained} XP earned · Total: ${qz.totalXP} XP</div>
+      ${newBadgesHtml}
+      <div class="qz-result-verse">${verse}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">
+        <div class="qz-stat" style="min-width:70px"><div class="qz-stat-n">${qz.dayStreak}</div><div class="qz-stat-l">Day Streak</div></div>
+        <div class="qz-stat" style="min-width:70px"><div class="qz-stat-n">${qz.maxCombo}x</div><div class="qz-stat-l">Best Combo</div></div>
+        <div class="qz-stat" style="min-width:70px"><div class="qz-stat-n">${qz.earnedBadges.length}</div><div class="qz-stat-l">Badges</div></div>
+      </div>
+      <div class="qz-result-btns">
+        <button class="qz-play-again-btn" onclick="startQuizLevel('${level.id}')">🔄 Play Again</button>
+        <button class="qz-back-home-btn" onclick="renderQuizHome()">← All Levels</button>
+      </div>
     </div>
   `;
-
-  setText('quizHeroTitle', 'Today Complete!');
-  setText('quizHeroSub', pct + '% — Come back tomorrow for new questions');
 }
+
 
 
 // ══════════════════════════════════════════════════════
@@ -6167,14 +6538,7 @@ const _origNav = nav;
 function nav(p) {
   if (p !== 'today') stopAudioIfPlaying();
   if (p === 'prayer') { loadPrayerWall(true); updatePwStats(); }
-  if (p === 'quiz') {
-    // Only re-init if not currently mid-game
-    if (!qzState.questions || qzState.questions.length === 0 || qzState.finished) {
-      initQuiz();
-    } else {
-      loadQuizStats();
-    }
-  }
+  if (p === 'quiz') { initQuiz(); }
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
   const page = document.getElementById('page-' + p);
