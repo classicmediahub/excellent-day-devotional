@@ -1748,6 +1748,7 @@ button.brand:active { transform: scale(0.97); }
 .quiz-feedback.correct { background:rgba(58,170,90,0.1); border:1px solid rgba(58,170,90,0.3); color:#3aaa5a; }
 .quiz-feedback.wrong { background:rgba(224,90,90,0.08); border:1px solid rgba(224,90,90,0.25); color:#e05a5a; }
 .quiz-next-btn { width:100%; margin-top:16px; padding:13px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:none; }
+.quiz-next-btn.visible { display:block !important; }
 .quiz-next-btn:hover { opacity:0.88; transform:translateY(-1px); }
 .quiz-result-card { background:var(--surface); border:1px solid var(--border); border-radius:18px; padding:28px 20px; text-align:center; }
 .quiz-result-emoji { font-size:3.5rem; margin-bottom:10px; }
@@ -3457,7 +3458,7 @@ function initQuiz() {
   if (saved) {
     // Already played today — show result
     const result = JSON.parse(saved);
-    qzState = { ...result, finished: true, todayKey };
+    qzState = { questions: [], current: 0, score: result.score, answered: false, finished: true, todayKey };
     showQuizResult(result.score, result.total, true);
     return;
   }
@@ -3536,7 +3537,8 @@ function answerQuiz(selectedIdx) {
     ? `✅ <strong>Correct!</strong> ${q.ref}`
     : `❌ <strong>The answer is: ${q.opts[q.ans]}</strong><br><span style="font-size:0.8rem;opacity:0.8">${q.ref}</span>`;
 
-  document.getElementById('qzNextBtn').style.display = 'block';
+  const nb = document.getElementById('qzNextBtn');
+  if (nb) nb.classList.add('visible');
 }
 
 function nextQuizQuestion() {
@@ -3551,6 +3553,7 @@ function nextQuizQuestion() {
 }
 
 function finishQuiz() {
+  qzState.finished = true;
   const { score, questions, todayKey } = qzState;
   const total = questions.length;
   const pct = Math.round((score / total) * 100);
@@ -5854,7 +5857,14 @@ const _origNav = nav;
 function nav(p) {
   if (p !== 'today') stopAudioIfPlaying();
   if (p === 'prayer') { loadPrayerWall(true); updatePwStats(); }
-  if (p === 'quiz') { initQuiz(); }
+  if (p === 'quiz') {
+    // Only re-init if not currently mid-game
+    if (!qzState.questions || qzState.questions.length === 0 || qzState.finished) {
+      initQuiz();
+    } else {
+      loadQuizStats();
+    }
+  }
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
   const page = document.getElementById('page-' + p);
