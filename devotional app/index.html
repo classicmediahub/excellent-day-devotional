@@ -1759,6 +1759,44 @@ button.brand:active { transform: scale(0.97); }
 .quiz-restart-btn:hover { opacity:0.88; }
 .quiz-streak-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(200,168,74,0.12); border:1px solid rgba(200,168,74,0.3); border-radius:20px; padding:5px 14px; font-size:0.78rem; color:var(--gold); font-family:var(--serif); margin-top:12px; }
 
+
+/* ═══════════════════════════════════════════════════
+   DEVOTIONAL COMMENTS & REACTIONS
+═══════════════════════════════════════════════════ */
+.cmt-section { margin-bottom: 24px; }
+.cmt-reactions-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.cmt-react-btn { display: flex; align-items: center; gap: 5px; padding: 7px 14px; border-radius: 24px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; font-family: var(--serif); font-size: 0.82rem; color: var(--text-2); transition: all 0.2s; }
+.cmt-react-btn:hover { border-color: var(--accent); background: var(--accent-bg); }
+.cmt-react-btn.reacted { border-color: var(--gold); background: var(--gold-bg); color: var(--gold); font-weight: 600; }
+.cmt-react-btn .cmt-emoji { font-size: 1.1rem; }
+.cmt-react-count { font-size: 0.78rem; font-weight: 700; }
+.cmt-compose { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+.cmt-avatar-small { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--gold)); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.cmt-input-wrap { flex: 1; }
+.cmt-textarea { width: 100%; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 13px; color: var(--text-1); font-family: var(--serif); font-size: 0.86rem; resize: none; outline: none; min-height: 60px; box-sizing: border-box; transition: border-color 0.2s; line-height: 1.55; }
+.cmt-textarea:focus { border-color: var(--accent); }
+.cmt-input-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.cmt-anon { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--text-4); cursor: pointer; }
+.cmt-anon input { accent-color: var(--accent); }
+.cmt-post-btn { padding: 7px 18px; background: var(--accent); border: none; border-radius: 10px; color: #fff; font-family: var(--serif); font-size: 0.76rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.cmt-post-btn:hover { opacity: 0.88; }
+.cmt-post-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.cmt-list { display: flex; flex-direction: column; gap: 10px; }
+.cmt-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.cmt-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.cmt-card-name { font-family: var(--serif); font-size: 0.8rem; font-weight: 600; color: var(--text-1); }
+.cmt-card-time { font-size: 0.65rem; color: var(--text-4); margin-left: auto; }
+.cmt-card-text { font-family: var(--serif); font-size: 0.86rem; color: var(--text-2); line-height: 1.6; }
+.cmt-card-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.cmt-like-btn { background: transparent; border: none; color: var(--text-4); font-size: 0.75rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 3px 0; transition: color 0.2s; font-family: var(--serif); }
+.cmt-like-btn:hover, .cmt-like-btn.liked { color: #e05a5a; }
+.cmt-del-btn { margin-left: auto; background: transparent; border: none; color: var(--text-4); font-size: 0.72rem; cursor: pointer; padding: 3px 6px; border-radius: 6px; transition: color 0.2s; font-family: var(--serif); }
+.cmt-del-btn:hover { color: #e05a5a; }
+.cmt-empty { text-align: center; padding: 24px 16px; color: var(--text-4); font-family: var(--serif); font-size: 0.85rem; font-style: italic; }
+.cmt-load-more { width: 100%; padding: 8px; background: transparent; border: 1px solid var(--border); border-radius: 10px; color: var(--text-3); font-family: var(--serif); font-size: 0.75rem; cursor: pointer; margin-top: 6px; transition: all 0.2s; }
+.cmt-load-more:hover { border-color: var(--accent); color: var(--accent); }
+.cmt-count-label { font-size: 0.72rem; color: var(--text-4); }
+
 </style>
 </head>
 <body>
@@ -1953,6 +1991,43 @@ button.brand:active { transform: scale(0.97); }
 
       <div class="sh"><div class="sh-gem">✦</div><div class="sh-label" id="sh-streak">Devotional Streak</div><div class="sh-line"></div></div>
       <div class="streak-row" id="streakRow"></div>
+
+
+      <!-- ── DEVOTIONAL COMMENTS ── -->
+      <div class="sh"><div class="sh-gem">💬</div><div class="sh-label">Community Reactions</div><div class="sh-line"></div></div>
+      <div class="card cmt-section" id="cmtSection">
+
+        <!-- Emoji reactions -->
+        <div class="cmt-reactions-row" id="cmtReactRow">
+          <button class="cmt-react-btn" id="crt-🙏" onclick="toggleReaction('🙏')"><span class="cmt-emoji">🙏</span><span class="cmt-react-count" id="crc-🙏">0</span></button>
+          <button class="cmt-react-btn" id="crt-❤️" onclick="toggleReaction('❤️')"><span class="cmt-emoji">❤️</span><span class="cmt-react-count" id="crc-❤️">0</span></button>
+          <button class="cmt-react-btn" id="crt-🔥" onclick="toggleReaction('🔥')"><span class="cmt-emoji">🔥</span><span class="cmt-react-count" id="crc-🔥">0</span></button>
+          <button class="cmt-react-btn" id="crt-✨" onclick="toggleReaction('✨')"><span class="cmt-emoji">✨</span><span class="cmt-react-count" id="crc-✨">0</span></button>
+          <button class="cmt-react-btn" id="crt-🙌" onclick="toggleReaction('🙌')"><span class="cmt-emoji">🙌</span><span class="cmt-react-count" id="crc-🙌">0</span></button>
+          <button class="cmt-react-btn" id="crt-💡" onclick="toggleReaction('💡')"><span class="cmt-emoji">💡</span><span class="cmt-react-count" id="crc-💡">0</span></button>
+        </div>
+
+        <!-- Comment compose -->
+        <div class="cmt-compose">
+          <div class="cmt-avatar-small" id="cmtMyAvatar">Me</div>
+          <div class="cmt-input-wrap">
+            <textarea class="cmt-textarea" id="cmtInput" placeholder="Share a reflection, testimony or thought on today's devotional…" maxlength="300" rows="2"></textarea>
+            <div class="cmt-input-footer">
+              <label class="cmt-anon"><input type="checkbox" id="cmtAnonCheck"> Anonymous</label>
+              <button class="cmt-post-btn" id="cmtPostBtn" onclick="postComment()">Post</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comment count -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <span class="cmt-count-label" id="cmtCountLabel">0 comments</span>
+        </div>
+
+        <!-- Comment list -->
+        <div class="cmt-list" id="cmtList"></div>
+        <button class="cmt-load-more" id="cmtLoadMore" style="display:none" onclick="loadMoreComments()">Load more…</button>
+      </div>
 
       <div class="brow">
         <button class="btn bp" onclick="nav('bible')">
@@ -3877,6 +3952,233 @@ function escapeHtml(text) {
 }
 
 
+
+// ══════════════════════════════════════════════════════
+//  DEVOTIONAL COMMENTS & REACTIONS
+// ══════════════════════════════════════════════════════
+const CMT_EMOJIS = ['🙏','❤️','🔥','✨','🙌','💡'];
+let cmtDateKey = '';
+let cmtOffset = 0;
+const CMT_PAGE = 8;
+let cmtMyReactions = new Set();
+let cmtMyLikes = new Set(JSON.parse(localStorage.getItem('edd_cmt_likes') || '[]'));
+
+function getTodayDateKey() {
+  return new Date().toISOString().split('T')[0];
+}
+
+async function initComments() {
+  if (!_db) return;
+  cmtDateKey = getTodayDateKey();
+  cmtOffset = 0;
+
+  // Load my saved reactions for today
+  const savedReacts = JSON.parse(localStorage.getItem('edd_reactions_' + cmtDateKey) || '[]');
+  cmtMyReactions = new Set(savedReacts);
+
+  await Promise.all([loadReactions(), loadComments(true)]);
+}
+
+// ── REACTIONS ───────────────────────────────────────
+async function loadReactions() {
+  if (!_db) return;
+  try {
+    const { data } = await _db
+      .from('devotional_reactions')
+      .select('emoji, count')
+      .eq('date', cmtDateKey);
+
+    // Reset all counts
+    CMT_EMOJIS.forEach(e => {
+      const el = document.getElementById('crc-' + e);
+      if (el) el.textContent = '0';
+      const btn = document.getElementById('crt-' + e);
+      if (btn) btn.classList.remove('reacted');
+    });
+
+    // Apply fetched counts
+    (data || []).forEach(row => {
+      const el = document.getElementById('crc-' + row.emoji);
+      if (el) el.textContent = row.count || 0;
+    });
+
+    // Apply my reactions
+    cmtMyReactions.forEach(e => {
+      const btn = document.getElementById('crt-' + e);
+      if (btn) btn.classList.add('reacted');
+    });
+  } catch(e) { console.error('Load reactions error:', e); }
+}
+
+async function toggleReaction(emoji) {
+  if (!_db) { toast('Connect to internet to react'); return; }
+  const hasReacted = cmtMyReactions.has(emoji);
+
+  // Optimistic UI
+  const btn = document.getElementById('crt-' + emoji);
+  const countEl = document.getElementById('crc-' + emoji);
+  let current = parseInt(countEl?.textContent || '0');
+
+  if (hasReacted) {
+    cmtMyReactions.delete(emoji);
+    btn?.classList.remove('reacted');
+    if (countEl) countEl.textContent = Math.max(0, current - 1);
+  } else {
+    cmtMyReactions.add(emoji);
+    btn?.classList.add('reacted');
+    if (countEl) countEl.textContent = current + 1;
+  }
+
+  // Save locally
+  localStorage.setItem('edd_reactions_' + cmtDateKey, JSON.stringify([...cmtMyReactions]));
+
+  // Upsert to Supabase
+  try {
+    const newCount = parseInt(countEl?.textContent || '0');
+    const { error } = await _db
+      .from('devotional_reactions')
+      .upsert({ date: cmtDateKey, emoji, count: newCount }, { onConflict: 'date,emoji' });
+    if (error) console.error('Reaction upsert error:', error);
+  } catch(e) { console.error('Reaction error:', e); }
+}
+
+// ── COMMENTS ────────────────────────────────────────
+async function loadComments(reset = false) {
+  if (!_db) return;
+  if (reset) { cmtOffset = 0; }
+
+  const list = document.getElementById('cmtList');
+  if (!list) return;
+  if (reset) list.innerHTML = '';
+
+  try {
+    const { data: { user } } = await _db.auth.getUser();
+    const userId = user?.id;
+
+    const { data, count, error } = await _db
+      .from('devotional_comments')
+      .select('*', { count: 'exact' })
+      .eq('date', cmtDateKey)
+      .order('created_at', { ascending: false })
+      .range(cmtOffset, cmtOffset + CMT_PAGE - 1);
+
+    if (error) throw error;
+
+    // Update count label
+    const lbl = document.getElementById('cmtCountLabel');
+    if (lbl && reset) lbl.textContent = (count || 0) + ' comment' + (count === 1 ? '' : 's');
+
+    if (!data || data.length === 0) {
+      if (reset) list.innerHTML = '<div class="cmt-empty">Be the first to share a reflection today ✦</div>';
+      document.getElementById('cmtLoadMore').style.display = 'none';
+      return;
+    }
+
+    data.forEach(c => list.appendChild(buildCommentCard(c, userId)));
+
+    cmtOffset += data.length;
+    const hasMore = data.length === CMT_PAGE;
+    document.getElementById('cmtLoadMore').style.display = hasMore ? 'block' : 'none';
+
+  } catch(e) {
+    console.error('Load comments error:', e);
+    if (reset) document.getElementById('cmtList').innerHTML =
+      '<div class="cmt-empty">Could not load comments — check your connection.</div>';
+  }
+}
+
+function loadMoreComments() { loadComments(false); }
+
+function buildCommentCard(c, userId) {
+  const isOwner = c.user_id === userId;
+  const isAnon = c.anonymous;
+  const displayName = isAnon ? 'Anonymous' : (isOwner ? 'You' : 'Community Member');
+  const initials = isAnon ? '🙏' : (c.user_id || '?').substring(0, 2).toUpperCase();
+  const hasLiked = cmtMyLikes.has(c.id);
+  const timeAgo = formatTimeAgo(c.created_at);
+
+  const div = document.createElement('div');
+  div.className = 'cmt-card';
+  div.id = 'cmt-' + c.id;
+  div.innerHTML = `
+    <div class="cmt-card-top">
+      <div class="cmt-avatar-small">${initials}</div>
+      <span class="cmt-card-name">${displayName}</span>
+      <span class="cmt-card-time">${timeAgo}</span>
+    </div>
+    <div class="cmt-card-text">${escapeHtml(c.text)}</div>
+    <div class="cmt-card-actions">
+      <button class="cmt-like-btn ${hasLiked ? 'liked' : ''}" id="cml-${c.id}" onclick="toggleCmtLike('${c.id}', ${c.likes || 0}, this)">
+        ♥ <span id="cmlc-${c.id}">${c.likes || 0}</span>
+      </button>
+      ${isOwner ? `<button class="cmt-del-btn" onclick="deleteComment('${c.id}')">✕ Delete</button>` : ''}
+    </div>
+  `;
+  return div;
+}
+
+async function postComment() {
+  const text = document.getElementById('cmtInput')?.value.trim();
+  if (!text) { toast('Write something first'); return; }
+  if (text.length < 3) { toast('Comment is too short'); return; }
+  if (!_db) { toast('Connect to internet to comment'); return; }
+
+  const btn = document.getElementById('cmtPostBtn');
+  const anon = document.getElementById('cmtAnonCheck')?.checked;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  try {
+    const { data: { user } } = await _db.auth.getUser();
+    const { error } = await _db.from('devotional_comments').insert({
+      date: cmtDateKey,
+      text,
+      anonymous: anon,
+      user_id: user?.id || 'anon',
+      likes: 0,
+    });
+    if (error) throw error;
+
+    document.getElementById('cmtInput').value = '';
+    document.getElementById('cmtAnonCheck').checked = false;
+    toast('Comment posted ✦');
+    loadComments(true);
+  } catch(e) {
+    console.error('Post comment error:', e);
+    toast('Could not post — check your connection');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Post';
+}
+
+async function toggleCmtLike(id, currentLikes, btn) {
+  const hasLiked = cmtMyLikes.has(id);
+  const newLikes = hasLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+
+  if (hasLiked) { cmtMyLikes.delete(id); btn.classList.remove('liked'); }
+  else { cmtMyLikes.add(id); btn.classList.add('liked'); }
+
+  const countEl = document.getElementById('cmlc-' + id);
+  if (countEl) countEl.textContent = newLikes;
+  localStorage.setItem('edd_cmt_likes', JSON.stringify([...cmtMyLikes]));
+
+  try {
+    await _db.from('devotional_comments').update({ likes: newLikes }).eq('id', id);
+  } catch(e) { console.error('Like error:', e); }
+}
+
+async function deleteComment(id) {
+  if (!confirm('Delete this comment?')) return;
+  try {
+    await _db.from('devotional_comments').delete().eq('id', id);
+    document.getElementById('cmt-' + id)?.remove();
+    toast('Comment deleted');
+    loadComments(true);
+  } catch(e) { toast('Could not delete — check connection'); }
+}
+
+
 //  DAILY DEVOTIONAL ROTATION — 30 entries, cycles by day of year
 //  Used when Supabase has no entry for today
 // ══════════════════════════════════════════════════════
@@ -4336,6 +4638,9 @@ async function loadTodayDevotional() {
     buildHymn();
     console.log('[Devo] Using local rotation (no cache for today)');
   }
+
+  // Init comments for today
+  initComments().catch(e => console.log('Comments init error:', e));
 
   // Step 3: Always fetch fresh from Supabase — gets all language fields
   if (!_db) return;
