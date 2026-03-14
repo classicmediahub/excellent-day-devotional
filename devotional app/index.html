@@ -1752,7 +1752,16 @@ button.brand:active { transform: scale(0.97); }
 .qz-lc-unlock { font-size:0.68rem; color:var(--text-4); font-family:var(--serif); }
 .qz-lc-check { font-size:1.1rem; }
 /* Playing screen */
-.qz-play-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.qz-play-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:12px;
+  position:sticky; top:0; z-index:10;
+  background:var(--bg);
+  padding:8px 0 8px;
+  margin-left:-2px; margin-right:-2px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:14px;
+}
 .qz-back-btn { background:transparent; border:1px solid var(--border); border-radius:10px; padding:6px 12px; font-family:var(--serif); font-size:0.75rem; color:var(--text-3); cursor:pointer; transition:all 0.2s; }
 .qz-back-btn:hover { border-color:var(--accent); color:var(--accent); }
 .qz-q-meta { display:flex; align-items:center; gap:8px; }
@@ -1795,7 +1804,14 @@ button.brand:active { transform: scale(0.97); }
 .qz-xp-pop { font-size:0.78rem; font-weight:700; color:var(--gold); margin-left:8px; animation:qzXpPop 0.5s ease forwards; }
 @keyframes qzXpPop { 0%{opacity:0;transform:translateY(4px)} 40%{opacity:1;transform:translateY(-4px)} 100%{opacity:0;transform:translateY(-10px)} }
 /* Next btn */
-.qz-next-btn { width:100%; margin-top:14px; padding:13px; background:var(--accent); border:none; border-radius:12px; color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.qz-next-btn {
+  width:100%; margin-top:14px; padding:14px;
+  background:var(--accent); border:none; border-radius:12px;
+  color:#fff; font-family:var(--serif); font-size:0.9rem; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+  position:sticky; bottom:8px;
+  box-shadow:0 4px 20px rgba(58,107,69,0.5);
+}
 .qz-next-btn:hover { opacity:0.88; transform:translateY(-1px); }
 /* Lifelines */
 .qz-lifelines { display:flex; gap:8px; margin-bottom:14px; }
@@ -3915,7 +3931,10 @@ function answerQuiz(selectedIdx) {
 
   setTimeout(() => {
     const nb = document.getElementById('qzNextBtn');
-    if (nb) { nb.style.display = 'block'; nb.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+    if (nb) { nb.style.display = 'block'; nb.scrollIntoView({ behavior:'smooth', block:'end' });
+    // Also scroll the main container down
+    const main = document.querySelector('.main');
+    if (main) setTimeout(() => main.scrollBy({ top: 120, behavior: 'smooth' }), 100); }
   }, 80);
 }
 
