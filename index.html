@@ -220,13 +220,14 @@ body {
 /* ══════════════════════════════════════
    APP SHELL
 ══════════════════════════════════════ */
-#app { display: none; height: 100vh; flex-direction: column; overflow: hidden; }
+#app { display: none; height: 100%; flex-direction: column; }
 #app.show { display: flex; }
 
 /* ══════════════════════════════════════
    TOP BAR
 ══════════════════════════════════════ */
 .topbar {
+  position: sticky; top: 0; z-index: 200;
   height: 60px; flex-shrink: 0;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -234,7 +235,6 @@ body {
   padding: 0 18px;
   box-shadow: var(--shadow-sm);
   transition: background var(--transition), border-color var(--transition), box-shadow var(--transition);
-  position: sticky; top: 0; z-index: 200;
 }
 
 .brand { display: flex; align-items: center; gap: 10px; }
@@ -300,17 +300,13 @@ body {
 ══════════════════════════════════════ */
 .main {
   flex: 1;
-  min-height: 0;
-  height: 0;            /* Forces flex child to have bounded height for scroll */
-  overflow-y: scroll;   /* 'scroll' not 'auto' — more reliable on Android WebView */
-  overflow-x: hidden;
+  height: 0;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
   transition: background var(--transition);
 }
-.page { display: none; padding: 22px 16px 32px; max-width: 680px; margin: 0 auto; }
+.page { display: none; padding: 22px 16px 100px; max-width: 680px; margin: 0 auto; }
 .page.active { display: block; animation: pg-in 0.35s ease; touch-action: pan-y; }
 @keyframes pg-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -321,12 +317,12 @@ body {
    BOTTOM NAV
 ══════════════════════════════════════ */
 .bnav {
-  display: flex; flex-shrink: 0;
+  flex-shrink: 0;
+  display: flex;
   background: var(--nav-bg);
   border-top: 1px solid var(--nav-border);
   padding: 6px 0 10px;
   transition: background var(--transition), border-color var(--transition);
-  position: relative; z-index: 200;
 }
 .nb {
   flex: 1; border: none; background: none; cursor: pointer;
@@ -4446,89 +4442,87 @@ function renderQuizResult(score, total, pct, xpGained, newLevel) {
 // ══════════════════════════════════════════════════════
 
 const CW_PUZZLES = [
+  // PUZZLE 1 — People of the Bible (5×7 simple grid)
   {
     title: "People of the Bible",
-    size: 9,
-    // grid: '.' = black, letter = solution
+    size: 7,
+    // '#' = black cell, letter = solution
     grid: [
-      "....N....",
-      "....O....",
-      ".MOSES...",
-      "....H....",
-      "DAVID....",
-      "....E....",
-      ".....PAUL",
-      ".........",
-      "....JOHN.",
+      "NOAH###",
+      "O#A###.",
+      "MOSES##",
+      "O#E###.",
+      "S#S###.",
+      "##DAVID",
+      "#######",
     ],
     clues: {
       across: [
-        { num:3, row:2, col:1, len:5, clue:"Led Israel out of Egypt (5)" },
-        { num:5, row:4, col:0, len:5, clue:"Killed Goliath and became king (5)" },
-        { num:7, row:6, col:5, len:4, clue:"Apostle to the Gentiles (4)" },
-        { num:8, row:8, col:4, len:4, clue:"The beloved disciple (4)" },
+        { num:1, row:0, col:0, len:4, clue:"Built the ark (4)" },
+        { num:3, row:2, col:0, len:5, clue:"Led Israel out of Egypt (5)" },
+        { num:5, row:5, col:2, len:5, clue:"Killed Goliath, became king (5)" },
       ],
       down: [
-        { num:1, row:0, col:4, len:9, clue:"Built the ark (4) — first 4 letters" },
-        { num:2, row:2, col:1, len:5, clue:"Led Israel out — same as 3 Across" },
-        { num:4, row:4, col:0, len:3, clue:"Giant-killer king — first 3" },
-        { num:6, row:6, col:5, len:3, clue:"Apostle Paul — first 3" },
+        { num:1, row:0, col:0, len:5, clue:"Ark builder (4) — first 4 letters down" },
+        { num:2, row:0, col:2, len:5, clue:"Prophet in the fish (5) — letters down" },
+        { num:4, row:2, col:2, len:4, clue:"Lawgiver (5) — letters down" },
       ]
     }
   },
+  // PUZZLE 2 — Books of the Bible (simple across only)
   {
     title: "Books of the Bible",
     size: 9,
     grid: [
-      "GENESIS..",
-      "......A..",
-      "......M..",
-      "EXODUS...",
-      "......S..",
-      "ACTS.....",
-      ".......",
-      "RUTH.....",
-      ".........",
+      "GENESIS##",
+      "#########",
+      "##EXODUS##",
+      "#########",
+      "####ACTS#",
+      "#########",
+      "######JOHN",
+      "#########",
+      "RUTH#####",
     ],
     clues: {
       across: [
         { num:1, row:0, col:0, len:7, clue:"First book of the Bible (7)" },
-        { num:4, row:3, col:0, len:6, clue:"Moses leads Israel out (6)" },
-        { num:5, row:5, col:0, len:4, clue:"Luke's second book (4)" },
-        { num:6, row:7, col:0, len:4, clue:"Story of loyalty and redemption (4)" },
+        { num:2, row:2, col:2, len:6, clue:"Second book — Moses leads Israel out (6)" },
+        { num:3, row:4, col:4, len:4, clue:"Luke's second book (4)" },
+        { num:4, row:6, col:6, len:4, clue:"The beloved disciple's gospel (4)" },
+        { num:5, row:8, col:0, len:4, clue:"Story of loyalty and redemption (4)" },
       ],
-      down: [
-        { num:2, row:0, col:6, len:5, clue:"Book by the prophet (5): J-A-M-E-S" },
-        { num:3, row:0, col:0, len:4, clue:"First book first word (4)" },
-      ]
+      down: []
     }
   },
+  // PUZZLE 3 — Places in Scripture (across only)
   {
     title: "Places in Scripture",
     size: 9,
     grid: [
       "BETHLEHEM",
-      ".........",
-      "..JORDAN.",
-      ".........",
-      "EGYPT....",
-      ".........",
-      ".SINAI...",
-      ".........",
-      "ZION.....",
+      "#########",
+      "#JORDAN##",
+      "#########",
+      "EGYPT####",
+      "#########",
+      "#SINAI###",
+      "#########",
+      "ZION#####",
     ],
     clues: {
       across: [
         { num:1, row:0, col:0, len:9, clue:"Where Jesus was born (9)" },
-        { num:3, row:2, col:2, len:6, clue:"River where Jesus was baptised (6)" },
-        { num:4, row:4, col:0, len:5, clue:"Land of the Pharaohs (5)" },
-        { num:5, row:6, col:1, len:5, clue:"Mountain where Moses received the Law (5)" },
-        { num:6, row:8, col:0, len:4, clue:"Holy hill of God in Jerusalem (4)" },
+        { num:2, row:2, col:1, len:6, clue:"River where Jesus was baptised (6)" },
+        { num:3, row:4, col:0, len:5, clue:"Land of the Pharaohs (5)" },
+        { num:4, row:6, col:1, len:5, clue:"Mountain where Moses got the Law (5)" },
+        { num:5, row:8, col:0, len:4, clue:"Holy hill of God in Jerusalem (4)" },
       ],
       down: []
     }
   },
 ];
+
 
 // Rotating daily puzzle
 function getCWPuzzle() {
@@ -4686,7 +4680,7 @@ function buildCWGridHTML() {
   for (let r = 0; r < size; r++) {
     for (let c = 0; c < size; c++) {
       const sol = puzzle.grid[r][c];
-      const isBlack = sol === '.' || sol === ' ' || !sol;
+      const isBlack = sol === '#' || sol === '.' || sol === ' ' || !sol;
       const key = `${r},${c}`;
       const userLetter = userGrid[r][c] || '';
       const isSelected = selected && selected[0] === r && selected[1] === c;
@@ -4915,43 +4909,34 @@ let smUserBlanks = [];
 let smHintsUsed = 0;
 
 function initScripture() {
-  try {
-    smProgress = JSON.parse(localStorage.getItem(SM_SAVE_KEY) || '{}');
-  } catch(e) { smProgress = {}; }
+  try { smProgress = JSON.parse(localStorage.getItem(SM_SAVE_KEY) || '{}'); }
+  catch(e) { smProgress = {}; }
   renderScriptureHome();
 }
 
-function smSave() {
-  localStorage.setItem(SM_SAVE_KEY, JSON.stringify(smProgress));
-}
+function smSave() { localStorage.setItem(SM_SAVE_KEY, JSON.stringify(smProgress)); }
 
 function renderScriptureHome() {
   const area = document.getElementById('scriptureArea');
   if (!area) return;
-
-  const totalStars = SM_VERSES.reduce((s, v) => s + (smProgress[v.ref]?.stars || 0), 0);
-  const mastered = SM_VERSES.filter(v => (smProgress[v.ref]?.stars || 0) >= 3).length;
-
-  const verseListHTML = SM_VERSES.map(v => {
-    const prog = smProgress[v.ref] || {};
-    const stars = prog.stars || 0;
-    return `
-      <div class="sm-vl-item ${stars >= 3 ? 'mastered' : ''}" onclick="smStartVerse('${v.ref.replace(/'/g,"\\'")}')">
-        <span class="sm-vl-icon">${stars >= 3 ? '⭐' : stars > 0 ? '📖' : '📜'}</span>
-        <div style="flex:1;min-width:0">
-          <div class="sm-vl-ref">${v.ref}</div>
-          <div class="sm-vl-preview">${v.text.substring(0, 55)}…</div>
-        </div>
-        <div class="sm-vl-stars">
-          ${[1,2,3].map(i => `<span class="sm-vl-star ${stars >= i ? 'e' : ''}">⭐</span>`).join('')}
-        </div>
-      </div>`;
+  const totalStars = SM_VERSES.reduce((s,v) => s+(smProgress[v.ref]?.stars||0), 0);
+  const mastered   = SM_VERSES.filter(v => (smProgress[v.ref]?.stars||0)>=3).length;
+  const list = SM_VERSES.map(v => {
+    const stars = smProgress[v.ref]?.stars || 0;
+    const starHTML = [1,2,3].map(i=>`<span class="sm-vl-star ${stars>=i?'e':''}" style="font-size:13px">⭐</span>`).join('');
+    return `<div class="sm-vl-item ${stars>=3?'mastered':''}" onclick="smStartVerse('${v.ref.replace(/'/g,"\\'")}')">
+      <span class="sm-vl-icon">${stars>=3?'⭐':stars>0?'📖':'📜'}</span>
+      <div style="flex:1;min-width:0">
+        <div class="sm-vl-ref">${v.ref}</div>
+        <div class="sm-vl-preview">${v.text.substring(0,52)}…</div>
+      </div>
+      <div class="sm-vl-stars">${starHTML}</div>
+    </div>`;
   }).join('');
-
   area.innerHTML = `
     <div class="sm-hero">
       <div class="sm-hero-label">Scripture Memory Vault</div>
-      <div class="sm-hero-title">${totalStars} / ${SM_VERSES.length * 3} Stars Earned</div>
+      <div class="sm-hero-title">${totalStars} / ${SM_VERSES.length*3} Stars</div>
       <div class="sm-hero-sub">${mastered} verses mastered · ${SM_VERSES.length} total</div>
     </div>
     <div class="cw-stats-row">
@@ -4960,8 +4945,7 @@ function renderScriptureHome() {
       <div class="cw-stat"><div class="cw-stat-n">${totalStars}</div><div class="cw-stat-l">Stars</div></div>
     </div>
     <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Choose a Verse</div><div class="sh-line"></div></div>
-    <div class="sm-verse-list">${verseListHTML}</div>
-  `;
+    <div class="sm-verse-list">${list}</div>`;
 }
 
 function smStartVerse(ref) {
@@ -4972,192 +4956,218 @@ function smStartVerse(ref) {
   smBuildChallenge();
 }
 
+function smStrip(w) { return w.replace(/[^a-zA-Z]/g, ''); }
+function smNorm(w)  { return smStrip(w||'').toLowerCase(); }
+
 function smBuildChallenge() {
   const verse = smCurrentVerse;
-  const words = verse.text.replace(/[,;:!?.]/g, '').split(' ').filter(w => w.length > 3);
-  // Pick 5-8 key words to blank out
-  const numBlanks = Math.min(7, Math.max(4, Math.floor(words.length * 0.25)));
-  const uniqueWords = [...new Set(words)].sort(() => Math.random() - 0.5).slice(0, numBlanks);
-  smBlankIndices = uniqueWords;
+  const tokens = verse.text.split(/\s+/);
 
-  // Build word bank (blanked words + 3 distractors)
-  const allVerseWords = verse.text.split(' ').map(w => w.replace(/[,;:!?.]/, ''));
+  // Unique words > 3 chars (case-insensitive dedupe)
+  const seen = new Set();
+  const candidates = tokens.map(smStrip).filter(w => {
+    if (w.length <= 3) return false;
+    const k = w.toLowerCase();
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+
+  const numBlanks = Math.min(6, Math.max(4, Math.floor(candidates.length * 0.35)));
+  // Shuffle and pick, then re-sort by verse order
+  const picked = [...candidates].sort(() => Math.random()-0.5).slice(0, numBlanks);
+  smBlankIndices = picked.sort((a,b) =>
+    tokens.findIndex(t => smNorm(t)===smNorm(a)) -
+    tokens.findIndex(t => smNorm(t)===smNorm(b))
+  );
+
+  const blankKeys = smBlankIndices.map(smNorm);
   const distractors = SM_VERSES
     .filter(v => v.ref !== verse.ref)
-    .flatMap(v => v.text.split(' ').map(w => w.replace(/[,;:!?.]/, '')))
-    .filter(w => w.length > 3 && !uniqueWords.includes(w))
-    .sort(() => Math.random() - 0.5).slice(0, 3);
+    .flatMap(v => v.text.split(/\s+/).map(smStrip))
+    .filter(w => w.length > 3 && !blankKeys.includes(smNorm(w)))
+    .sort(() => Math.random()-0.5)
+    .slice(0,3);
 
-  smWordBank = [...uniqueWords, ...distractors].sort(() => Math.random() - 0.5);
-  smUserBlanks = new Array(numBlanks).fill('');
+  smWordBank   = [...smBlankIndices, ...distractors].sort(() => Math.random()-0.5);
+  smUserBlanks = new Array(smBlankIndices.length).fill('');
   renderScriptureChallenge();
 }
 
 function renderScriptureChallenge() {
-  const area = document.getElementById('scriptureArea');
+  const area  = document.getElementById('scriptureArea');
   const verse = smCurrentVerse;
-  const prog = smProgress[verse.ref] || {};
-  const stars = prog.stars || 0;
+  if (!area || !verse) return;
+  const stars = smProgress[verse.ref]?.stars || 0;
 
-  // Build verse with blanks
-  let blankIdx = 0;
-  const words = verse.text.split(' ');
-  const verseHTML = words.map((word, i) => {
-    const clean = word.replace(/[,;:!?.]/g, '');
-    const punct = word.slice(clean.length);
-    if (smBlankIndices.includes(clean)) {
-      const bi = smBlankIndices.indexOf(clean);
+  const blankKeys = smBlankIndices.map(smNorm);
+  const usedMap   = {};
+  const verseHTML = verse.text.split(/\s+/).map(token => {
+    const clean = smStrip(token);
+    const punct = token.slice(clean.length);
+    const key   = smNorm(clean);
+    if (blankKeys.includes(key) && !(key in usedMap)) {
+      const bi     = smBlankIndices.findIndex(b => smNorm(b)===key);
+      usedMap[key] = bi;
       const filled = smUserBlanks[bi] || '';
-      return `<span class="blank ${filled ? 'filled' : ''}" data-bi="${bi}" onclick="smClearBlank(${bi})">${filled ? filled : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}</span>${punct} `;
+      const minW   = Math.max(60, clean.length*11);
+      return `<span class="blank ${filled?'filled':''}" style="min-width:${minW}px;cursor:pointer" onclick="smClearBlank(${bi})">${filled||'&nbsp;'}</span>${punct} `;
     }
-    return word + ' ';
+    return token+' ';
   }).join('');
+
+  const pctFilled = Math.round(smUserBlanks.filter(Boolean).length / smBlankIndices.length * 100);
+
+  const inputSection = smMode === 'wordbank' ? `
+    <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:6px">Tap a word to fill the next blank · Tap a blank to remove</div>
+    <div class="sm-word-bank">
+      ${smWordBank.map(w => {
+        const used = smUserBlanks.map(smNorm).includes(smNorm(w));
+        return '<div class="sm-word '+(used?'used':'')+'">'+w+'</div>'; // click handled below
+      }).join('')}
+    </div>` : `
+    <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:6px">
+      Type each missing word with a <b>space</b> between them:<br>
+      <span style="color:var(--gold);font-family:var(--serif);font-size:0.78rem">${smBlankIndices.join(' · ')}</span>
+    </div>
+    <textarea class="sm-type-area" id="smTypeInput"
+      placeholder="${smBlankIndices.join(' ')}"
+      rows="3" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>`;
 
   area.innerHTML = `
     <button class="sm-back-btn" onclick="renderScriptureHome()">← All Verses</button>
     <div class="sm-progress-info">
       <span class="sm-prog-label">${verse.ref} · ${verse.category}</span>
-      <div class="sm-stars">
-        ${[1,2,3].map(i => `<span class="sm-star ${stars >= i ? 'earned' : ''}">⭐</span>`).join('')}
-      </div>
+      <div class="sm-stars">${[1,2,3].map(i=>`<span class="sm-star ${stars>=i?'earned':''}">⭐</span>`).join('')}</div>
     </div>
-    <div class="sm-prog-bar">
-      <div class="sm-prog-fill" style="width:${Math.round((smUserBlanks.filter(b => b).length / smBlankIndices.length) * 100)}%"></div>
-    </div>
+    <div class="sm-prog-bar"><div class="sm-prog-fill" style="width:${pctFilled}%"></div></div>
     <div class="sm-verse-card">
       <div class="sm-vc-ref">${verse.ref} · KJV</div>
       <div class="sm-vc-verse" id="smVerseDisplay">${verseHTML}</div>
     </div>
     <div class="sm-mode-tabs">
-      <div class="sm-mode-tab ${smMode === 'wordbank' ? 'active' : ''}" onclick="smSetMode('wordbank')">🃏 Word Bank</div>
-      <div class="sm-mode-tab ${smMode === 'type' ? 'active' : ''}" onclick="smSetMode('type')">⌨️ Type It</div>
+      <div class="sm-mode-tab ${smMode==='wordbank'?'active':''}" onclick="smSetMode('wordbank')">🃏 Word Bank</div>
+      <div class="sm-mode-tab ${smMode==='type'?'active':''}" onclick="smSetMode('type')">⌨️ Type It</div>
     </div>
-    ${smMode === 'wordbank' ? `
-      <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:8px">Tap a word below to fill the blanks in order</div>
-      <div class="sm-word-bank" id="smWordBank">
-        ${smWordBank.map((w, i) => `<div class="sm-word ${smUserBlanks.includes(w) ? 'used' : ''}" onclick="smPickWord('${w}')">${w}</div>`).join('')}
-      </div>
-    ` : `
-      <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:8px">Type the missing words separated by spaces</div>
-      <textarea class="sm-type-area" id="smTypeInput" placeholder="${smBlankIndices.join(' · ')}" rows="3"></textarea>
-    `}
-    <button class="sm-hint-btn" onclick="smHint()">💡 Reveal a hint (${smHintsUsed}/2 used)</button>
+    ${inputSection}
+    <button class="sm-hint-btn" onclick="smHint()">💡 Reveal one word (${smHintsUsed}/2 hints used)</button>
     <div id="smFeedback"></div>
     <div class="sm-actions">
       <button class="sm-check-btn" onclick="smCheck()">✓ Check My Answers</button>
       <button class="sm-skip-btn" onclick="smSkip()">Skip →</button>
     </div>
     <div class="sh" style="margin-top:8px"><div class="sh-gem">✦</div><div class="sh-label">Full Verse</div><div class="sh-line"></div></div>
-    <div style="font-family:var(--serif);font-size:0.85rem;color:var(--text-3);line-height:1.75;padding:8px 0;font-style:italic">"${verse.text}" — ${verse.ref}</div>
-  `;
+    <div style="font-family:var(--serif);font-size:0.85rem;color:var(--text-3);line-height:1.75;padding:8px 0;font-style:italic">"${verse.text}" — ${verse.ref}</div>`;
 }
 
 function smSetMode(mode) {
   smMode = mode;
+  smUserBlanks = new Array(smBlankIndices.length).fill('');
   renderScriptureChallenge();
 }
 
 function smPickWord(word) {
-  // Find first empty blank
   const idx = smUserBlanks.findIndex(b => !b);
-  if (idx === -1) return;
+  if (idx === -1) { toast('All blanks filled — tap a blank to remove'); return; }
   smUserBlanks[idx] = word;
   renderScriptureChallenge();
 }
 
 function smClearBlank(bi) {
+  if (!smUserBlanks[bi]) return;
   smUserBlanks[bi] = '';
   renderScriptureChallenge();
 }
 
 function smHint() {
-  if (smHintsUsed >= 2) { toast('No more hints available'); return; }
-  const emptyIdx = smBlankIndices.findIndex((w, i) => !smUserBlanks[i]);
-  if (emptyIdx === -1) return;
-  smUserBlanks[emptyIdx] = smBlankIndices[emptyIdx];
+  if (smHintsUsed >= 2) { toast('No more hints for this verse'); return; }
+  const i = smUserBlanks.findIndex(b => !b);
+  if (i === -1) { toast('All blanks are already filled'); return; }
+  smUserBlanks[i] = smBlankIndices[i];
   smHintsUsed++;
+  toast('💡 Hint: ' + smBlankIndices[i] + ' revealed · ' + (2-smHintsUsed) + ' hints left');
   renderScriptureChallenge();
 }
 
 function smSkip() {
   const idx = SM_VERSES.findIndex(v => v.ref === smCurrentVerse.ref);
-  const nextIdx = (idx + 1) % SM_VERSES.length;
-  smStartVerse(SM_VERSES[nextIdx].ref);
+  smStartVerse(SM_VERSES[(idx+1) % SM_VERSES.length].ref);
 }
 
 function smCheck() {
   const verse = smCurrentVerse;
-  let correct = 0, total = smBlankIndices.length;
+  let answers = [];
 
   if (smMode === 'wordbank') {
-    smUserBlanks.forEach((ans, i) => {
-      if (ans.toLowerCase() === smBlankIndices[i].toLowerCase()) correct++;
-    });
+    answers = smUserBlanks.map(smNorm);
   } else {
-    const typeInput = document.getElementById('smTypeInput');
-    if (!typeInput) return;
-    const typed = typeInput.value.trim().split(/\s+/);
-    smUserBlanks = typed;
-    typed.forEach((ans, i) => {
-      if (i < smBlankIndices.length && ans.toLowerCase() === smBlankIndices[i].toLowerCase()) correct++;
-    });
-    total = smBlankIndices.length;
+    const input = document.getElementById('smTypeInput');
+    if (!input) return;
+    const raw = input.value.trim();
+    if (!raw) { toast('Please type your answers first'); return; }
+    // Split on ANY sequence of non-letters — handles spaces, dots, commas, etc.
+    answers = raw.split(/[^a-zA-Z]+/).map(smNorm).filter(w => w.length > 0);
   }
 
-  const pct = Math.round((correct / total) * 100);
-  let stars = 0;
-  if (pct === 100 && smHintsUsed === 0) stars = 3;
-  else if (pct >= 80 || (pct === 100 && smHintsUsed > 0)) stars = 2;
-  else if (pct >= 50) stars = 1;
+  const expected = smBlankIndices.map(smNorm);
+  let correct = 0;
+  expected.forEach((exp, i) => { if ((answers[i]||'') === exp) correct++; });
 
-  // Save best stars
+  const total = expected.length;
+  const pct   = Math.round(correct/total*100);
+  const stars = pct===100 && smHintsUsed===0 ? 3 : pct>=80 ? 2 : pct>=50 ? 1 : 0;
+
   const prev = smProgress[verse.ref]?.stars || 0;
-  if (stars > prev) {
-    smProgress[verse.ref] = { stars, attempts: (smProgress[verse.ref]?.attempts || 0) + 1 };
-    smSave();
-  } else {
-    smProgress[verse.ref] = { ...smProgress[verse.ref], attempts: (smProgress[verse.ref]?.attempts || 0) + 1 };
-    smSave();
-  }
+  smProgress[verse.ref] = { stars: Math.max(stars,prev), attempts: (smProgress[verse.ref]?.attempts||0)+1 };
+  smSave();
 
   const fb = document.getElementById('smFeedback');
   if (!fb) return;
 
   if (pct === 100) {
     fb.className = 'sm-feedback correct';
-    fb.innerHTML = `⭐ ${stars} star${stars !== 1 ? 's' : ''} earned! ${stars === 3 ? 'Perfect — no hints used! 🏆' : 'Great work!'}<br><span style="font-size:0.78rem;opacity:0.8">Verse mastered: ${correct}/${total} correct</span>`;
-    // Show next verse button
+    fb.innerHTML = `${stars===3?'🏆':'⭐'} ${stars} star${stars!==1?'s':''} — ${stars===3?'Perfect! No hints!':'Well done!'} (${correct}/${total})`;
+    const nextIdx = (SM_VERSES.findIndex(v=>v.ref===verse.ref)+1) % SM_VERSES.length;
+    const nextRef = SM_VERSES[nextIdx].ref;
     setTimeout(() => {
-      const nextIdx = (SM_VERSES.findIndex(v => v.ref === verse.ref) + 1) % SM_VERSES.length;
-      const nextVerse = SM_VERSES[nextIdx];
-      fb.innerHTML += `<button onclick="smStartVerse('${nextVerse.ref.replace(/'/g,"\\'")}') " style="display:block;margin-top:10px;width:100%;padding:10px;background:var(--accent);border:none;border-radius:10px;color:#fff;font-family:var(--serif);font-size:0.85rem;cursor:pointer">Next Verse: ${nextVerse.ref} →</button>`;
-    }, 400);
+      fb.innerHTML += `<button onclick="smStartVerse('${nextRef.replace(/'/g,"\\'")}') "
+        style="display:block;margin-top:10px;width:100%;padding:10px;background:var(--accent);
+        border:none;border-radius:10px;color:#fff;font-family:var(--serif);font-size:0.85rem;cursor:pointer">
+        Next: ${nextRef} →</button>`;
+    }, 300);
   } else if (pct >= 50) {
     fb.className = 'sm-feedback partial';
-    fb.innerHTML = `⭐ ${stars} star! ${correct}/${total} correct (${pct}%). Try again for a higher score!`;
+    fb.innerHTML = `⭐ ${stars} star — ${correct}/${total} correct (${pct}%). Try again for better!`;
   } else {
     fb.className = 'sm-feedback wrong';
-    fb.innerHTML = `${correct}/${total} correct — keep practising! The full verse is shown below.`;
+    fb.innerHTML = `${correct}/${total} correct (${pct}%) — keep practising! See full verse below.`;
   }
 
-  // Update verse display with correct/wrong styling
-  const display = document.getElementById('smVerseDisplay');
-  if (display) {
-    const words = verse.text.split(' ');
-    const html = words.map(word => {
-      const clean = word.replace(/[,;:!?.]/g, '');
-      const punct = word.slice(clean.length);
-      if (smBlankIndices.includes(clean)) {
-        const bi = smBlankIndices.indexOf(clean);
-        const userAns = smUserBlanks[bi] || '';
-        const isCorrect = userAns.toLowerCase() === clean.toLowerCase();
-        return `<span class="blank ${isCorrect ? 'correct' : 'wrong'}">${clean}</span>${punct} `;
-      }
-      return word + ' ';
-    }).join('');
-    display.innerHTML = html;
-  }
+  // Show correct/wrong highlights on blanks
+  const blankKeys = smBlankIndices.map(smNorm);
+  const usedMap2  = {};
+  const rHTML = verse.text.split(/\s+/).map(token => {
+    const clean = smStrip(token);
+    const punct = token.slice(clean.length);
+    const key   = smNorm(clean);
+    if (blankKeys.includes(key) && !(key in usedMap2)) {
+      const bi   = smBlankIndices.findIndex(b=>smNorm(b)===key);
+      usedMap2[key] = bi;
+      const ok   = (answers[bi]||'') === smNorm(clean);
+      return `<span class="blank ${ok?'correct':'wrong'}" title="${ok?'✅ Correct':'❌ Should be: '+clean}">${clean}</span>${punct} `;
+    }
+    return token+' ';
+  }).join('');
+  const disp = document.getElementById('smVerseDisplay');
+  if (disp) disp.innerHTML = rHTML;
 }
+
+function smWordTap(idx) {
+  const w = smWordBank[idx];
+  const used = smUserBlanks.map(smNorm).includes(smNorm(w));
+  if (!used) smPickWord(w);
+}
+
 
 
 // ══════════════════════════════════════════════════════
