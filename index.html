@@ -3415,13 +3415,14 @@ document.addEventListener('click', function(e) {
 });
 
 function applyLanguage() {
-  // Reload devotional in new language — use Supabase cache if available
+  // Reload devotional in new language — only use Supabase cache
   const _today = new Date().toISOString().split('T')[0];
-  const _cached = getCachedDevotional(_today); // full Supabase row with all lang fields
-  if (_cached) {
-    applyDevotionalToPage(_cached); // pick() inside will use currentLang automatically
+  const _cached = getCachedDevotional(_today);
+  if (_cached && _cached._source === 'supabase') {
+    applyDevotionalToPage(_cached);
   } else {
-    applyDevotionalToPage(getTodayLocalDevotional());
+    // Re-fetch from Supabase for the new language
+    loadTodayDevotional().catch(e => console.log('Lang reload error:', e));
   }
 
   // Greeting
@@ -4577,314 +4578,13 @@ async function deleteComment(id) {
 //  DAILY DEVOTIONAL ROTATION — 30 entries, cycles by day of year
 //  Used when Supabase has no entry for today
 // ══════════════════════════════════════════════════════
-const DAILY_DEVOTIONALS = [
-{
-  title: "His Mercies Are New",
-  verse: "It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",
-  verse_ref: "Lamentations 3:22–23 · KJV",
-  tags: ["Faithfulness", "Mercy & Grace", "Morning"],
-  reflection_1: "Each sunrise is a covenant renewed. Before the noise of the day finds you, God has already gone before — His mercy not diminished by yesterday's failures, not strained by tomorrow's unknowns.",
-  reflection_2: "Jeremiah penned these words in the ruins of Jerusalem, surrounded by devastation. Yet he anchored his soul to one unshakeable truth: God's compassions are not depleted. They are replenished with every dawn.",
-  reflection_3: "Today, whatever you carry into this new day, lay it at His feet. His faithfulness is not a feeling that fluctuates. It is His very nature — as steady and unchanging as His holy name.",
-  prayer: "Lord, I receive this new morning as a gift from Your hands. Let Your mercies be the lens through which I see every challenge today. May Your faithfulness be my confidence, and Your love be my strength. Amen."
-},
-{
-  title: "The Lord is My Shepherd",
-  verse: "The LORD is my shepherd; I shall not want.",
-  verse_ref: "Psalm 23:1 · KJV",
-  tags: ["God's Care", "Trust", "Provision"],
-  reflection_1: "In a world of endless striving, the twenty-third Psalm opens with an astonishing declaration: because the Lord shepherds me, I lack nothing. This is not wishful thinking — it is the confession of a soul that has tested God's provision and found it sufficient.",
-  reflection_2: "A shepherd does not merely give commands from a distance. He leads, he searches, he carries the lost one home. Jesus described Himself as the Good Shepherd who knows each sheep by name. You are known. You are led.",
-  reflection_3: "Whatever you feel you lack today — peace, direction, strength, hope — bring it to the Shepherd. He has gone before you into today. He knows the path. Trust His leading.",
-  prayer: "Lord, You are my Shepherd and I am Yours. Still my restless heart today. Where I feel I lack, remind me of Your provision. Lead me in Your paths of righteousness, for Your name's sake. Amen."
-},
-{
-  title: "More Than Conquerors",
-  verse: "Nay, in all these things we are more than conquerors through him that loved us.",
-  verse_ref: "Romans 8:37 · KJV",
-  tags: ["Strength & Victory", "God's Love", "Overcoming"],
-  reflection_1: "Paul does not say we avoid hardship. He says: in all these things — in tribulation, distress, persecution, famine — we are more than conquerors. The victory is not the absence of the trial but the presence of Christ within it.",
-  reflection_2: "More than conquerors is a remarkable phrase. A conqueror merely wins. But through Christ, we gain something from the battle — deeper faith, proven character, indestructible hope. The trial becomes a teacher.",
-  reflection_3: "Whatever battle you are fighting today, you are not fighting alone. The One who loved you enough to die for you has not abandoned you in this season. He is your strength, your victory, your conqueror.",
-  prayer: "Father, I claim this word today. Through Christ who loves me, I am more than a conqueror. Strengthen me in my weakness. Let me not just endure this trial but grow through it, for Your glory. Amen."
-},
-{
-  title: "Trusting in the Lord",
-  verse: "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
-  verse_ref: "Proverbs 3:5–6 · KJV",
-  tags: ["Trust & Obedience", "God's Guidance", "Faith"],
-  reflection_1: "The invitation here is total: trust with all your heart. Not most of it, not the parts that feel safe — all of it. God asks for complete surrender of our understanding because His ways are higher and His knowledge deeper than ours will ever be.",
-  reflection_2: "Leaning on our own understanding is our default setting. We evaluate, calculate, and plan — and God's invitation gets buried beneath our strategies. Acknowledging Him in all our ways is a discipline of the will, practiced daily in small moments as much as large ones.",
-  reflection_3: "The promise is not that God will explain every turn, but that He will direct your path. You do not need a map — you need a guide. And the Lord is the most faithful guide who has ever walked beside a human soul.",
-  prayer: "Lord, today I choose to trust You with what I cannot understand. I acknowledge You in every decision, every step. Direct my path. When my understanding runs out, let Your wisdom lead. Amen."
-},
-{
-  title: "Strength in Quietness",
-  verse: "In returning and rest shall ye be saved; in quietness and in confidence shall be your strength.",
-  verse_ref: "Isaiah 30:15 · KJV",
-  tags: ["Peace & Rest", "Strength", "God's Presence"],
-  reflection_1: "In a culture that celebrates busyness, God offers a countercultural word: your strength comes from stillness. From returning — coming back to Him. From rest — releasing the burden of self-reliance. From quietness — the soul at peace in His presence.",
-  reflection_2: "The original context is Israel straining after foreign alliances for protection. But God said, I am enough. Return to Me. This is always the divine invitation when we are stretched thin — not try harder, but come home.",
-  reflection_3: "Confidence here is not self-confidence — it is trust in God's character and faithfulness. When we know who He is, we need not strive. That unshakeable knowing becomes our greatest strength.",
-  prayer: "Father, I return to You right now. I release my striving and my anxious effort. Let me find my strength in stillness before You. Renew my confidence in who You are. I am safe in You. Amen."
-},
-{
-  title: "Ask, Seek, Knock",
-  verse: "Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you.",
-  verse_ref: "Matthew 7:7 · KJV",
-  tags: ["Prayer & Communion", "Faith", "God's Provision"],
-  reflection_1: "Jesus does not say: if you deserve it, ask. Or: if your faith is strong enough, seek. The invitation is unconditional — ask. The guarantee rests not on our worthiness but on our Father's generous nature.",
-  reflection_2: "There is a progression here: asking is the cry of need, seeking is the pursuit of relationship, knocking is persistence in the face of closed doors. Together they describe a life oriented toward God — dependent, searching, undeterred.",
-  reflection_3: "What have you stopped asking for? What door have you stopped knocking on, assuming it is permanently closed? Bring those things back to your Father today. His ear is not dull and His arm is not shortened.",
-  prayer: "Father, I come to You today with my needs and my longings. I ask. I seek. I knock. Not because I have earned a hearing but because You have invited me and promised to answer. Hear my prayer, Lord. Amen."
-},
-{
-  title: "The Armour of God",
-  verse: "Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.",
-  verse_ref: "Ephesians 6:11 · KJV",
-  tags: ["Strength & Warfare", "Faith", "Spiritual Life"],
-  reflection_1: "Paul's military imagery is deliberate: the Christian life is not a picnic but a battlefield. And yet the armour is God's — not self-forged, not purchased with human effort. It is put on by faith and sustained by prayer.",
-  reflection_2: "Each piece of armour speaks to a specific vulnerability: truth guards against deception, righteousness against condemnation, the gospel of peace against anxiety, faith against doubt, salvation against despair, the Word against every lie. God has covered every angle.",
-  reflection_3: "The command is not to fight but to stand. Ground already won by Christ. The battle has been decided on the cross. Our task is to stand firm in that finished victory, dressed in the character of Christ Himself.",
-  prayer: "Lord, I put on Your full armour today. I choose truth over deception. I stand in Your righteousness. I walk in the peace of the gospel. I raise the shield of faith. Strengthen me to stand firm this day. Amen."
-},
-{
-  title: "Born Again",
-  verse: "Jesus answered and said unto him, Verily, verily, I say unto thee, Except a man be born again, he cannot see the kingdom of God.",
-  verse_ref: "John 3:3 · KJV",
-  tags: ["Salvation & Assurance", "New Life", "Jesus Christ"],
-  reflection_1: "Nicodemus came to Jesus by night, a respected teacher of Israel, full of questions he could not ask in public. Jesus went straight to the heart: you need a new birth. Not reformation of the old, but regeneration — a new life from above.",
-  reflection_2: "To be born again is to receive a nature you did not have before. A love for God that was not there. A sight that sees the Kingdom. A hunger for His Word. A peace that passes understanding. This is not a programme — it is a miracle.",
-  reflection_3: "If you have been born again, let today be a day of wonder. Reflect on the new creation you have become in Christ. If you have not, today is the day — the invitation stands open: come to Jesus and receive life.",
-  prayer: "Lord Jesus, thank You for making me new. All things old have passed away. Help me live today as the new creation I am — with fresh eyes, a grateful heart, and a life hidden in You. Amen."
-},
-{
-  title: "Peace That Passes Understanding",
-  verse: "And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",
-  verse_ref: "Philippians 4:7 · KJV",
-  tags: ["Peace & Rest", "Prayer & Communion", "God's Presence"],
-  reflection_1: "The peace Paul describes is not the absence of problems — he wrote Philippians from prison. It is a garrison, a guard stationed at the gates of the heart and mind. This peace makes no logical sense in the circumstances — yet it holds.",
-  reflection_2: "Paul's prescription comes in the verse before: be anxious for nothing, but in everything by prayer and thanksgiving, make your requests known to God. The peace follows the prayer. It is not found by avoiding the trouble but by bringing the trouble to God.",
-  reflection_3: "What anxiety are you carrying today that God has not yet heard from you? Name it. Bring it in prayer with a thankful heart — even a small thank you for what you already have. Watch the garrison of peace take its post.",
-  prayer: "Lord, I release my anxieties to You right now. I am not carrying these alone. Guard my heart and mind with Your peace — the peace that defies my circumstances. I thank You for Your faithfulness even now. Amen."
-},
-{
-  title: "All Things Work Together",
-  verse: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",
-  verse_ref: "Romans 8:28 · KJV",
-  tags: ["God's Provision", "Hope & Trust", "Faithfulness of God"],
-  reflection_1: "We know — not we hope, not we wish. This is a settled conviction grounded in the character of God. All things: not the pleasant things only, not the easily redeemed things. All things are in His hands, being worked for good.",
-  reflection_2: "The good in view is not our comfort but our conformity to the image of Christ (Romans 8:29). God is not primarily engineering pleasant circumstances — He is shaping a person. The trials are tools in His loving, purposeful hands.",
-  reflection_3: "What in your life right now seems to defy this promise? Hold it up to the light of Romans 8:28. You may not see the purpose yet — but the Weaver sees the whole tapestry while you see only threads. Trust His design.",
-  prayer: "Father, I trust You with this — even when I cannot see the purpose. You are working all things together for good. I love You. I am called according to Your purpose. I rest in Your sovereign, loving plan. Amen."
-},
-{
-  title: "The Bread of Life",
-  verse: "And Jesus said unto them, I am the bread of life: he that cometh to me shall never hunger; and he that believeth on me shall never thirst.",
-  verse_ref: "John 6:35 · KJV",
-  tags: ["Jesus Christ", "Salvation & Assurance", "God's Provision"],
-  reflection_1: "Jesus spoke these words to a crowd who had just eaten miraculous bread. But He turned their physical satisfaction into a deeper invitation: there is a hunger that no earthly meal can fill — and He alone satisfies it.",
-  reflection_2: "The declaration I am the bread of life was scandalous. Bread was survival. Jesus claimed to be the very substance of eternal life — not a teacher who points to the way, but the Way itself. Not someone who tells us about God, but God made flesh.",
-  reflection_3: "If you find your soul restless, if success leaves you empty, if relationships leave you still hungry — Jesus is the bread you have not yet fully tasted. Come to Him today. The table is set and the invitation stands.",
-  prayer: "Lord Jesus, You are the bread my soul needs. Feed me today with Your Word, Your presence, Your life. Fill the places in me that nothing else can reach. I come to You, hungry and believing. Amen."
-},
-{
-  title: "The Light of the World",
-  verse: "Then spake Jesus again unto them, saying, I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life.",
-  verse_ref: "John 8:12 · KJV",
-  tags: ["Jesus Christ", "God's Guidance", "New Life"],
-  reflection_1: "Light reveals and light guides. Jesus does both. He reveals the truth about who we are — sinners in need of grace — and simultaneously reveals who God is: full of mercy and love. In His light, we see clearly for the first time.",
-  reflection_2: "To follow Jesus is to walk in His light — not to have every question answered, but to have enough light for the next step. The promise is not a floodlight for the whole path but a lamp that lights the way as you walk it.",
-  reflection_3: "Where does darkness seem to press in on you today? Areas of confusion, fear, grief, or uncertainty? Bring them into His light. He does not merely illuminate the path — He walks it with you.",
-  prayer: "Lord Jesus, I choose to follow You into this day. Scatter any darkness in my mind or heart. Let Your light guide each step. I will not be afraid, for You are my light and my salvation. Amen."
-},
-{
-  title: "Chosen and Dearly Loved",
-  verse: "Put on therefore, as the elect of God, holy and beloved, bowels of mercies, kindness, humbleness of mind, meekness, longsuffering.",
-  verse_ref: "Colossians 3:12 · KJV",
-  tags: ["God's Love", "Salvation & Assurance", "Holiness of God"],
-  reflection_1: "Three words form the foundation of this verse: elect, holy, beloved. Before Paul tells us how to behave, he tells us who we are. Identity precedes action. The fruit grows from the root — and the root is God's choosing love.",
-  reflection_2: "Beloved — this word carries the weight of the Father's delight. You are not merely tolerated or accepted on probation. You are dearly loved, cherished, held. This is what clothes you each morning as you rise.",
-  reflection_3: "When we know we are deeply loved, it becomes possible to show mercy, kindness, and humility to others. We give from abundance, not from emptiness. Today, put on who you are — chosen, holy, and beloved.",
-  prayer: "Father, let this truth sink deep today — I am chosen, holy, and dearly loved by You. From that abundance, help me to show that same love to everyone I meet. Let my life reflect Your heart. Amen."
-},
-{
-  title: "Drawing Near to God",
-  verse: "Draw nigh to God, and he will draw nigh to you.",
-  verse_ref: "James 4:8 · KJV",
-  tags: ["God's Presence", "Prayer & Communion", "Surrender & Consecration"],
-  reflection_1: "This is one of the most intimate promises in all of Scripture. The God of all creation — infinite, holy, sovereign — promises to close the distance when you move toward Him. The initiative begins with you, but He rushes to meet you.",
-  reflection_2: "Drawing near to God is not reserved for the spiritual giants. It is available to the struggling believer, the doubting seeker, the one who feels far away. The very desire to draw near is already the beginning of the movement.",
-  reflection_3: "Today, before anything else competes for your attention, take a moment to consciously draw near. A breath of prayer, a line of Scripture, a moment of stillness. He is not far off. He is closer than you know.",
-  prayer: "Father, I draw near to You right now. I come with all my mess, my doubt, my weakness. You promised to draw near, and I trust that promise. Let me feel Your presence today, near and real and faithful. Amen."
-},
-{
-  title: "The God Who Sees",
-  verse: "Thou God seest me.",
-  verse_ref: "Genesis 16:13 · KJV",
-  tags: ["God's Care", "God's Presence", "Hope & Trust"],
-  reflection_1: "Hagar was in the wilderness — alone, afraid, cast out. An angel found her there. And when she encountered God, her response was not theology but wonder: You are the God who sees me. El-Roi. The God of the seen.",
-  reflection_2: "These words have comforted millions who have felt overlooked, forgotten, invisible. In your most hidden struggle, your most private pain, your most unwitnessed effort — God sees. Not with judgment but with compassion.",
-  reflection_3: "You are not anonymous to God. Not a statistic. Not lost in the crowd of eight billion. He sees you specifically, completely, lovingly. Whatever wilderness you are in right now, you are not there alone.",
-  prayer: "You are El-Roi — the God who sees me. I am not hidden from You. See me in this season, Lord. Meet me here. I trust that You see every detail of my life and that none of it is too small for Your love. Amen."
-},
-{
-  title: "Carried on Eagles' Wings",
-  verse: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
-  verse_ref: "Isaiah 40:31 · KJV",
-  tags: ["Strength", "Hope & Trust", "God's Provision"],
-  reflection_1: "The word wait in Hebrew carries the idea of expectant hope — like a twisted rope, woven tightly to the object of trust. To wait on the Lord is not passive resignation but active trust, eyes fixed on Him through the season of difficulty.",
-  reflection_2: "The renewal promised is not natural strength recovered — it is supernatural strength imparted. Eagles' wings speak of an effortless soaring above circumstances that would normally exhaust and defeat. This is the gift of those who wait on God.",
-  reflection_3: "Are you weary? Have you been running and feel ready to faint? This promise is for you today. Wait on the Lord. Fix your hope on His character and His promises. Renewal is coming — not by your straining but by His supplying.",
-  prayer: "Lord, I am weary. I wait on You today — actively, expectantly, with hope. Renew my strength. Lift me up on eagle's wings above what is weighing me down. You are my source and my sustainer. Amen."
-},
-{
-  title: "The Good Shepherd",
-  verse: "I am the good shepherd: the good shepherd giveth his life for the sheep.",
-  verse_ref: "John 10:11 · KJV",
-  tags: ["Jesus Christ", "God's Love", "Salvation & Assurance"],
-  reflection_1: "A hired hand runs when the wolf comes. The good shepherd stands. More than stands — He lays down His life. Jesus is not merely a guide pointing to safety; He is the One who entered the danger so that we might be brought home.",
-  reflection_2: "He knows His sheep by name. This is extraordinary — not collective management but individual, personal knowledge. Your name is known to the Shepherd. Your fears, your tendencies, your seasons of wandering — all known, and all met with patient, pursuing love.",
-  reflection_3: "There is no safer place in all of existence than in the care of the Good Shepherd. His cross is the proof of His commitment to you. You will not be lost. You will not be abandoned. He has pledged His life for yours.",
-  prayer: "Lord Jesus, Good Shepherd, thank You for knowing my name and giving Your life for mine. Keep me close today. When I wander, bring me back. I am Yours and You are mine — and nothing shall separate me from Your love. Amen."
-},
-{
-  title: "Hidden in His Hand",
-  verse: "For ye are dead, and your life is hid with Christ in God.",
-  verse_ref: "Colossians 3:3 · KJV",
-  tags: ["Salvation & Assurance", "God's Love", "New Life"],
-  reflection_1: "Your life — your true, essential life — is hidden with Christ in God. Not hidden in circumstances. Not hidden in achievement or appearance. Hidden in the safest place in all of creation: inside the love of the Father, inside Christ Himself.",
-  reflection_2: "Hid suggests security, invisibility from the enemy, protection from loss. What is hidden in God cannot be stolen, cannot be destroyed, cannot be taken from you. Your identity, your destiny, your worth — all secured in Him.",
-  reflection_3: "When the world attacks your sense of worth today, when circumstances press in and make you question your significance — remember where your life is hidden. Not in what others think. Not in what you have achieved. In Christ. In God.",
-  prayer: "Father, thank You that my life is hidden in You. Nothing can reach what You hold. Remind me of this today when I am tempted to find my worth elsewhere. I am secure in You. Amen."
-},
-{
-  title: "Walking in the Spirit",
-  verse: "This I say then, Walk in the Spirit, and ye shall not fulfil the lust of the flesh.",
-  verse_ref: "Galatians 5:16 · KJV",
-  tags: ["Holy Spirit", "Surrender & Consecration", "Holiness of God"],
-  reflection_1: "The spiritual life is not primarily about willpower — it is about walking. A rhythm, a direction, a moment-by-moment orientation. To walk in the Spirit is to stay in conscious fellowship with the Holy Spirit through the hours of the day.",
-  reflection_2: "The promise is remarkable: walk in the Spirit and you will not fulfil the desires of the flesh. The answer to the pull of sin is not gritted-teeth effort but Spirit-empowered living. When He fills us, there is less room for what would harm us.",
-  reflection_3: "How do you walk in the Spirit practically? Pray continuously. Keep short accounts with God. Ask His guidance before decisions. Welcome His prompting. Yield when He speaks. Repent quickly when you stumble. Keep walking.",
-  prayer: "Holy Spirit, I invite You to lead me through every hour of this day. Keep me in step with You. Fill me fresh. Where I have grieved You, forgive me. I choose Your way over mine. Walk with me. Amen."
-},
-{
-  title: "A Living Hope",
-  verse: "Blessed be the God and Father of our Lord Jesus Christ, which according to his abundant mercy hath begotten us again unto a lively hope by the resurrection of Jesus Christ from the dead.",
-  verse_ref: "1 Peter 1:3 · KJV",
-  tags: ["Hope & Trust", "Resurrection", "God's Love"],
-  reflection_1: "A living hope — not a wish, not an optimism, not a wistful longing. A hope that is alive because the One it is anchored in is alive. The resurrection of Jesus is not just a doctrine; it is the engine of Christian hope.",
-  reflection_2: "Peter wrote to believers scattered and suffering, living as strangers. And he opened his letter with an explosion of praise: blessed be God! Not because the circumstances were comfortable, but because the hope was indestructible.",
-  reflection_3: "The same resurrection that raised Jesus from the dead is the source of your hope today. Whatever death-like season you are in — grief, failure, exhaustion — the Living Hope speaks into it. New life is possible. Easter is real. He is risen.",
-  prayer: "Father, I praise You for the living hope I have through the resurrection of Jesus. This hope is alive in me. Let it rise up today and scatter every despair. I have a future because Christ is alive. Amen."
-},
-{
-  title: "The Name above Every Name",
-  verse: "Wherefore God also hath highly exalted him, and given him a name which is above every name: That at the name of Jesus every knee should bow.",
-  verse_ref: "Philippians 2:9–10 · KJV",
-  tags: ["Jesus Christ", "Praise & Worship", "Kingdom of God"],
-  reflection_1: "The name of Jesus is not merely an identifier — it is authority. Every knee will bow at that name. Every power, every fear, every principality must yield to it. This is the name you carry when you pray. The name you belong to.",
-  reflection_2: "Paul gives us the full story: Jesus humbled Himself to the point of the cross (Philippians 2:8). The exaltation followed the humility. He did not grasp at greatness — He served, and God lifted Him to the highest place.",
-  reflection_3: "Today, name what in your life needs to bow to Jesus. What fear. What stronghold. What habit. What relationship. Speak His name over it. The authority of that name has not diminished by one syllable since the resurrection.",
-  prayer: "Lord Jesus, I exalt Your name above every other name in my life. I bring before You ___. I declare Your authority over it. Every knee will bow — including every fear in my heart. Be glorified in me today. Amen."
-},
-{
-  title: "Kept in Perfect Peace",
-  verse: "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.",
-  verse_ref: "Isaiah 26:3 · KJV",
-  tags: ["Peace & Rest", "Faith & Trust", "God's Presence"],
-  reflection_1: "Perfect peace in Hebrew is shalom shalom — the word doubled for emphasis. Comprehensive peace: peace of mind, peace in relationships, peace with God. Not merely the absence of war but the presence of wholeness.",
-  reflection_2: "The condition is a stayed mind — a mind fixed, anchored, pointing continually toward God. Not a mind that never wanders but one that keeps returning. The discipline of turning your thoughts back to God is the path to this peace.",
-  reflection_3: "Today you will have many opportunities for your mind to wander into worry, resentment, or fear. Each time, notice it and return to God. This is not failure — it is the practice of a stayed mind. Peace will guard you as you walk it.",
-  prayer: "Lord, I fix my mind on You today. When anxious thoughts come, I will turn back to You. Keep me in perfect peace — the shalom of a mind and heart rooted in Your character and Your love. Amen."
-},
-{
-  title: "Overflowing with Hope",
-  verse: "Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost.",
-  verse_ref: "Romans 15:13 · KJV",
-  tags: ["Hope & Trust", "Holy Spirit", "Peace & Rest"],
-  reflection_1: "Paul calls God the God of hope — not the God of religion, not the God of duty, not even the God of suffering. The God of hope. His very character overflows with possibility, with future, with the promise that what is not yet will yet be.",
-  reflection_2: "Joy and peace are given in believing — not in achieving, not in performing, not in earning. The act of trust itself releases them into our experience. When we truly believe God is who He says He is, the fruit begins to appear.",
-  reflection_3: "Abound in hope — not merely survive with a little hope left at the bottom, but overflow with it. This is the work of the Holy Spirit in the yielded heart. Ask Him today to fill you afresh. Let hope rise.",
-  prayer: "God of hope, fill me today. I am believing — fill me with joy and peace as I trust You. Let me overflow with hope by the power of Your Holy Spirit. Let that hope be visible to everyone around me. Amen."
-},
-{
-  title: "The Resurrection and the Life",
-  verse: "Jesus said unto her, I am the resurrection, and the life: he that believeth in me, though he were dead, yet shall he live.",
-  verse_ref: "John 11:25 · KJV",
-  tags: ["Resurrection", "Jesus Christ", "Eternal Life"],
-  reflection_1: "Martha was grieving at the tomb of her brother Lazarus. Jesus did not offer platitudes or explanations. He offered Himself: I am the resurrection and the life. The comfort is not a doctrine but a Person — the Person standing before her.",
-  reflection_2: "Though he were dead, yet shall he live. There is no death so final, no situation so hopeless, no dream so buried that the resurrection power of Jesus cannot speak into it. He spoke life into the grave. He can speak life into yours.",
-  reflection_3: "What in your life has felt like a death — a relationship, a dream, a season of joy? Bring it to the One who is the resurrection and the life. He has not finished writing your story. Dead things live when He speaks.",
-  prayer: "Lord Jesus, You are the resurrection and the life. Speak life into what feels dead in my world. I believe in You. Though things look hopeless, You are the God of the impossible. Have Your way. Amen."
-},
-{
-  title: "Sanctified by His Word",
-  verse: "Sanctify them through thy truth: thy word is truth.",
-  verse_ref: "John 17:17 · KJV",
-  tags: ["Word of God", "Holiness of God", "Jesus Christ"],
-  reflection_1: "These words come from Jesus's high priestly prayer — He was interceding for His disciples before the cross. And one of His great requests was that God's Word would do its deep work of sanctification in them. He prays the same for you.",
-  reflection_2: "Sanctify means to make holy, to set apart, to purify. And the agent is truth — specifically, God's Word. The Bible is not merely inspirational literature. It is the instrument of transformation, the means by which God shapes us into the image of His Son.",
-  reflection_3: "When was the last time you allowed the Word to search you, challenge you, and change you — not just inform you? Today, read the Scriptures not as a duty but as an invitation: God, sanctify me through this. Transform me.",
-  prayer: "Father, sanctify me through Your truth today. Let Your Word do its deep, thorough work in me. I don't want to stay the same. Transform my mind, purify my heart, and shape me into the image of Jesus. Amen."
-},
-{
-  title: "Faithful to the End",
-  verse: "He which hath begun a good work in you will perform it until the day of Jesus Christ.",
-  verse_ref: "Philippians 1:6 · KJV",
-  tags: ["Faithfulness of God", "Hope & Trust", "Salvation & Assurance"],
-  reflection_1: "What God starts, He finishes. The good work He began in you on the day of your salvation was not a project He undertook without the intention to complete it. He is faithful to His own purpose — and His purpose includes your full transformation.",
-  reflection_2: "On the days when you feel you are failing, when your growth seems stuck, when your old habits still rear up — return to this promise. The pressure of completion rests on God, not on you. He is the One performing it.",
-  reflection_3: "This does not mean we are passive — we cooperate with God's work, we yield to His Spirit, we engage His Word. But the ultimate guarantee of completion is His faithfulness, not ours. He who began will finish.",
-  prayer: "Father, thank You that You finish what You start. I trust You with the work You are doing in me — even the slow, unseen parts. You are faithful. What You began, You will complete. I rest in that today. Amen."
-},
-{
-  title: "The Everlasting Arms",
-  verse: "The eternal God is thy refuge, and underneath are the everlasting arms: and he shall thrust out the enemy from before thee.",
-  verse_ref: "Deuteronomy 33:27 · KJV",
-  tags: ["God's Care", "God's Presence", "Peace & Rest"],
-  reflection_1: "Underneath are the everlasting arms. Whatever you sink into — grief, failure, exhaustion, impossibility — there are arms beneath you that have no bottom. You cannot fall through the love of God. The eternal God is your floor.",
-  reflection_2: "Moses spoke these words as his final blessing over Israel before they entered the Promised Land without him. He was leaving them — but he reminded them they were never alone. Their God would be their refuge in every new territory.",
-  reflection_3: "The enemy that God thrusts out may be fear, confusion, sickness, or opposition. The same arms that hold you up also fight for you. You are sheltered and defended. You are loved with an everlasting love and held by arms that will not let go.",
-  prayer: "Eternal God, You are my refuge today. I rest in the reality of Your arms beneath me. Whatever I face, I cannot fall through Your love. Hold me. Fight for me. Let me feel the security of Your everlasting embrace. Amen."
-}
-];
+const DAILY_DEVOTIONALS = [];
+const DAILY_DEVOTIONALS_YO = [];
+const DAILY_DEVOTIONALS_PCM = [];
+const DAILY_DEVOTIONALS_FR = [];
 
 // Get today's devotional from the local rotation
 
-// ── YORUBA DEVOTIONALS ──────────────────────────────────
-const DAILY_DEVOTIONALS_YO = [
-{ title:"Àánú Rẹ̀ Tuntun Ni", verse:"Àánú Oluwa kò parí, àwọn àánú rẹ̀ kò pari. Wọ́n tuntun gbogbo owurọ̀: nla ni ìgbẹ́kẹ̀lé rẹ.", verse_ref:"Ifá Lamentations 3:22-23", reflection_1:"Ọlọ́run fúnni ní ìmísísàn tuntun fun ọjọ́ tuntun kọ̀ọ̀kan. Gbogbo ohun tó ṣẹlẹ̀ lánàná ti kọjá — àánú Rẹ̀ nla ju àṣìṣe rẹ lọ.", reflection_2:"Gbà àánú tuntun tó wà fún ọ lónì. Ọ̀rọ̀ Rẹ̀ jẹ́ ìdánilójú: ìgbẹ́kẹ̀lé Rẹ̀ pín gẹ́gẹ́ bí ìgbésọ̀run.", prayer:"Oluwa, mo dúpẹ́ fún àánú tuntun ti owurọ̀ yìí. Ran mí lọ́wọ́ kí n gbé ní ìmọ̀ ìfẹ́ Rẹ tí kò ní òpin. Àmín." },
-{ title:"Gbẹ́kẹ̀lé Rẹ̀ Pẹ̀lú Ọkàn Rẹ Gbogbo", verse:"Gbẹ́kẹ̀lé Oluwa pẹ̀lú ọkàn rẹ gbogbo; má sì tẹ ara rẹ mọ òye rẹ̀ fúnra rẹ.", verse_ref:"Owe Salomoni 3:5", reflection_1:"Ọkàn ènìyàn máa ń fẹ́ òye tirẹ̀, ṣùgbọ́n Ọlọ́run pè wa láti fi ara wa sọ fún Rẹ̀ kíkún.", reflection_2:"Lónì, gbìyànjú láti jẹ́ kí àwọn ìpinnu rẹ jẹ́ ìjọsìn — máa bèrè lọ́wọ́ Ọlọ́run kí o tó ṣe ìgbésẹ̀ kankan.", prayer:"Baba, mo fi ọkàn mi fún Ọ. Jẹ́ ki ìmọ̀ Rẹ ṣamọ̀nà mi, kì í ṣe temi. Àmín." },
-{ title:"Mo Lè Ṣe Ohun Gbogbo", verse:"Mo lè ṣe ohun gbogbo nípasẹ̀ Kristi tí ń fún mi ní agbára.", verse_ref:"Fìlípì 4:13", reflection_1:"Eléyìí kì í ṣe ìgberaga ara ẹni — ó jẹ́ ìgbẹ́kẹ̀lé tó jinlẹ̀ pé agbára Ọlọ́run ń ṣiṣẹ́ nínú ọ.", reflection_2:"Irú ìpènijà wo tó wà níwájú rẹ lónì? Rántí pé kì í ṣe agbára tìrẹ ni — ó jẹ́ ti Rẹ̀.", prayer:"Oluwa, jẹ́ ki agbára Rẹ ṣiṣẹ́ nínú agbára àìní mi. Ní Rẹ ṣe ohun gbogbo nípasẹ̀ mi. Àmín." },
-{ title:"Ìfẹ́ Tí Ń Lé Ẹrù", verse:"Ìfẹ́ tó péye ń lé ẹrù jáde; nítorí ẹrù ní ìdálóró; ẹni tó bẹ̀rù kò tó pé nínú ìfẹ́.", verse_ref:"1 Jòhánù 4:18", reflection_1:"Ọlọ́run kò fún wa ní ẹ̀mí ẹrù. Ìfẹ́ Rẹ̀ kó wa láìmọ́ ìnira tó wà ní ojú-ọ̀nà wa.", reflection_2:"Pé ara wa pẹ̀lú ìfẹ́ Rẹ̀ lónì. Jẹ́ kó ṣamọ̀nà gbogbo ohun tó ń ṣe ìdààmú ọ.", prayer:"Baba, rọ́pò ẹrù mi pẹ̀lú ìmọ̀ ìfẹ́ Rẹ. Jẹ́ ìfẹ́ Rẹ̀ jẹ́ ààbò mi lónì. Àmín." },
-{ title:"Ìmísísàn Tuntun", verse:"Nítorí náà, bí ẹnikẹ́ni bá wà nínú Kristi, ó jẹ́ ẹ̀dá tuntun: àwọn ohun àtijọ́ ti kọjá; kíyèsí, ohun gbogbo ti di tuntun.", verse_ref:"2 Kọríńtì 5:17", reflection_1:"Ọlọ́run kì í ká ọ gẹ́gẹ́ bí ó ti jẹ́ ní àtijọ́. Nínú Kristi, ó rí ẹ gẹ́gẹ́ bí ẹni tí o ti di — tuntun, mímọ́, àti gbígbàpadà.", reflection_2:"Gbà ìmísísàn tuntun yìí lónì. Ọ̀rọ̀ 'tuntun' jẹ́ ọrọ ìṣe tó ń tẹ̀síwájú — ó ń ṣẹlẹ̀ ní gbogbo ìgbà.", prayer:"Oluwa, mo dúpẹ́ pé mi ò ní dópin pẹ̀lú àwọn àṣìṣe mi. Jẹ́ ìmísísàn tuntun Rẹ kún mi lónì. Àmín." },
-{ title:"Alaafia Ọlọ́run", verse:"Alaafia Ọlọ́run tó ju òye ènìyàn gbogbo lọ yóò pèlú ọkàn àti èrò yín ní Kristi Jesu.", verse_ref:"Fìlípì 4:7", reflection_1:"Alaafia yìí kì í ṣe àìsí ìṣòro — ó jẹ́ ìwàláàyè tó jinlẹ̀ àti àmójútó ní àárín ìjákulẹ̀.", reflection_2:"Ó jẹ́ ẹbùn fún àwọn tó fún ìnira wọn sí Ọlọ́run gẹ́gẹ́ bí ẹ̀bọ ìjọsìn.", prayer:"Oluwa, mo mu àwọn ìnira mi wá sí Ọ. Jẹ́ alaafia Rẹ tó ju òye lọ pèlú ọkàn mi lónì. Àmín." },
-{ title:"Ìgbẹ́kẹ̀lé Pátápátá", verse:"Gbẹ́kẹ̀lé Rẹ̀ pẹ̀lú ọkàn rẹ gbogbo ní àwọn ọ̀nà rẹ gbogbo mọ̀ Ọ̀; Òun yóò sọ àwọn ọ̀nà rẹ di tọ́.", verse_ref:"Owe Salomoni 3:5-6", reflection_1:"Ìgbẹ́kẹ̀lé kì í ṣe ìmọ̀ ohun gbogbo — ó jẹ́ ìgbẹ́kẹ̀lé pé Olúwa mọ ohun gbogbo.", reflection_2:"Ohun kan wà tó ṣoro fún ọ láti mọ ìdáhùn rẹ̀ lónì? Gbẹ́kẹ̀lé Rẹ̀ pẹ̀lú ọkàn rẹ gbogbo.", prayer:"Baba, nínú àwọn ohun tí n kò mọ, mo gbẹ́kẹ̀lé Rẹ. Jẹ́ ìgbọ́n Rẹ yìí ṣamọ̀nà mi. Àmín." },
-];
-
-// ── NIGERIAN PIDGIN DEVOTIONALS ────────────────────────
-const DAILY_DEVOTIONALS_PCM = [
-{ title:"E Mercy Dey Fresh", verse:"Na because of di mercy of di LORD, we no don finish. Him compassion no go end. E dey fresh every morning — great na him faithfulness.", verse_ref:"Lamentations 3:22-23", reflection_1:"Every morning, God dey give you fresh mercy. Wetin happen yesterday don pass. Today na new day, new chance.", reflection_2:"No carry yesterday load come today. God mercy don cover am already. Just receive am and move forward.", prayer:"Father, thank you for dis fresh mercy wey you give me today. Help me to walk inside your goodness today. Amen." },
-{ title:"Trust Am With Your Whole Heart", verse:"Trust in the LORD with all your heart; and no lean on your own understanding.", verse_ref:"Proverbs 3:5", reflection_1:"Sometimes wetin we think e make sense no be God's plan. E get better vision pass us.", reflection_2:"Today, before you take any decision, ask God first. Him direction always better pass your own.", prayer:"Lord, I give you my plans today. Guide me, because your way better pass my own. Amen." },
-{ title:"I Get Power To Do Am", verse:"I fit do everything through Christ wey dey give me strength.", verse_ref:"Philippians 4:13", reflection_1:"Dis no be big talk — na truth. Di strength no come from you, e come from Christ inside you.", reflection_2:"Wetin dey look impossible to you today? Remember say na through Christ you go do am.", prayer:"Jesus, your strength dey inside me. Help me to use am today for your glory. Amen." },
-{ title:"Perfect Love Cast Out Fear", verse:"Perfect love cast out all fear — because fear get punishment, and anyone wey dey fear no don perfect inside love.", verse_ref:"1 John 4:18", reflection_1:"God love for you no get condition. E no depend on wetin you do or no do.", reflection_2:"Fear and faith no fit stay for same place. Choose to believe God love today.", prayer:"Father, cast out every fear from my heart today. Let your love be my strength. Amen." },
-{ title:"You Be New Creature", verse:"If any person dey inside Christ, that person don become new creature — old things don pass away, everything don become new.", verse_ref:"2 Corinthians 5:17", reflection_1:"God no see who you used to be. E see who you don become inside Christ — clean, new, forgiven.", reflection_2:"Stop carrying old labels. Inside God eyes, you be new person from today.", prayer:"Lord, thank you for making me new. Help me to live like di new person wey you don make me. Amen." },
-{ title:"God Peace Pass Understanding", verse:"Di peace of God wey pass all understanding go keep your heart and mind through Christ Jesus.", verse_ref:"Philippians 4:7", reflection_1:"Dis peace no be say trouble no dey — na say even when trouble dey, your heart still dey calm.", reflection_2:"Di secret na to cast your worry on God, and receive Him peace as exchange.", prayer:"Father, I give you all my worries now. Give me your peace wey pass understanding today. Amen." },
-{ title:"Complete Trust", verse:"Trust in di LORD with all your heart; in all your ways know am, and Him go make your paths straight.", verse_ref:"Proverbs 3:5-6", reflection_1:"Trusting God no mean you go understand everything — e mean say you believe He knows everything.", reflection_2:"Give God that thing wey you no understand today. Him road always dey lead to good place.", prayer:"Father, in what I no understand, I trust you. Lead me on your path today. Amen." },
-];
-
-
-// ── FRENCH DEVOTIONALS ──────────────────────────────────────────────
-const DAILY_DEVOTIONALS_FR = [
-{ title:"Ses Miséricordes Sont Nouvelles", verse:"Les bontés de l'Éternel ne sont pas épuisées, ses compassions ne sont pas à leur terme. Elles se renouvellent chaque matin. Grande est ta fidélité!", verse_ref:"Lamentations 3:22-23", reflection_1:"Chaque matin, Dieu vous offre une miséricorde toute fraîche. Ce qui s'est passé hier est révolu — Sa grâce couvre tout. Aujourd'hui est un nouveau départ.", reflection_2:"Ne portez pas le fardeau d'hier jusqu'à aujourd'hui. La miséricorde de Dieu l'a déjà couvert. Recevez-la simplement et avancez dans Sa paix.", prayer:"Père, merci pour cette miséricorde nouvelle que Tu m'accordes ce matin. Aide-moi à marcher dans Ta bonté aujourd'hui. Amen." },
-{ title:"Fais Confiance de Tout Ton Cœur", verse:"Confie-toi en l'Éternel de tout ton cœur, et ne t'appuie pas sur ta propre sagesse.", verse_ref:"Proverbes 3:5", reflection_1:"Parfois, ce qui nous semble logique n'est pas le plan de Dieu. Il voit bien au-delà de notre compréhension.", reflection_2:"Aujourd'hui, avant toute décision, consulte Dieu en premier. Sa direction est toujours meilleure que la nôtre.", prayer:"Seigneur, je Te remets mes plans aujourd'hui. Guide-moi, car Ton chemin surpasse le mien. Amen." },
-{ title:"Je Peux Tout par Christ", verse:"Je puis tout par celui qui me fortifie.", verse_ref:"Philippiens 4:13", reflection_1:"Ce n'est pas de la vantardise — c'est une profonde confiance que la puissance de Dieu agit en vous.", reflection_2:"Quelle est l'épreuve qui vous semble impossible aujourd'hui? Souvenez-vous que c'est par Christ que vous la surmonterez.", prayer:"Jésus, que Ta force agisse en moi aujourd'hui pour Ta gloire. Amen." },
-{ title:"L'Amour Parfait Chasse la Crainte", verse:"L'amour parfait bannit la crainte, car la crainte suppose un châtiment, et celui qui craint n'est pas parfait dans l'amour.", verse_ref:"1 Jean 4:18", reflection_1:"L'amour de Dieu pour vous est sans condition. Il ne dépend pas de vos actions ou de vos manquements.", reflection_2:"La foi et la peur ne peuvent cohabiter. Choisissez aujourd'hui de croire en l'amour de Dieu.", prayer:"Père, chasse toute crainte de mon cœur aujourd'hui. Que Ton amour soit ma force. Amen." },
-{ title:"Vous Êtes Nouvelle Créature", verse:"Si quelqu'un est en Christ, il est une nouvelle créature. Les choses anciennes sont passées; voici, toutes choses sont devenues nouvelles.", verse_ref:"2 Corinthiens 5:17", reflection_1:"Dieu ne vous voit pas tel que vous étiez. Il vous voit tel que vous êtes devenu en Christ — pur, nouveau, pardonné.", reflection_2:"Cessez de porter d'anciennes étiquettes. Aux yeux de Dieu, vous êtes une nouvelle personne dès aujourd'hui.", prayer:"Seigneur, merci de m'avoir renouvelé. Aide-moi à vivre selon la nouvelle identité que Tu m'as donnée. Amen." },
-{ title:"La Paix de Dieu", verse:"La paix de Dieu, qui surpasse toute intelligence, gardera vos cœurs et vos esprits en Jésus-Christ.", verse_ref:"Philippiens 4:7", reflection_1:"Cette paix ne signifie pas l'absence de problèmes — c'est un calme profond au milieu de la tempête.", reflection_2:"Le secret est de confier vos soucis à Dieu et de recevoir Sa paix en échange.", prayer:"Père, je Te remets toutes mes inquiétudes. Accorde-moi Ta paix qui surpasse toute intelligence aujourd'hui. Amen." },
-{ title:"Confiance Totale", verse:"Confie-toi en l'Éternel de tout ton cœur; reconnais-le dans toutes tes voies, et il aplanira tes sentiers.", verse_ref:"Proverbes 3:5-6", reflection_1:"Faire confiance à Dieu ne signifie pas tout comprendre — cela signifie croire qu'Il sait tout.", reflection_2:"Remets à Dieu ce que tu ne comprends pas aujourd'hui. Ses chemins mènent toujours à un bon endroit.", prayer:"Père, dans ce que je ne comprends pas, je Te fais confiance. Guide-moi sur Ton chemin aujourd'hui. Amen." },
-];
 
 function getTodayLocalDevotional() {
   const d = new Date();
@@ -5017,28 +4717,27 @@ async function prefetchUpcomingDevotionals() {
 async function loadTodayDevotional() {
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
   // Always fetch fresh from Supabase first — language-aware
-  // Cache key includes language so switching language shows correct version
-  const cacheKey = today; // raw Supabase data cached once, lang applied at display
+  const cacheKey = today;
 
-  // Step 1: Check localStorage cache first (works fully offline)
+  // ── Step 1: Show cached Supabase devotional instantly (if available) ──
   const cached = getCachedDevotional(cacheKey);
-  if (cached) {
-    console.log('[Devo] Loaded from offline cache:', cacheKey);
+  if (cached && cached._source === 'supabase') {
     applyDevotionalToPage(cached);
     buildHymn();
+    console.log('[Devo] Loaded from Supabase cache:', cacheKey);
   } else {
-    // Step 2: Fall back to built-in local rotation
-    const localDevotional = getTodayLocalDevotional();
-    applyDevotionalToPage(localDevotional);
-    buildHymn();
-    console.log('[Devo] Using local rotation (no cache for today)');
+    // No Supabase cache — show a loading placeholder while we fetch
+    showDevotionalLoading();
   }
 
   // Init comments for today
   initComments().catch(e => console.log('Comments init error:', e));
 
-  // Step 3: Always fetch fresh from Supabase — gets all language fields
-  if (!_db) return;
+  // ── Step 2: Always fetch fresh from Supabase ──────────────────────
+  if (!_db) {
+    if (!cached) showDevotionalEmpty();
+    return;
+  }
   try {
     const { data, error } = await _db
       .from('devotionals')
@@ -5047,26 +4746,68 @@ async function loadTodayDevotional() {
       .single();
 
     if (!error && data) {
-      // Save full Supabase row (all language fields) to cache
+      data._source = 'supabase';
       cacheDevotional(cacheKey, data);
-      // Apply with current language — pick() in applyDevotionalToPage handles lang
       applyDevotionalToPage(data);
       buildHymn();
-      console.log('[Devo] Updated from Supabase (lang=' + currentLang + '):', today);
+      console.log('[Devo] Loaded fresh from Supabase:', today);
+    } else {
+      // No devotional posted for today
+      if (!cached || cached._source !== 'supabase') {
+        showDevotionalEmpty();
+      }
     }
 
-    // Also prefetch upcoming days in the background
     setTimeout(() => {
       prefetchUpcomingDevotionals();
       pruneCachedDevotionals();
     }, 3000);
 
   } catch(e) {
-    console.log('[Devo] Background sync failed — cached/local version in use');
+    console.log('[Devo] Supabase fetch failed:', e);
+    if (!cached || cached._source !== 'supabase') {
+      showDevotionalEmpty();
+    }
   }
 }
 
+function showDevotionalLoading() {
+  const title = document.getElementById('devotionalTitle');
+  const reflection = document.getElementById('devotionalReflection');
+  const prayer = document.getElementById('devotionalPrayer');
+  const verse = document.getElementById('votdVerse');
+  const ref = document.getElementById('votdRef');
+  if (title) title.innerHTML = 'Loading<br>Today&rsquo;s Word&hellip;';
+  if (verse) verse.textContent = 'Fetching today\u2019s devotional\u2026';
+  if (ref) ref.textContent = '';
+  if (reflection) reflection.innerHTML = '<p style="color:var(--text-4);font-style:italic">Please wait a moment\u2026</p>';
+  if (prayer) prayer.textContent = '';
+}
+
+function showDevotionalEmpty() {
+  const title = document.getElementById('devotionalTitle');
+  const reflection = document.getElementById('devotionalReflection');
+  const prayer = document.getElementById('devotionalPrayer');
+  const verse = document.getElementById('votdVerse');
+  const ref = document.getElementById('votdRef');
+  if (title) title.innerHTML = 'No Devotional<br>Posted Today';
+  if (verse) verse.textContent = '\u201cThis is the day the LORD has made; we will rejoice and be glad in it.\u201d';
+  if (ref) ref.textContent = 'Psalm 118:24 \u00b7 KJV';
+  if (reflection) reflection.innerHTML = '<p style="color:var(--text-3);font-style:italic">Today\u2019s devotional has not been posted yet. Check back soon \u2014 the admin posts daily.</p>';
+  if (prayer) prayer.textContent = '\u201cLord, as I wait on Your word today, fill me with Your peace and presence. Amen.\u201d';
+}
+
 async function boot() {
+  // Clear any cached devotionals that were from the old local rotation (not Supabase)
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const cached = getCachedDevotional(today);
+    if (cached && cached._source !== 'supabase') {
+      localStorage.removeItem('edd_devo_' + today);
+      console.log('[Boot] Cleared old local rotation cache');
+    }
+  } catch(e) {}
+
   tick(); setInterval(tick, 30000);
   setGreeting();
   applyLanguage();
