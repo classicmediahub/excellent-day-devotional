@@ -20,16 +20,18 @@ self.addEventListener('install', event => {
       return Promise.allSettled(
         APP_SHELL.map(url => cache.add(url).catch(e => console.warn('[SW] Failed to cache:', url)))
       );
-    }).then(() => self.skipWaiting())
+    }).then(() => { self.skipWaiting(); })
   );
 });
 
 // ── ACTIVATE: clean up old caches ─────────────────────
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys =>
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim())]
   );
 });
 
