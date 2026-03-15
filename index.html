@@ -307,11 +307,12 @@ body {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+  touch-action: pan-y;
   z-index: 1;
   transition: background var(--transition);
 }
 .page { display: none; padding: 22px 16px 40px; max-width: 680px; margin: 0 auto; }
-.page.active { display: block; animation: pg-in 0.35s ease; touch-action: pan-y; }
+.page.active { display: block; animation: pg-in 0.35s ease; }
 @keyframes pg-in {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1904,6 +1905,7 @@ button.brand:active { transform: scale(0.97); }
 .game-hub-card::before {
   content:''; position:absolute; top:0; left:0; right:0; height:3px;
   background:var(--g-color, var(--accent));
+  pointer-events:none;
 }
 .game-hub-card:hover { border-color:var(--accent); transform:translateX(4px); }
 .ghc-icon {
@@ -2498,7 +2500,7 @@ button.brand:active { transform: scale(0.97); }
         <h2 class="ph-title" style="font-size:1.32rem">Bible Crossword</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
-      <div id="crosswordArea" style="touch-action:pan-y"></div>
+      <div id="crosswordArea"></div>
     </div>
 
     <!-- SCRIPTURE MEMORY PAGE -->
@@ -2508,7 +2510,7 @@ button.brand:active { transform: scale(0.97); }
         <h2 class="ph-title" style="font-size:1.32rem">Scripture Memory</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
-      <div id="scriptureArea" style="touch-action:pan-y"></div>
+      <div id="scriptureArea"></div>
     </div>
 
     <!-- BIBLE QUIZ PAGE — LEVELLED -->
@@ -2518,10 +2520,9 @@ button.brand:active { transform: scale(0.97); }
         <h2 class="ph-title" style="font-size:1.32rem">Bible Quiz</h2>
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
-      <div id="quizArea" style="touch-action:pan-y"></div>
+      <div id="quizArea"></div>
     </div>
 
-    </div>
 
     <!-- PRAYER WALL PAGE -->
     <div class="page" id="page-prayer">
@@ -4050,7 +4051,7 @@ function renderQuizHome() {
     const isCurrent = i === curLevelIdx;
     return `
       <div class="qz-level-card ${!unlocked ? 'locked' : ''} ${isCurrent ? 'active-level' : ''}"
-           onclick="${unlocked ? `startQuizLevel('${l.id}')` : `toast('Earn ${l.xpNeeded - qz.totalXP} more XP to unlock ${l.name}')`}">
+           data-levelid="${l.id}" data-unlocked="${unlocked}" data-xpneeded="${l.xpNeeded - qz.totalXP}" data-levelname="${l.name}">
         <div class="qz-lc-icon" style="background:${unlocked ? l.color + '22' : 'var(--border)'};font-size:1.4rem">${l.icon}</div>
         <div class="qz-lc-info">
           <div class="qz-lc-name" style="font-size:0.88rem">${l.name} ${isCurrent ? '<span style="font-size:0.6rem;color:var(--gold)">▶ CURRENT</span>' : ''}</div>
@@ -4093,6 +4094,21 @@ function renderQuizHome() {
     <div class="sh" style="margin-bottom:10px"><div class="sh-gem">✦</div><div class="sh-label">Choose Your Level</div><div class="sh-line"></div></div>
     <div class="qz-levels-grid">${levelsHtml}</div>
   `;
+
+  // Event delegation for level cards
+  area.querySelectorAll('.qz-level-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const levelId = this.dataset.levelid;
+      const unlocked = this.dataset.unlocked === 'true';
+      if (unlocked) {
+        startQuizLevel(levelId);
+      } else {
+        const xpNeeded = parseInt(this.dataset.xpneeded) || 0;
+        const name = this.dataset.levelname || '';
+        toast('Earn ' + xpNeeded + ' more XP to unlock ' + name);
+      }
+    });
+  });
 }
 
 // ── START A LEVEL ───────────────────────────────────
@@ -4628,9 +4644,9 @@ function renderCrossword() {
     </div>
     <div class="cw-keyboard">
       ${['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'].map(l =>
-        `<div class="cw-key" onclick="cwKey('${l}')">${l}</div>`).join('')}
-      <div class="cw-key backspace" onclick="cwKey('⌫')">⌫</div>
-      <div class="cw-key check-btn" onclick="cwCheckAll()">✓ Check</div>
+        `<div class="cw-key" data-key="${l}">${l}</div>`).join('')}
+      <div class="cw-key backspace" data-key="⌫">⌫</div>
+      <div class="cw-key check-btn" data-key="CHECK">✓ Check</div>
     </div>
     <div class="cw-clue-section">
       <div class="cw-clue-header">Across</div>
@@ -4958,6 +4974,14 @@ function renderScriptureHome() {
     </div>
     <div class="sh"><div class="sh-gem">✦</div><div class="sh-label">Choose a Verse</div><div class="sh-line"></div></div>
     <div class="sm-verse-list">${list}</div>`;
+
+  // Event delegation for verse list
+  area.querySelectorAll('.sm-vl-item').forEach(item => {
+    item.addEventListener('click', function() {
+      smStartVerse(this.dataset.verseref);
+    });
+  });
+
 }
 
 function smStartVerse(ref) {
@@ -5023,7 +5047,7 @@ function renderScriptureChallenge() {
       usedMap[key] = bi;
       const filled = smUserBlanks[bi] || '';
       const minW   = Math.max(60, clean.length*11);
-      return `<span class="blank ${filled?'filled':''}" style="min-width:${minW}px;cursor:pointer" onclick="smClearBlank(${bi})">${filled||'&nbsp;'}</span>${punct} `;
+      return `<span class="blank ${filled?'filled':''}" style="min-width:${minW}px;cursor:pointer" data-clearblank="${bi}">${filled||'&nbsp;'}</span>${punct} `;
     }
     return token+' ';
   }).join('');
@@ -5070,6 +5094,27 @@ function renderScriptureChallenge() {
     </div>
     <div class="sh" style="margin-top:8px"><div class="sh-gem">✦</div><div class="sh-label">Full Verse</div><div class="sh-line"></div></div>
     <div style="font-family:var(--serif);font-size:0.85rem;color:var(--text-3);line-height:1.75;padding:8px 0;font-style:italic">"${verse.text}" — ${verse.ref}</div>`;
+
+  // Event delegation for all interactive elements in scripture challenge
+  area.addEventListener('click', function(e) {
+    // Clear blank
+    const blankEl = e.target.closest('[data-clearblank]');
+    if (blankEl) { smClearBlank(parseInt(blankEl.dataset.clearblank)); return; }
+    // Word bank tap
+    const wordEl = e.target.closest('[data-wordidx]');
+    if (wordEl) { smWordTap(parseInt(wordEl.dataset.wordidx)); return; }
+    // Check button
+    if (e.target.closest('.sm-check-btn')) { smCheck(); return; }
+    // Skip button
+    if (e.target.closest('.sm-skip-btn')) { smSkip(); return; }
+    // Hint button
+    if (e.target.closest('.sm-hint-btn')) { smHint(); return; }
+    // Mode tabs
+    const modeTab = e.target.closest('.sm-mode-tab');
+    if (modeTab) { smSetMode(modeTab.dataset.mode || (modeTab.textContent.includes('Word')?'wordbank':'type')); return; }
+    // Back button
+    if (e.target.closest('.sm-back-btn')) { renderScriptureHome(); return; }
+  });
 }
 
 function smSetMode(mode) {
