@@ -1720,11 +1720,17 @@ button.brand:active { transform: scale(0.97); }
 ═══════════════════════════════════════════════════ */
 /* Level badge */
 .qz-level-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; font-family:var(--serif); font-size:0.75rem; font-weight:700; letter-spacing:0.04em; }
+.qz-lvl-novice      { background:rgba(122,170,120,0.15); color:#7aaa78; border:1px solid rgba(122,170,120,0.3); }
 .qz-lvl-beginner    { background:rgba(90,138,120,0.15); color:#5a8a78; border:1px solid rgba(90,138,120,0.3); }
+.qz-lvl-apprentice  { background:rgba(74,154,138,0.15); color:#4a9a8a; border:1px solid rgba(74,154,138,0.3); }
 .qz-lvl-intermediate{ background:rgba(90,138,200,0.15); color:#5a78c8; border:1px solid rgba(90,138,200,0.3); }
 .qz-lvl-advanced    { background:rgba(168,90,200,0.15); color:#a85ac8; border:1px solid rgba(168,90,200,0.3); }
+.qz-lvl-warrior     { background:rgba(200,120,88,0.15); color:#c87858; border:1px solid rgba(200,120,88,0.3); }
 .qz-lvl-expert      { background:rgba(200,100,60,0.15); color:#c8643c; border:1px solid rgba(200,100,60,0.3); }
+.qz-lvl-elder       { background:rgba(136,144,216,0.15); color:#8890d8; border:1px solid rgba(136,144,216,0.3); }
 .qz-lvl-scholar     { background:rgba(200,168,74,0.18); color:var(--gold); border:1px solid rgba(200,168,74,0.4); }
+.qz-lvl-apostle     { background:rgba(232,160,64,0.2); color:#e8a040; border:2px solid rgba(232,160,64,0.5); animation:apostleGlow 2s ease-in-out infinite; }
+@keyframes apostleGlow { 0%,100%{box-shadow:0 0 0 0 rgba(232,160,64,0)} 50%{box-shadow:0 0 12px rgba(232,160,64,0.4)} }
 /* XP bar */
 .qz-xp-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px 16px; margin-bottom:16px; }
 .qz-xp-top  { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
@@ -3512,107 +3518,221 @@ function setText(id, text) {
 
 // ── LEVEL CONFIG ────────────────────────────────────
 const QZ_LEVELS = [
-  { id:'beginner',     name:'Beginner',     icon:'🌱', color:'#5a8a78', xpNeeded:0,    questions:8,  timePerQ:30, desc:'Foundation of faith — start here' },
-  { id:'intermediate', name:'Intermediate', icon:'📖', color:'#5a78c8', xpNeeded:150,  questions:10, timePerQ:25, desc:'Growing in the Word' },
-  { id:'advanced',     name:'Advanced',     icon:'⚔️', color:'#a85ac8', xpNeeded:400,  questions:10, timePerQ:20, desc:'Deep Bible knowledge' },
-  { id:'expert',       name:'Expert',       icon:'🏛️', color:'#c8643c', xpNeeded:800,  questions:12, timePerQ:18, desc:'Walk by faith not by sight' },
-  { id:'scholar',      name:'Scholar',      icon:'👑', color:'#C8A84A', xpNeeded:1500, questions:15, timePerQ:15, desc:'The crown of wisdom' },
+  { id:'novice',       name:'Novice',        icon:'🌿', color:'#7aaa78', xpNeeded:0,    questions:8,  timePerQ:35, desc:'Start your Bible journey here' },
+  { id:'beginner',     name:'Beginner',      icon:'🌱', color:'#5a8a78', xpNeeded:100,  questions:10, timePerQ:30, desc:'Foundation of faith' },
+  { id:'apprentice',   name:'Apprentice',    icon:'📗', color:'#4a9a8a', xpNeeded:280,  questions:12, timePerQ:28, desc:'Learning the Word daily' },
+  { id:'intermediate', name:'Intermediate',  icon:'📖', color:'#5a78c8', xpNeeded:550,  questions:12, timePerQ:25, desc:'Growing deeper in Scripture' },
+  { id:'advanced',     name:'Advanced',      icon:'⚔️', color:'#a85ac8', xpNeeded:1000, questions:15, timePerQ:22, desc:'Strong in the Word' },
+  { id:'warrior',      name:'Word Warrior',  icon:'🛡️', color:'#c87858', xpNeeded:1800, questions:15, timePerQ:20, desc:'Fight the good fight of faith' },
+  { id:'expert',       name:'Expert',        icon:'🏛️', color:'#c8643c', xpNeeded:3000, questions:18, timePerQ:18, desc:'Walk by faith not by sight' },
+  { id:'elder',        name:'Church Elder',  icon:'🕊️', color:'#8890d8', xpNeeded:5000, questions:18, timePerQ:16, desc:'Wisdom beyond your years' },
+  { id:'scholar',      name:'Scholar',       icon:'👑', color:'#C8A84A', xpNeeded:8000, questions:20, timePerQ:15, desc:'The crown of Bible wisdom' },
+  { id:'apostle',      name:'Apostle',       icon:'✝️', color:'#e8a040', xpNeeded:15000,questions:20, timePerQ:12, desc:'Greatest level — for the chosen few' },
 ];
 
-// ── QUESTION BANK ────────────────────────────────────
-// difficulty: 1=Beginner, 2=Intermediate, 3=Advanced, 4=Expert, 5=Scholar
+// ── QUESTION BANK — 200+ questions ────────────────────────────────
+// diff: 1=Novice, 2=Beginner, 3=Apprentice, 4=Intermediate, 5=Advanced, 6=Warrior, 7=Expert, 8=Elder, 9=Scholar, 10=Apostle
 const QZ_BANK = [
-  // ── BEGINNER (1) ────────────────────────────────
-  { q:"How many days did God take to create the world?", opts:["5 days","6 days","7 days","8 days"], ans:1, cat:"Creation", ref:"Genesis 1", diff:1 },
-  { q:"What was the name of the garden where Adam and Eve lived?", opts:["Gethsemane","Eden","Babylon","Nazareth"], ans:1, cat:"Old Testament", ref:"Genesis 2:8", diff:1 },
-  { q:"How many books are in the entire Bible?", opts:["60","66","72","78"], ans:1, cat:"Bible Knowledge", ref:"39 OT + 27 NT", diff:1 },
-  { q:"In which town was Jesus born?", opts:["Nazareth","Jerusalem","Bethlehem","Capernaum"], ans:2, cat:"New Testament", ref:"Luke 2:4-7", diff:1 },
-  { q:"Who built the ark?", opts:["Moses","Abraham","Noah","David"], ans:2, cat:"Old Testament", ref:"Genesis 6:14", diff:1 },
-  { q:"How many disciples did Jesus choose?", opts:["7","10","12","14"], ans:2, cat:"New Testament", ref:"Luke 6:13", diff:1 },
-  { q:"Which psalm begins 'The LORD is my shepherd'?", opts:["Psalm 1","Psalm 23","Psalm 91","Psalm 100"], ans:1, cat:"Psalms", ref:"Psalm 23:1", diff:1 },
-  { q:"Who was swallowed by a great fish?", opts:["Elijah","Jonah","Ezekiel","Isaiah"], ans:1, cat:"Prophets", ref:"Jonah 1:17", diff:1 },
-  { q:"How many commandments did God give Moses?", opts:["5","7","10","12"], ans:2, cat:"Law", ref:"Exodus 20", diff:1 },
-  { q:"Who baptised Jesus?", opts:["Peter","Paul","John the Baptist","Elijah"], ans:2, cat:"New Testament", ref:"Matthew 3:13", diff:1 },
-  { q:"What was Jesus' first miracle?", opts:["Healing blind man","Turning water to wine","Walking on water","Raising Lazarus"], ans:1, cat:"Miracles", ref:"John 2:1-11", diff:1 },
-  { q:"Who denied Jesus three times?", opts:["Judas","Thomas","Peter","James"], ans:2, cat:"New Testament", ref:"Matthew 26:75", diff:1 },
-  { q:"What is the last book of the Bible?", opts:["Jude","Hebrews","Revelation","Acts"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:1 },
-  { q:"What did God promise after Noah's flood as a sign?", opts:["A dove","The rainbow","The sun","A star"], ans:1, cat:"Old Testament", ref:"Genesis 9:13", diff:1 },
-  { q:"How many books are in the New Testament?", opts:["24","27","30","33"], ans:1, cat:"Bible Knowledge", ref:"Bible", diff:1 },
 
-  // ── INTERMEDIATE (2) ───────────────────────────
-  { q:"How many days and nights did it rain in Noah's flood?", opts:["20 days","40 days","60 days","7 days"], ans:1, cat:"Old Testament", ref:"Genesis 7:12", diff:2 },
-  { q:"Who interpreted Pharaoh's dreams in Egypt?", opts:["Moses","Abraham","Joseph","Daniel"], ans:2, cat:"Old Testament", ref:"Genesis 41:15", diff:2 },
-  { q:"How many brothers did Joseph have?", opts:["10","11","12","9"], ans:1, cat:"Old Testament", ref:"Genesis 42:3", diff:2 },
-  { q:"How many plagues did God send on Egypt?", opts:["7","10","12","9"], ans:1, cat:"Old Testament", ref:"Exodus 7-12", diff:2 },
+  // ══ NOVICE (1) ══════════════════════════════════════════════════
+  { q:"What is the first book of the Bible?", opts:["Exodus","Genesis","Psalms","Matthew"], ans:1, cat:"Bible Knowledge", ref:"Genesis 1:1", diff:1 },
+  { q:"How many days did God take to create the world?", opts:["5 days","6 days","7 days","8 days"], ans:1, cat:"Creation", ref:"Genesis 1", diff:1 },
+  { q:"Who built the ark?", opts:["Moses","Abraham","Noah","David"], ans:2, cat:"Old Testament", ref:"Genesis 6:14", diff:1 },
+  { q:"In which town was Jesus born?", opts:["Nazareth","Jerusalem","Bethlehem","Capernaum"], ans:2, cat:"New Testament", ref:"Luke 2:4-7", diff:1 },
+  { q:"How many disciples did Jesus choose?", opts:["7","10","12","14"], ans:2, cat:"New Testament", ref:"Luke 6:13", diff:1 },
+  { q:"What is the last book of the Bible?", opts:["Jude","Hebrews","Revelation","Acts"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:1 },
+  { q:"Who was swallowed by a great fish?", opts:["Elijah","Jonah","Ezekiel","Isaiah"], ans:1, cat:"Prophets", ref:"Jonah 1:17", diff:1 },
+  { q:"Which psalm begins 'The LORD is my shepherd'?", opts:["Psalm 1","Psalm 23","Psalm 91","Psalm 100"], ans:1, cat:"Psalms", ref:"Psalm 23:1", diff:1 },
+  { q:"How many books are in the entire Bible?", opts:["60","66","72","78"], ans:1, cat:"Bible Knowledge", ref:"39 OT + 27 NT", diff:1 },
+  { q:"Who created the heavens and the earth?", opts:["Angels","Man","God","Nature"], ans:2, cat:"Creation", ref:"Genesis 1:1", diff:1 },
+  { q:"What did Jesus turn water into?", opts:["Milk","Oil","Wine","Honey"], ans:2, cat:"Miracles", ref:"John 2:1-11", diff:1 },
+  { q:"What is the name of the garden where Adam and Eve lived?", opts:["Gethsemane","Eden","Babylon","Paradise"], ans:1, cat:"Creation", ref:"Genesis 2:8", diff:1 },
+  { q:"Who was Jesus' mother?", opts:["Elizabeth","Martha","Mary","Miriam"], ans:2, cat:"New Testament", ref:"Luke 1:27", diff:1 },
+  { q:"What animal did Noah send out first from the ark?", opts:["A dove","A raven","A sparrow","A swallow"], ans:1, cat:"Old Testament", ref:"Genesis 8:7", diff:1 },
+  { q:"What sea did Moses part?", opts:["Dead Sea","Sea of Galilee","Red Sea","Mediterranean"], ans:2, cat:"Old Testament", ref:"Exodus 14:21", diff:1 },
+
+  // ══ BEGINNER (2) ════════════════════════════════════════════════
+  { q:"How many commandments did God give Moses?", opts:["5","7","10","12"], ans:2, cat:"Law", ref:"Exodus 20", diff:2 },
+  { q:"Who baptised Jesus?", opts:["Peter","Paul","John the Baptist","Elijah"], ans:2, cat:"New Testament", ref:"Matthew 3:13", diff:2 },
   { q:"Which weapon did David use to defeat Goliath?", opts:["Sword","Spear","Sling and stone","Bow and arrow"], ans:2, cat:"Old Testament", ref:"1 Samuel 17:50", diff:2 },
+  { q:"What was Jesus' first miracle?", opts:["Healing blind man","Turning water to wine","Walking on water","Raising Lazarus"], ans:1, cat:"Miracles", ref:"John 2:1-11", diff:2 },
+  { q:"Who denied Jesus three times?", opts:["Judas","Thomas","Peter","James"], ans:2, cat:"New Testament", ref:"Matthew 26:75", diff:2 },
+  { q:"What did God promise after Noah's flood as a sign?", opts:["A dove","The rainbow","The sun","A star"], ans:1, cat:"Old Testament", ref:"Genesis 9:13", diff:2 },
+  { q:"How many books are in the New Testament?", opts:["24","27","30","33"], ans:1, cat:"Bible Knowledge", ref:"Bible", diff:2 },
+  { q:"Who was swallowed by a great fish for three days?", opts:["Elijah","Daniel","Jonah","Ezekiel"], ans:2, cat:"Prophets", ref:"Jonah 1:17", diff:2 },
+  { q:"What is the shortest verse in the Bible?", opts:["God is love","Pray without ceasing","Jesus wept","Trust in God"], ans:2, cat:"Bible Knowledge", ref:"John 11:35", diff:2 },
+  { q:"How many loaves and fish did Jesus use to feed 5,000?", opts:["5 loaves 2 fish","3 loaves 5 fish","7 loaves 2 fish","2 loaves 5 fish"], ans:0, cat:"Miracles", ref:"John 6:9", diff:2 },
   { q:"Who was the first king of Israel?", opts:["David","Solomon","Saul","Samuel"], ans:2, cat:"Old Testament", ref:"1 Samuel 10:1", diff:2 },
+  { q:"How many days and nights did it rain in Noah's flood?", opts:["20 days","40 days","60 days","7 days"], ans:1, cat:"Old Testament", ref:"Genesis 7:12", diff:2 },
   { q:"What did Solomon ask God for?", opts:["Long life","Wealth","Wisdom","Victory"], ans:2, cat:"Old Testament", ref:"1 Kings 3:9", diff:2 },
-  { q:"Which disciple walked on water with Jesus?", opts:["John","James","Peter","Andrew"], ans:2, cat:"New Testament", ref:"Matthew 14:29", diff:2 },
-  { q:"How many days was Lazarus in the tomb?", opts:["1 day","2 days","3 days","4 days"], ans:3, cat:"Miracles", ref:"John 11:39", diff:2 },
   { q:"Who betrayed Jesus for 30 pieces of silver?", opts:["Pilate","Peter","Judas Iscariot","Herod"], ans:2, cat:"New Testament", ref:"Matthew 26:15", diff:2 },
   { q:"On which day did Jesus rise from the dead?", opts:["First","Second","Third","Fourth"], ans:2, cat:"New Testament", ref:"Luke 24:7", diff:2 },
-  { q:"What was Paul's name before his conversion?", opts:["Simon","Saul","Silas","Sosthenes"], ans:1, cat:"New Testament", ref:"Acts 13:9", diff:2 },
-  { q:"How many fish and loaves did Jesus use to feed 5,000?", opts:["5 loaves 2 fish","3 loaves 5 fish","7 loaves 2 fish","2 loaves 5 fish"], ans:0, cat:"Miracles", ref:"John 6:9", diff:2 },
-  { q:"What is the shortest verse in the Bible?", opts:["God is love","Pray without ceasing","Jesus wept","Trust in God"], ans:2, cat:"Bible Knowledge", ref:"John 11:35", diff:2 },
-  { q:"Who was the first martyr of the Christian church?", opts:["Paul","James","Peter","Stephen"], ans:3, cat:"New Testament", ref:"Acts 7:59", diff:2 },
 
-  // ── ADVANCED (3) ──────────────────────────────
-  { q:"How many days was Jonah inside the fish?", opts:["1 day","2 days","3 days","7 days"], ans:2, cat:"Prophets", ref:"Jonah 1:17", diff:3 },
+  // ══ APPRENTICE (3) ══════════════════════════════════════════════
+  { q:"How many brothers did Joseph have?", opts:["10","11","12","9"], ans:1, cat:"Old Testament", ref:"Genesis 42:3", diff:3 },
+  { q:"How many plagues did God send on Egypt?", opts:["7","10","12","9"], ans:1, cat:"Old Testament", ref:"Exodus 7-12", diff:3 },
+  { q:"Which disciple walked on water with Jesus?", opts:["John","James","Peter","Andrew"], ans:2, cat:"New Testament", ref:"Matthew 14:29", diff:3 },
+  { q:"How many days was Lazarus in the tomb before Jesus raised him?", opts:["1 day","2 days","3 days","4 days"], ans:3, cat:"Miracles", ref:"John 11:39", diff:3 },
+  { q:"What was Paul's name before his conversion?", opts:["Simon","Saul","Silas","Sosthenes"], ans:1, cat:"New Testament", ref:"Acts 13:9", diff:3 },
   { q:"Who was thrown into the lions' den?", opts:["Shadrach","Daniel","Nehemiah","Ezra"], ans:1, cat:"Prophets", ref:"Daniel 6:16", diff:3 },
+  { q:"Who interpreted Pharaoh's dreams in Egypt?", opts:["Moses","Abraham","Joseph","Daniel"], ans:2, cat:"Old Testament", ref:"Genesis 41:15", diff:3 },
+  { q:"What did God use to guide Israel at night in the wilderness?", opts:["A star","A pillar of fire","An angel","The moon"], ans:1, cat:"Old Testament", ref:"Exodus 13:21", diff:3 },
+  { q:"Who was the first martyr of the Christian church?", opts:["Paul","James","Peter","Stephen"], ans:3, cat:"New Testament", ref:"Acts 7:59", diff:3 },
+  { q:"On the Day of Pentecost, how many were added to the church?", opts:["1,000","2,000","3,000","5,000"], ans:2, cat:"New Testament", ref:"Acts 2:41", diff:3 },
+  { q:"How many years did Israel wander in the wilderness?", opts:["20 years","30 years","40 years","50 years"], ans:2, cat:"Old Testament", ref:"Numbers 14:33", diff:3 },
+  { q:"What weapon did Samson use to kill 1,000 Philistines?", opts:["Sword","Bare hands","Donkey's jawbone","Stone"], ans:2, cat:"Old Testament", ref:"Judges 15:15", diff:3 },
   { q:"Which prophet predicted Jesus' birth in Bethlehem?", opts:["Isaiah","Jeremiah","Micah","Ezekiel"], ans:2, cat:"Prophets", ref:"Micah 5:2", diff:3 },
   { q:"How many times should we forgive according to Jesus?", opts:["7 times","49 times","70 times 7","As many as needed"], ans:2, cat:"Teaching", ref:"Matthew 18:22", diff:3 },
-  { q:"On the Day of Pentecost, how many joined the church?", opts:["1,000","2,000","3,000","5,000"], ans:2, cat:"New Testament", ref:"Acts 2:41", diff:3 },
-  { q:"What fruit of the Spirit is NOT in Galatians 5?", opts:["Love","Wealth","Peace","Kindness"], ans:1, cat:"Epistles", ref:"Galatians 5:22-23", diff:3 },
   { q:"What did Elijah do before going to heaven?", opts:["He died peacefully","He was taken in a whirlwind","He walked into the sea","He ascended a mountain"], ans:1, cat:"Old Testament", ref:"2 Kings 2:11", diff:3 },
-  { q:"How many times is 'fear not' found in the Bible?", opts:["66","100","365","200"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:3 },
-  { q:"Which book of the Bible has the most chapters?", opts:["Genesis","Isaiah","Psalms","Proverbs"], ans:2, cat:"Bible Knowledge", ref:"Psalms — 150 chapters", diff:3 },
-  { q:"Who wrote the most books in the New Testament?", opts:["Peter","John","Luke","Paul"], ans:3, cat:"New Testament", ref:"Bible", diff:3 },
-  { q:"What weapon did Samson use to kill 1,000 Philistines?", opts:["Sword","Bare hands","Donkey's jawbone","Stone"], ans:2, cat:"Old Testament", ref:"Judges 15:15", diff:3 },
-  { q:"What did God use to guide Israel in the wilderness at night?", opts:["A star","A pillar of fire","An angel","The moon"], ans:1, cat:"Old Testament", ref:"Exodus 13:21", diff:3 },
-  { q:"Where was Jesus when He was transfigured?", opts:["Mount Sinai","Mount of Olives","A high mountain","Mount Zion"], ans:2, cat:"New Testament", ref:"Matthew 17:1", diff:3 },
-  { q:"How many years did Israel wander in the wilderness?", opts:["20 years","30 years","40 years","50 years"], ans:2, cat:"Old Testament", ref:"Numbers 14:33", diff:3 },
+  { q:"Who was Moses' father-in-law?", opts:["Jethro","Caleb","Eleazar","Hobab"], ans:0, cat:"Old Testament", ref:"Exodus 3:1", diff:3 },
 
-  // ── EXPERT (4) ────────────────────────────────
-  { q:"Who was Abraham's first son?", opts:["Isaac","Jacob","Ishmael","Esau"], ans:2, cat:"Patriarchs", ref:"Genesis 16:15", diff:4 },
-  { q:"How many years did Jacob work for Rachel?", opts:["7 years","14 years","21 years","Both 7 and 14 years"], ans:3, cat:"Patriarchs", ref:"Genesis 29:20-30", diff:4 },
-  { q:"Who was Moses' father-in-law?", opts:["Jethro","Caleb","Eleazar","Hobab"], ans:0, cat:"Old Testament", ref:"Exodus 3:1", diff:4 },
-  { q:"In what city did Paul and Silas get thrown in prison and worship?", opts:["Corinth","Philippi","Ephesus","Thessalonica"], ans:1, cat:"Acts", ref:"Acts 16:24-25", diff:4 },
-  { q:"What was the name of the valley where David fought Goliath?", opts:["Jezreel","Elah","Kidron","Berachah"], ans:1, cat:"Old Testament", ref:"1 Samuel 17:2", diff:4 },
+  // ══ INTERMEDIATE (4) ════════════════════════════════════════════
+  { q:"What fruit of the Spirit is NOT in Galatians 5?", opts:["Love","Wealth","Peace","Kindness"], ans:1, cat:"Epistles", ref:"Galatians 5:22-23", diff:4 },
   { q:"How many chapters are in the Psalms?", opts:["100","120","150","175"], ans:2, cat:"Psalms", ref:"Psalms", diff:4 },
   { q:"Who was the first judge of Israel?", opts:["Samuel","Gideon","Othniel","Deborah"], ans:2, cat:"Judges", ref:"Judges 3:9", diff:4 },
   { q:"What tree did Zacchaeus climb to see Jesus?", opts:["Fig tree","Olive tree","Sycamore tree","Cedar tree"], ans:2, cat:"New Testament", ref:"Luke 19:4", diff:4 },
   { q:"How many letters did Paul write in the New Testament?", opts:["11","13","15","17"], ans:1, cat:"Epistles", ref:"Bible", diff:4 },
-  { q:"Which apostle was a tax collector before following Jesus?", opts:["Peter","James","Matthew","Bartholomew"], ans:2, cat:"New Testament", ref:"Matthew 9:9", diff:4 },
+  { q:"Which apostle was a tax collector?", opts:["Peter","James","Matthew","Bartholomew"], ans:2, cat:"New Testament", ref:"Matthew 9:9", diff:4 },
+  { q:"How many years did Jacob work for Rachel in total?", opts:["7 years","14 years","21 years","Both 7 and 14 years"], ans:3, cat:"Patriarchs", ref:"Genesis 29:20-30", diff:4 },
+  { q:"In what city did Paul and Silas sing in prison?", opts:["Corinth","Philippi","Ephesus","Thessalonica"], ans:1, cat:"Acts", ref:"Acts 16:24-25", diff:4 },
+  { q:"What was the name of the valley where David fought Goliath?", opts:["Jezreel","Elah","Kidron","Berachah"], ans:1, cat:"Old Testament", ref:"1 Samuel 17:2", diff:4 },
+  { q:"Which book of the Bible has the most chapters?", opts:["Genesis","Isaiah","Psalms","Proverbs"], ans:2, cat:"Bible Knowledge", ref:"Psalms — 150 chapters", diff:4 },
+  { q:"How many days was Jonah inside the fish?", opts:["1 day","2 days","3 days","7 days"], ans:2, cat:"Prophets", ref:"Jonah 1:17", diff:4 },
+  { q:"Who wrote the most books in the New Testament?", opts:["Peter","John","Luke","Paul"], ans:3, cat:"Epistles", ref:"Bible", diff:4 },
+  { q:"Where was Jesus when He was transfigured?", opts:["Mount Sinai","Mount of Olives","A high mountain","Mount Zion"], ans:2, cat:"New Testament", ref:"Matthew 17:1", diff:4 },
+  { q:"How many times is 'fear not' found in the Bible?", opts:["66","100","365","200"], ans:2, cat:"Bible Knowledge", ref:"Bible", diff:4 },
+  { q:"What does CAC stand for?", opts:["Christ Assembly Church","Christ Apostolic Church","Christian Apostolic Community","Church of Almighty Christ"], ans:1, cat:"CAC Knowledge", ref:"CAC History", diff:4 },
 
-  // ── SCHOLAR (5) ───────────────────────────────
-  { q:"What is the Hebrew word for 'the LORD' used in the Old Testament?", opts:["Adonai","Elohim","YHWH / Yahweh","El Shaddai"], ans:2, cat:"Hebrew", ref:"Exodus 3:14", diff:5 },
-  { q:"How many elders surround the throne in Revelation 4?", opts:["12","24","48","72"], ans:1, cat:"Revelation", ref:"Revelation 4:4", diff:5 },
+  // ══ ADVANCED (5) ════════════════════════════════════════════════
+  { q:"Who was Abraham's first son?", opts:["Isaac","Jacob","Ishmael","Esau"], ans:2, cat:"Patriarchs", ref:"Genesis 16:15", diff:5 },
+  { q:"What does the word 'Gospel' mean?", opts:["Holy scripture","Good news","God's word","Sacred text"], ans:1, cat:"Bible Knowledge", ref:"Greek: euangelion", diff:5 },
   { q:"Who was the king of Salem who blessed Abraham?", opts:["Melchizedek","Abimelech","Bera","Balak"], ans:0, cat:"Patriarchs", ref:"Genesis 14:18", diff:5 },
-  { q:"What are the first words of the book of John?", opts:["In the beginning was the Word","God so loved the world","The Spirit of the Lord","Grace and peace to you"], ans:0, cat:"Gospel of John", ref:"John 1:1", diff:5 },
+  { q:"What does 'Emmanuel' mean?", opts:["Son of God","God saves","God with us","Holy One"], ans:2, cat:"Names of Jesus", ref:"Matthew 1:23", diff:5 },
   { q:"Who were the parents of John the Baptist?", opts:["Joseph and Mary","Zechariah and Elizabeth","Simeon and Anna","Joachim and Anne"], ans:1, cat:"New Testament", ref:"Luke 1:5-13", diff:5 },
-  { q:"In which prison was Paul held before going to Rome?", opts:["Jerusalem prison","Caesarea — in Herod's palace","Antioch jail","The Mamertine"], ans:1, cat:"Acts", ref:"Acts 23:35", diff:5 },
-  { q:"What does the name 'Emmanuel' mean?", opts:["Son of God","God saves","God with us","Holy One"], ans:2, cat:"Names of Jesus", ref:"Matthew 1:23", diff:5 },
+  { q:"How many elders surround the throne in Revelation 4?", opts:["12","24","48","72"], ans:1, cat:"Revelation", ref:"Revelation 4:4", diff:5 },
+  { q:"What is the Hebrew word for the LORD used in the Old Testament?", opts:["Adonai","Elohim","YHWH / Yahweh","El Shaddai"], ans:2, cat:"Hebrew", ref:"Exodus 3:14", diff:5 },
+  { q:"Who was Moses' sister?", opts:["Deborah","Miriam","Naomi","Rachel"], ans:1, cat:"Old Testament", ref:"Exodus 15:20", diff:5 },
   { q:"How many seals are opened in the book of Revelation?", opts:["4","6","7","12"], ans:2, cat:"Revelation", ref:"Revelation 6-8", diff:5 },
-  { q:"What was the Sanhedrin?", opts:["A synagogue","Jewish supreme court & council","A Roman court","A Pharisee school"], ans:1, cat:"History", ref:"John 11:47", diff:5 },
-  { q:"Who wrote the book of Hebrews?", opts:["Paul","Barnabas","Apollos","Unknown — disputed"], ans:3, cat:"Epistles", ref:"Hebrews — authorship debated", diff:5 },
+  { q:"What was the Sanhedrin?", opts:["A synagogue","Jewish supreme court and council","A Roman court","A Pharisee school"], ans:1, cat:"History", ref:"John 11:47", diff:5 },
+  { q:"What is the first commandment?", opts:["Do not kill","Have no other gods before Me","Keep the Sabbath","Do not steal"], ans:1, cat:"Law", ref:"Exodus 20:3", diff:5 },
+  { q:"How many chapters does Isaiah have?", opts:["52","60","66","72"], ans:2, cat:"Old Testament", ref:"Isaiah", diff:5 },
+  { q:"Which gate did Nehemiah inspect first when rebuilding Jerusalem?", opts:["Water Gate","Sheep Gate","Valley Gate","Dung Gate"], ans:1, cat:"Old Testament", ref:"Nehemiah 3:1", diff:5 },
+  { q:"In which prison was Paul held before going to Rome?", opts:["Jerusalem prison","Caesarea — in Herod's palace","Antioch jail","Mamertine"], ans:1, cat:"Acts", ref:"Acts 23:35", diff:5 },
+  { q:"What is the longest chapter in the Bible?", opts:["Psalm 118","Psalm 119","Numbers 7","Ezekiel 40"], ans:1, cat:"Bible Knowledge", ref:"Psalm 119 — 176 verses", diff:5 },
+
+  // ══ WARRIOR (6) ═════════════════════════════════════════════════
+  { q:"What were the names of Job's three friends?", opts:["Eliphaz, Bildad, Zophar","Abraham, Isaac, Jacob","Shadrach, Meshach, Abednego","Gad, Asher, Dan"], ans:0, cat:"Old Testament", ref:"Job 2:11", diff:6 },
+  { q:"How many sons did Jacob have?", opts:["10","11","12","13"], ans:2, cat:"Patriarchs", ref:"Genesis 35:22-26", diff:6 },
+  { q:"Which tribe of Israel was Paul from?", opts:["Judah","Levi","Benjamin","Ephraim"], ans:2, cat:"Epistles", ref:"Romans 11:1", diff:6 },
+  { q:"How many years did Solomon reign over Israel?", opts:["20 years","30 years","40 years","50 years"], ans:2, cat:"Old Testament", ref:"1 Kings 11:42", diff:6 },
+  { q:"What does 'Ebenezer' mean?", opts:["God is great","Stone of help","Place of blessing","God is near"], ans:1, cat:"Old Testament", ref:"1 Samuel 7:12", diff:6 },
+  { q:"Which apostle is called 'the beloved disciple'?", opts:["Peter","James","John","Philip"], ans:2, cat:"New Testament", ref:"John 13:23", diff:6 },
+  { q:"Who was the mother of Ishmael?", opts:["Sarah","Hagar","Rebekah","Keturah"], ans:1, cat:"Patriarchs", ref:"Genesis 16:1", diff:6 },
+  { q:"How many verses are in the shortest book of the Bible?", opts:["13 verses","21 verses","25 verses","3 verses"], ans:3, cat:"Bible Knowledge", ref:"3 John — 14 verses (but 2 John is 13)", diff:6 },
+  { q:"What does the name 'Israel' mean?", opts:["Chosen of God","One who strives with God","Beloved of God","Servant of God"], ans:1, cat:"Patriarchs", ref:"Genesis 32:28", diff:6 },
+  { q:"Which city was Rahab the harlot from?", opts:["Jerusalem","Jericho","Bethlehem","Hebron"], ans:1, cat:"Old Testament", ref:"Joshua 2:1", diff:6 },
+  { q:"Who was the high priest when Jesus was arrested?", opts:["Zechariah","Annas","Caiaphas","Ezra"], ans:2, cat:"New Testament", ref:"Matthew 26:57", diff:6 },
+  { q:"How many days did Elijah fast under the juniper tree?", opts:["3 days","7 days","14 days","40 days"], ans:3, cat:"Old Testament", ref:"1 Kings 19:8", diff:6 },
+  { q:"What was the name of David's mighty man who killed 300 enemies at once?", opts:["Joab","Abishai","Eleazar","Shammah"], ans:1, cat:"Old Testament", ref:"2 Samuel 23:18", diff:6 },
+  { q:"Which prophet saw the valley of dry bones?", opts:["Isaiah","Jeremiah","Ezekiel","Daniel"], ans:2, cat:"Prophets", ref:"Ezekiel 37:1", diff:6 },
+  { q:"What was the name of the Roman governor who sentenced Jesus?", opts:["Herod","Caesar","Pontius Pilate","Felix"], ans:2, cat:"New Testament", ref:"Matthew 27:2", diff:6 },
+
+  // ══ EXPERT (7) ══════════════════════════════════════════════════
+  { q:"What is the name of the well where Jesus met the Samaritan woman?", opts:["Well of Bethlehem","Jacob's Well","Well of Beersheba","En Gedi"], ans:1, cat:"New Testament", ref:"John 4:6", diff:7 },
+  { q:"How many years did the children of Israel serve in Egypt?", opts:["200 years","300 years","400 years","430 years"], ans:3, cat:"Old Testament", ref:"Exodus 12:40", diff:7 },
+  { q:"What does 'Hallelujah' mean?", opts:["Praise be","Praise the LORD","God is great","Glory to God"], ans:1, cat:"Worship", ref:"Hebrew: Hallelu-Yah", diff:7 },
+  { q:"Who was the first person to see Jesus after His resurrection?", opts:["Mary the mother of Jesus","Mary Magdalene","Peter","John"], ans:1, cat:"New Testament", ref:"John 20:14-16", diff:7 },
+  { q:"How many times did Peter deny Christ before the rooster crowed?", opts:["Once","Twice","Three times","Four times"], ans:2, cat:"New Testament", ref:"Matthew 26:34", diff:7 },
+  { q:"Who wrote the book of Hebrews?", opts:["Paul","Barnabas","Apollos","Unknown — authorship disputed"], ans:3, cat:"Epistles", ref:"Hebrews — authorship debated", diff:7 },
+  { q:"What was the original language of most of the Old Testament?", opts:["Aramaic","Latin","Hebrew","Greek"], ans:2, cat:"Bible Knowledge", ref:"Old Testament", diff:7 },
+  { q:"What was the original language of the New Testament?", opts:["Aramaic","Latin","Hebrew","Greek"], ans:3, cat:"Bible Knowledge", ref:"New Testament", diff:7 },
+  { q:"How many sons did Noah have?", opts:["2","3","4","5"], ans:1, cat:"Old Testament", ref:"Genesis 6:10", diff:7 },
+  { q:"Which city was Paul born in?", opts:["Jerusalem","Antioch","Tarsus","Athens"], ans:2, cat:"New Testament", ref:"Acts 22:3", diff:7 },
+  { q:"What was the name of the angel who appeared to Mary?", opts:["Michael","Raphael","Gabriel","Uriel"], ans:2, cat:"New Testament", ref:"Luke 1:26", diff:7 },
+  { q:"Who was the father of John the Baptist?", opts:["Joseph","Zechariah","Simeon","Cleopas"], ans:1, cat:"New Testament", ref:"Luke 1:13", diff:7 },
+  { q:"Which judge had 70 sons and was the son of a concubine?", opts:["Samson","Gideon","Jephthah","Abimelech"], ans:3, cat:"Judges", ref:"Judges 9:1", diff:7 },
+  { q:"How many baskets of fragments were left after Jesus fed 4,000?", opts:["5 baskets","7 baskets","10 baskets","12 baskets"], ans:1, cat:"Miracles", ref:"Matthew 15:37", diff:7 },
+  { q:"What does the name 'Bethlehem' mean?", opts:["City of David","House of bread","Land of promise","Holy city"], ans:1, cat:"Bible Knowledge", ref:"Hebrew: Beth-lechem", diff:7 },
+
+  // ══ ELDER (8) ═══════════════════════════════════════════════════
+  { q:"In what year was the temple of Solomon built approximately?", opts:["1200 BC","1000 BC","966 BC","800 BC"], ans:2, cat:"History", ref:"1 Kings 6:1", diff:8 },
+  { q:"How many years did Adam live?", opts:["700 years","800 years","930 years","1000 years"], ans:2, cat:"Old Testament", ref:"Genesis 5:5", diff:8 },
+  { q:"What were the three gifts the Magi brought to Jesus?", opts:["Gold, Silver, Myrrh","Gold, Frankincense, Myrrh","Gold, Frankincense, Spices","Silver, Incense, Myrrh"], ans:1, cat:"New Testament", ref:"Matthew 2:11", diff:8 },
+  { q:"Who was the father of Methuselah?", opts:["Adam","Enoch","Seth","Lamech"], ans:1, cat:"Old Testament", ref:"Genesis 5:21", diff:8 },
+  { q:"What was the name of the woman who judged Israel and was a prophetess?", opts:["Miriam","Esther","Deborah","Huldah"], ans:2, cat:"Judges", ref:"Judges 4:4", diff:8 },
+  { q:"What does the Greek word 'Logos' mean?", opts:["Spirit","Word","Light","Life"], ans:1, cat:"New Testament", ref:"John 1:1 — Greek", diff:8 },
+  { q:"Which Roman emperor ordered the census that brought Mary and Joseph to Bethlehem?", opts:["Nero","Caligula","Augustus","Tiberius"], ans:2, cat:"History", ref:"Luke 2:1", diff:8 },
+  { q:"How many books are in the Apocrypha recognised by the Catholic Church?", opts:["7","10","14","17"], ans:0, cat:"Bible Knowledge", ref:"Catholic deuterocanonical books", diff:8 },
+  { q:"What was the name of Paul's companion who left him and went to Thessalonica?", opts:["Barnabas","Silas","Demas","Timothy"], ans:2, cat:"Epistles", ref:"2 Timothy 4:10", diff:8 },
+  { q:"Who was the first person in the Bible to be called a Hebrew?", opts:["Noah","Abraham","Isaac","Jacob"], ans:1, cat:"Patriarchs", ref:"Genesis 14:13", diff:8 },
+  { q:"What was the name of the high place where Solomon built a temple to foreign gods?", opts:["Mount Carmel","Mount of Olives","Tophet","Bamah"], ans:1, cat:"Old Testament", ref:"1 Kings 11:7", diff:8 },
+  { q:"How many times did the Israelites march around Jericho before the walls fell?", opts:["6 days once, then 7 times","7 days once","Once each day for 7 days, then 7 times on day 7","7 times on one day"], ans:2, cat:"Old Testament", ref:"Joshua 6:3-4", diff:8 },
+  { q:"Who was the father of Alexander the Great, whose reign is referenced in Daniel?", opts:["Cyrus","Philip II of Macedon","Darius","Xerxes"], ans:1, cat:"History", ref:"Daniel 8:21", diff:8 },
+  { q:"What was the name of Paul's young apprentice whom he called 'my true son in the faith'?", opts:["Titus","Silas","Timothy","Philemon"], ans:2, cat:"Epistles", ref:"1 Timothy 1:2", diff:8 },
+  { q:"How many times does the word 'love' appear in 1 Corinthians 13?", opts:["7","9","10","13"], ans:1, cat:"Epistles", ref:"1 Corinthians 13", diff:8 },
+
+  // ══ SCHOLAR (9) ═════════════════════════════════════════════════
+  { q:"What is the longest word found in the book of Isaiah?", opts:["Maher-Shalal-Hash-Baz","Shear-Jashub","Immanuel","Pele-joez-el-gibbor"], ans:0, cat:"Prophets", ref:"Isaiah 8:1", diff:9 },
+  { q:"In Revelation, what are the seven churches of Asia Minor?", opts:["Ephesus, Smyrna, Pergamos, Thyatira, Sardis, Philadelphia, Laodicea","Jerusalem, Antioch, Rome, Corinth, Galatia, Philippi, Colosse","Athens, Corinth, Crete, Malta, Cyprus, Rhodes, Patmos","Caesarea, Joppa, Lydda, Samaria, Damascus, Tarsus, Ephesus"], ans:0, cat:"Revelation", ref:"Revelation 1-3", diff:9 },
+  { q:"What Hebrew word meaning 'anointed one' is the source of 'Messiah'?", opts:["Adonai","Mashiach","Elohim","Shalom"], ans:1, cat:"Hebrew", ref:"Hebrew: Mashiach", diff:9 },
+  { q:"What is the term for the first five books of the Bible in Hebrew?", opts:["Septuagint","Tanakh","Torah","Talmud"], ans:2, cat:"Bible Knowledge", ref:"Hebrew: Torah = Law", diff:9 },
+  { q:"How many times did God speak audibly to Jesus in the Gospels?", opts:["Once","Twice","Three times","Four times"], ans:2, cat:"New Testament", ref:"Baptism, Transfiguration, John 12:28", diff:9 },
+  { q:"What was the name of the Pharisee who came to Jesus by night?", opts:["Simon","Joseph of Arimathea","Nicodemus","Gamaliel"], ans:2, cat:"New Testament", ref:"John 3:1", diff:9 },
+  { q:"How many prophetic books are in the Old Testament?", opts:["12","16","17","20"], ans:2, cat:"Old Testament", ref:"5 major + 12 minor = 17", diff:9 },
+  { q:"What was the name of the keeper of the prison in Philippi who was converted?", opts:["Lydia","Silas","The Philippian jailer","Cornelius"], ans:2, cat:"Acts", ref:"Acts 16:30-33", diff:9 },
+  { q:"In which book does the famous Acrostic poem for 'a virtuous woman' appear?", opts:["Song of Solomon","Psalms","Proverbs","Lamentations"], ans:2, cat:"Old Testament", ref:"Proverbs 31:10-31", diff:9 },
+  { q:"What term describes the 70 scholars who translated the Hebrew Bible into Greek?", opts:["The Masoretes","The Septuagint scholars","The Targum scribes","The Sanhedrin"], ans:1, cat:"Bible Knowledge", ref:"Greek: LXX — Septuagint", diff:9 },
+  { q:"Which book of the Bible never mentions the name of God?", opts:["Song of Solomon, Ecclesiastes, and Esther","Only Esther","Only Song of Solomon","Ruth and Esther"], ans:0, cat:"Bible Knowledge", ref:"Esther, Song of Solomon, Ecclesiastes", diff:9 },
+  { q:"What does the Hebrew word 'Shema' mean?", opts:["Pray","Hear","See","Trust"], ans:1, cat:"Hebrew", ref:"Deuteronomy 6:4 — 'Shema Israel'", diff:9 },
+  { q:"What is the name for the traditional Jewish oral law compiled around 200 AD?", opts:["Talmud","Mishnah","Gemara","Midrash"], ans:1, cat:"History", ref:"Mishnah compiled by Rabbi Judah", diff:9 },
+  { q:"How many verses are in the entire Bible approximately?", opts:["23,145","31,102","41,000","28,000"], ans:1, cat:"Bible Knowledge", ref:"31,102 total verses", diff:9 },
+  { q:"Which early church father wrote extensively against Gnosticism around 180 AD?", opts:["Tertullian","Origen","Irenaeus","Justin Martyr"], ans:2, cat:"History", ref:"Irenaeus — Against Heresies", diff:9 },
+
+  // ══ APOSTLE (10) ════════════════════════════════════════════════
+  { q:"What is the chiastic structure of the Bible's central chapter?", opts:["Psalm 117 is the middle chapter","Psalm 118:8 is the middle verse","Psalm 119 is the middle chapter","Acts 17 is the centre"], ans:0, cat:"Bible Knowledge", ref:"Psalm 117 — shortest and middle chapter", diff:10 },
+  { q:"What does the Greek word 'Paraclete' (used of the Holy Spirit) mean?", opts:["Comforter or Advocate","Teacher or Guide","Healer or Helper","Fire or Wind"], ans:0, cat:"New Testament", ref:"John 14:16 — Greek: Parakletos", diff:10 },
+  { q:"In what language was the book of Daniel partly written?", opts:["Hebrew only","Greek and Hebrew","Aramaic and Hebrew","Latin and Hebrew"], ans:2, cat:"Prophets", ref:"Daniel 2:4-7:28 in Aramaic, rest in Hebrew", diff:10 },
+  { q:"What is the term for the council of Nicaea's primary doctrinal outcome in 325 AD?", opts:["The Apostles' Creed","The Nicene Creed","The Athanasian Creed","The Chalcedonian Definition"], ans:1, cat:"History", ref:"Council of Nicaea 325 AD", diff:10 },
+  { q:"What are the 'Deuterocanonical' books?", opts:["Lost books of the Bible","Books accepted by Catholic and Orthodox but not Protestant canon","The original 12 books","The prophetic appendix"], ans:1, cat:"Bible Knowledge", ref:"Catholic/Orthodox canon", diff:10 },
+  { q:"Who was the scribe who wrote down Jeremiah's prophecies?", opts:["Ezra","Nehemiah","Baruch","Shaphan"], ans:2, cat:"Prophets", ref:"Jeremiah 36:4", diff:10 },
+  { q:"How many 'I AM' statements did Jesus make in the Gospel of John?", opts:["5","6","7","8"], ans:2, cat:"Gospel of John", ref:"I am the bread, light, door, shepherd, resurrection, way, vine = 7", diff:10 },
+  { q:"What Hebrew term describes God's steadfast covenant love?", opts:["Shalom","Hesed","Emet","Tsedakah"], ans:1, cat:"Hebrew", ref:"Hebrew: Hesed — loyal covenant love", diff:10 },
+  { q:"Which ecumenical council defined the two natures of Christ in 451 AD?", opts:["Council of Nicaea","Council of Constantinople","Council of Chalcedon","Council of Ephesus"], ans:2, cat:"History", ref:"Council of Chalcedon 451 AD", diff:10 },
+  { q:"What is the term for the Greek translation of the Old Testament completed around 250 BC?", opts:["Vulgate","Masoretic Text","Septuagint","Peshitta"], ans:2, cat:"Bible Knowledge", ref:"Septuagint — LXX", diff:10 },
+  { q:"In the Dead Sea Scrolls discovered in 1947, which biblical book was found most complete?", opts:["Psalms","Isaiah","Genesis","Daniel"], ans:1, cat:"History", ref:"Great Isaiah Scroll — complete Isaiah", diff:10 },
+  { q:"What does the Hebrew term 'Ruach HaKodesh' mean?", opts:["God Almighty","The Holy Spirit","The Messiah","The Sacred Fire"], ans:1, cat:"Hebrew", ref:"Hebrew: Holy Spirit", diff:10 },
+  { q:"Who commissioned the Latin Vulgate translation of the Bible?", opts:["Pope Gregory","Pope Leo","Pope Damasus","Augustine"], ans:2, cat:"History", ref:"Pope Damasus commissioned Jerome, completed ~405 AD", diff:10 },
+  { q:"What is the primary theme of the book of Lamentations?", opts:["Israel's exodus from Egypt","The mourning over Jerusalem's destruction","The coming of the Messiah","The rebuilding of the temple"], ans:1, cat:"Old Testament", ref:"Lamentations — destruction of Jerusalem 586 BC", diff:10 },
+  { q:"How many times does the phrase 'Thus saith the LORD' appear in the King James Bible?", opts:["Approximately 415 times","Approximately 629 times","Approximately 200 times","Approximately 1000 times"], ans:1, cat:"Bible Knowledge", ref:"Approx 413-415 times in KJV", diff:10 },
 ];
+
 
 // ── BADGE DEFINITIONS ───────────────────────────────
 const QZ_BADGES = [
-  { id:'first_quiz',   icon:'🎉', name:'First Step',     desc:'Complete your first quiz',           check: s => s.totalGames >= 1 },
-  { id:'perfect',      icon:'💯', name:'Perfect Score',  desc:'Get 100% on any quiz',               check: s => s.perfectCount >= 1 },
-  { id:'combo5',       icon:'🔥', name:'On Fire',        desc:'Get a 5x combo streak',              check: s => s.maxCombo >= 5 },
-  { id:'streak7',      icon:'📅', name:'Week Warrior',   desc:'Play 7 days in a row',               check: s => s.dayStreak >= 7 },
-  { id:'scholar_lvl',  icon:'👑', name:'Bible Scholar',  desc:'Unlock Scholar level',               check: s => s.totalXP >= 1500 },
-  { id:'speed',        icon:'⚡', name:'Lightning Fast', desc:'Answer 5 questions under 5 seconds', check: s => s.speedAnswers >= 5 },
-  { id:'nt_master',    icon:'✝️', name:'NT Master',       desc:'Get 10 NT questions right',          check: s => s.catCorrect?.NT >= 10 },
-  { id:'ot_master',    icon:'🏺', name:'OT Master',      desc:'Get 10 OT questions right',          check: s => s.catCorrect?.OT >= 10 },
-  { id:'psalm_master', icon:'🎵', name:'Psalm Master',   desc:'Get 5 Psalms questions right',       check: s => s.catCorrect?.Psalms >= 5 },
-  { id:'noah',         icon:'🌊', name:'Noah Scholar',   desc:'Answer 3 creation/flood questions',  check: s => s.catCorrect?.Creation >= 3 },
-  { id:'prophet',      icon:'📜', name:'Prophet\'s Voice',desc:'Get 5 Prophets questions right',    check: s => s.catCorrect?.Prophets >= 5 },
-  { id:'centurion',    icon:'🎖️', name:'Centurion',      desc:'Answer 100 questions total',         check: s => s.totalAnswered >= 100 },
-  { id:'xp500',        icon:'⭐', name:'Rising Star',    desc:'Earn 500 XP',                        check: s => s.totalXP >= 500 },
-  { id:'xp1000',       icon:'🌟', name:'Shining Light',  desc:'Earn 1,000 XP',                      check: s => s.totalXP >= 1000 },
+  { id:'first_quiz',   icon:'🎉', name:'First Step',       desc:'Complete your first quiz',             check: s => s.totalGames >= 1 },
+  { id:'perfect',      icon:'💯', name:'Perfect Score',    desc:'Get 100% on any quiz',                 check: s => s.perfectCount >= 1 },
+  { id:'perfect3',     icon:'🏆', name:'Hat-Trick',        desc:'Get 100% three times',                 check: s => s.perfectCount >= 3 },
+  { id:'combo5',       icon:'🔥', name:'On Fire',          desc:'Get a 5x combo streak',                check: s => s.maxCombo >= 5 },
+  { id:'combo10',      icon:'💥', name:'Unstoppable',      desc:'Get a 10x combo streak',               check: s => s.maxCombo >= 10 },
+  { id:'streak3',      icon:'📆', name:'Consistent',       desc:'Play 3 days in a row',                 check: s => s.dayStreak >= 3 },
+  { id:'streak7',      icon:'📅', name:'Week Warrior',     desc:'Play 7 days in a row',                 check: s => s.dayStreak >= 7 },
+  { id:'streak30',     icon:'🗓️', name:'Monthly Devotee', desc:'Play 30 days in a row',                check: s => s.dayStreak >= 30 },
+  { id:'speed',        icon:'⚡', name:'Lightning Fast',   desc:'Answer 5 questions in under 5 seconds',check: s => s.speedAnswers >= 5 },
+  { id:'nt_master',    icon:'✝️', name:'NT Master',         desc:'Get 10 NT questions right',            check: s => s.catCorrect?.NT >= 10 },
+  { id:'ot_master',    icon:'🏺', name:'OT Master',        desc:'Get 10 OT questions right',            check: s => s.catCorrect?.OT >= 10 },
+  { id:'psalm_master', icon:'🎵', name:'Psalm Master',     desc:'Get 5 Psalms questions right',         check: s => s.catCorrect?.Psalms >= 5 },
+  { id:'noah',         icon:'🌊', name:'Noah Scholar',     desc:'Answer 3 Creation questions right',    check: s => s.catCorrect?.Creation >= 3 },
+  { id:'prophet',      icon:'📜', name:"Prophet's Voice",  desc:'Get 5 Prophets questions right',       check: s => s.catCorrect?.Prophets >= 5 },
+  { id:'centurion',    icon:'🎖️', name:'Centurion',        desc:'Answer 100 questions total',           check: s => s.totalAnswered >= 100 },
+  { id:'five_hundred', icon:'🎯', name:'Sharpshooter',     desc:'Answer 500 questions total',           check: s => s.totalAnswered >= 500 },
+  { id:'xp500',        icon:'⭐', name:'Rising Star',      desc:'Earn 500 XP',                          check: s => s.totalXP >= 500 },
+  { id:'xp1000',       icon:'🌟', name:'Shining Light',    desc:'Earn 1,000 XP',                        check: s => s.totalXP >= 1000 },
+  { id:'xp5000',       icon:'💫', name:'Radiant',          desc:'Earn 5,000 XP',                        check: s => s.totalXP >= 5000 },
+  { id:'scholar_lvl',  icon:'👑', name:'Bible Scholar',    desc:'Unlock Scholar level',                 check: s => s.totalXP >= 8000 },
+  { id:'apostle_lvl',  icon:'✨', name:'Apostle',          desc:'Reach the Apostle level',              check: s => s.totalXP >= 15000 },
+  { id:'accuracy90',   icon:'🎪', name:'Dead Eye',         desc:'Maintain 90%+ accuracy after 50 Qs',  check: s => s.totalAnswered >= 50 && (s.totalCorrect/s.totalAnswered) >= 0.9 },
+  { id:'games10',      icon:'🎮', name:'Dedicated',        desc:'Play 10 quizzes',                      check: s => s.totalGames >= 10 },
+  { id:'games50',      icon:'🏅', name:'Veteran',          desc:'Play 50 quizzes',                      check: s => s.totalGames >= 50 },
 ];
 
 // ── QUIZ STATE ───────────────────────────────────────
@@ -3693,22 +3813,27 @@ function renderQuizHome() {
     ? Math.min(100, ((qz.totalXP - curLevel.xpNeeded) / (nextLevel.xpNeeded - curLevel.xpNeeded)) * 100)
     : 100;
 
+  // Show levels in a 2-column grid for 10 levels
+  const levelPairs = [];
+  for (let i = 0; i < QZ_LEVELS.length; i += 2) levelPairs.push([i, i+1 < QZ_LEVELS.length ? i+1 : null]);
+
   let levelsHtml = QZ_LEVELS.map((l, i) => {
     const unlocked = qz.totalXP >= l.xpNeeded;
     const isCurrent = i === curLevelIdx;
     return `
       <div class="qz-level-card ${!unlocked ? 'locked' : ''} ${isCurrent ? 'active-level' : ''}"
            onclick="${unlocked ? `startQuizLevel('${l.id}')` : `toast('Earn ${l.xpNeeded - qz.totalXP} more XP to unlock ${l.name}')`}">
-        <div class="qz-lc-icon" style="background:${unlocked ? l.color + '22' : 'var(--border)'}">${l.icon}</div>
+        <div class="qz-lc-icon" style="background:${unlocked ? l.color + '22' : 'var(--border)'};font-size:1.4rem">${l.icon}</div>
         <div class="qz-lc-info">
-          <div class="qz-lc-name">${l.name} ${isCurrent ? '<span style="font-size:0.65rem;color:var(--gold)">◀ YOUR LEVEL</span>' : ''}</div>
-          <div class="qz-lc-desc">${l.desc} · ${l.questions} questions · ${l.timePerQ}s each</div>
+          <div class="qz-lc-name" style="font-size:0.88rem">${l.name} ${isCurrent ? '<span style="font-size:0.6rem;color:var(--gold)">▶ CURRENT</span>' : ''}</div>
+          <div class="qz-lc-desc" style="font-size:0.68rem">${l.questions}Q · ${l.timePerQ}s · ${unlocked ? l.desc : '🔒 ' + l.xpNeeded + ' XP needed'}</div>
         </div>
         <div class="qz-lc-right">
-          ${unlocked ? '<span class="qz-lc-check">✅</span>' : `<span class="qz-lc-unlock">🔒 ${l.xpNeeded} XP</span>`}
+          ${unlocked ? '<span class="qz-lc-check">✅</span>' : ''}
         </div>
       </div>`;
   }).join('');
+  levelsHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">' + levelsHtml + '</div>';
 
   let badgesHtml = '';
   if (qz.earnedBadges.length > 0) {
@@ -3749,8 +3874,12 @@ function startQuizLevel(levelId) {
   if (!level) return;
   const diff = QZ_LEVELS.indexOf(level) + 1;
 
-  // Pick questions for this difficulty
-  const pool = QZ_BANK.filter(q => q.diff === diff);
+  // Map level index to difficulty range (levels now span 2 diffs each for variety)
+  const levelIdx = QZ_LEVELS.indexOf(level);
+  const diffMap = { 0:1, 1:2, 2:3, 3:4, 4:5, 5:6, 6:7, 7:8, 8:9, 9:10 };
+  const targetDiff = diffMap[levelIdx] || (levelIdx + 1);
+  // Mix in questions from the level below for variety (except novice)
+  const pool = QZ_BANK.filter(q => q.diff === targetDiff || (targetDiff > 1 && q.diff === targetDiff - 1));
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   const chosen = shuffled.slice(0, Math.min(level.questions, shuffled.length));
 
@@ -3889,7 +4018,7 @@ function answerQuiz(selectedIdx) {
   const correct = selectedIdx === q.ans;
 
   // XP calculation
-  const baseXP = { 1:5, 2:8, 3:12, 4:18, 5:25 }[q.diff] || 10;
+  const baseXP = { 1:4, 2:6, 3:9, 4:12, 5:16, 6:20, 7:26, 8:32, 9:40, 10:50 }[q.diff] || 10;
   let xpGained = 0;
 
   if (correct) {
