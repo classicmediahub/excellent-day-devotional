@@ -2268,11 +2268,11 @@ button.brand:active { transform: scale(0.97); }
       </div>
 
       <div class="brow">
-        <button class="btn bp" onclick="nav('bible')">
+        <button class="btn bp" data-nav="bible">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
           <span id="qa-bible">Open Bible</span>
         </button>
-        <button class="btn bs" onclick="nav('journal')">
+        <button class="btn bs" data-nav="journal">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
           <span id="qa-journal">Journal</span>
         </button>
@@ -2462,7 +2462,7 @@ button.brand:active { transform: scale(0.97); }
         <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
       </div>
       <div class="games-hub">
-        <div class="game-hub-card" style="--g-color:#c8a84a;--g-bg:rgba(200,168,74,0.12)" onclick="menuNav('quiz')">
+        <div class="game-hub-card" style="--g-color:#c8a84a;--g-bg:rgba(200,168,74,0.12)" data-nav="quiz">
           <div class="ghc-icon">❓</div>
           <div class="ghc-info">
             <div class="ghc-title">Bible Quiz</div>
@@ -2470,7 +2470,7 @@ button.brand:active { transform: scale(0.97); }
           </div>
           <span class="ghc-badge">10 Levels</span>
         </div>
-        <div class="game-hub-card" style="--g-color:#5a78c8;--g-bg:rgba(90,120,200,0.1)" onclick="menuNav('crossword')">
+        <div class="game-hub-card" style="--g-color:#5a78c8;--g-bg:rgba(90,120,200,0.1)" data-nav="crossword">
           <div class="ghc-icon">🔲</div>
           <div class="ghc-info">
             <div class="ghc-title">Bible Crossword</div>
@@ -2478,7 +2478,7 @@ button.brand:active { transform: scale(0.97); }
           </div>
           <span class="ghc-badge">Daily Puzzle</span>
         </div>
-        <div class="game-hub-card" style="--g-color:#5a8a78;--g-bg:rgba(90,138,120,0.1)" onclick="menuNav('scripture')">
+        <div class="game-hub-card" style="--g-color:#5a8a78;--g-bg:rgba(90,138,120,0.1)" data-nav="scripture">
           <div class="ghc-icon">📜</div>
           <div class="ghc-info">
             <div class="ghc-title">Scripture Memory</div>
@@ -2577,23 +2577,23 @@ button.brand:active { transform: scale(0.97); }
     </div>
 
   <nav class="bnav">
-    <button class="nb active" id="nb-today" onclick="nav('today')">
+    <button class="nb active" id="nb-today" data-nav="today">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span id="nav-lbl-today">Today</span>
     </button>
-    <button class="nb" id="nb-bible" onclick="nav('bible')">
+    <button class="nb" id="nb-bible" data-nav="bible">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
       <span id="nav-lbl-bible">Bible</span>
     </button>
-    <button class="nb" id="nb-search" onclick="nav('search')">
+    <button class="nb" id="nb-search" data-nav="search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       Search
     </button>
-    <button class="nb" id="nb-journal" onclick="nav('journal')">
+    <button class="nb" id="nb-journal" data-nav="journal">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       <span id="nav-lbl-journal">Journal</span>
     </button>
-    <button class="nb" id="nb-plan" onclick="nav('plan')">
+    <button class="nb" id="nb-plan" data-nav="plan">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
       Plan
     </button>
@@ -2666,7 +2666,7 @@ button.brand:active { transform: scale(0.97); }
 
     <div class="sm-section-label">Navigation</div>
     <ul class="sm-nav">
-      <li class="sm-item active" id="sm-today" onclick="menuNav('today')">
+      <li class="sm-item active" id="sm-today" data-nav="today">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
@@ -2676,7 +2676,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-bible" onclick="menuNav('bible')">
+      <li class="sm-item" id="sm-bible" data-nav="bible">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
         </div>
@@ -2686,7 +2686,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-search" onclick="menuNav('search')">
+      <li class="sm-item" id="sm-search" data-nav="search">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
@@ -2696,7 +2696,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-journal" onclick="menuNav('journal')">
+      <li class="sm-item" id="sm-journal" data-nav="journal">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </div>
@@ -2706,7 +2706,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-plan" onclick="menuNav('plan')">
+      <li class="sm-item" id="sm-plan" data-nav="plan">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
@@ -2716,7 +2716,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-games" onclick="menuNav('games')">
+      <li class="sm-item" id="sm-games" data-nav="games">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 2l-4 5-4-5"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9.5" y1="14.5" x2="14.5" y2="14.5"/></svg>
         </div>
@@ -2726,28 +2726,28 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-crossword" onclick="menuNav('crossword')" style="padding-left:52px">
+      <li class="sm-item" id="sm-crossword" data-nav="crossword" style="padding-left:52px">
         <div class="sm-item-text">
           <div class="sm-item-name" style="font-size:0.82rem">🔲 Bible Crossword</div>
           <div class="sm-item-sub">Daily puzzle</div>
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-scripture" onclick="menuNav('scripture')" style="padding-left:52px">
+      <li class="sm-item" id="sm-scripture" data-nav="scripture" style="padding-left:52px">
         <div class="sm-item-text">
           <div class="sm-item-name" style="font-size:0.82rem">📜 Scripture Memory</div>
           <div class="sm-item-sub">30 verses to memorise</div>
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-quiz" onclick="menuNav('quiz')" style="padding-left:52px">
+      <li class="sm-item" id="sm-quiz" data-nav="quiz" style="padding-left:52px">
         <div class="sm-item-text">
           <div class="sm-item-name" style="font-size:0.82rem">❓ Bible Quiz</div>
           <div class="sm-item-sub">10 levels — trivia challenge</div>
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-prayer" onclick="menuNav('prayer')">
+      <li class="sm-item" id="sm-prayer" data-nav="prayer">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2V4a2 2 0 00-2-2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="12" y2="13"/></svg>
         </div>
@@ -2757,7 +2757,7 @@ button.brand:active { transform: scale(0.97); }
         </div>
         <div class="sm-arrow">›</div>
       </li>
-      <li class="sm-item" id="sm-hymns" onclick="menuNav('hymns')">
+      <li class="sm-item" id="sm-hymns" data-nav="hymns">
         <div class="sm-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         </div>
@@ -4618,7 +4618,7 @@ function renderCrossword() {
   const secs = elapsed % 60;
 
   area.innerHTML = `
-    <button class="cw-back-btn" onclick="nav('games')">← Back to Games</button>
+    <button class="cw-back-btn" data-nav="games">← Back to Games</button>
     <div class="cw-puzzle-info">
       <div>
         <div class="cw-pi-title">${puzzle.title}</div>
@@ -4884,7 +4884,7 @@ function renderCWComplete() {
       </div>
     </div>
     <p style="text-align:center;font-family:var(--serif);font-size:0.82rem;color:var(--text-4);margin-top:10px">New puzzle tomorrow!</p>
-    <button class="cw-back-btn" onclick="nav('games')" style="width:100%;text-align:center;margin-top:8px">← Back to Games</button>
+    <button class="cw-back-btn" data-nav="games" style="width:100%;text-align:center;margin-top:8px">← Back to Games</button>
   `;
 }
 
@@ -5254,6 +5254,16 @@ function filterPrayerWall(filter, btn) {
 
 // Character counter
 document.addEventListener('DOMContentLoaded', () => {
+  // ── GLOBAL DATA-NAV DELEGATION ──────────────────────
+  // Handles ALL navigation clicks across the entire app
+  document.body.addEventListener('click', function(e) {
+    const navEl = e.target.closest('[data-nav]');
+    if (navEl) {
+      e.preventDefault();
+      menuNav(navEl.dataset.nav);
+    }
+  });
+
   const inp = document.getElementById('pwInput');
   if (inp) {
     inp.addEventListener('input', () => {
