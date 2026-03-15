@@ -122,7 +122,7 @@
    GLOBAL RESET & BASE
 ══════════════════════════════════════ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { height: 100%; } body { min-height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 
 body {
   font-family: 'Source Serif 4', serif;
@@ -220,8 +220,8 @@ body {
 /* ══════════════════════════════════════
    APP SHELL
 ══════════════════════════════════════ */
-#app { display: none; }
-#app.show { display: block; }
+#app { display: none; height: 100%; flex-direction: column; }
+#app.show { display: flex; }
 
 /* ══════════════════════════════════════
    TOP BAR
@@ -4095,20 +4095,20 @@ function renderQuizHome() {
     <div class="qz-levels-grid">${levelsHtml}</div>
   `;
 
-  // Event delegation for level cards
-  area.querySelectorAll('.qz-level-card').forEach(card => {
-    card.addEventListener('click', function() {
-      const levelId = this.dataset.levelid;
-      const unlocked = this.dataset.unlocked === 'true';
-      if (unlocked) {
-        startQuizLevel(levelId);
-      } else {
-        const xpNeeded = parseInt(this.dataset.xpneeded) || 0;
-        const name = this.dataset.levelname || '';
-        toast('Earn ' + xpNeeded + ' more XP to unlock ' + name);
-      }
-    });
-  });
+  // Single delegation on area container — more reliable on mobile
+  area.onclick = function(e) {
+    const card = e.target.closest('.qz-level-card');
+    if (!card) return;
+    const levelId = card.dataset.levelid;
+    const unlocked = card.dataset.unlocked === 'true';
+    if (unlocked) {
+      startQuizLevel(levelId);
+    } else {
+      const xpNeeded = parseInt(card.dataset.xpneeded) || 0;
+      const name = card.dataset.levelname || '';
+      toast('Earn ' + xpNeeded + ' more XP to unlock ' + name);
+    }
+  };
 }
 
 // ── START A LEVEL ───────────────────────────────────
@@ -4156,7 +4156,7 @@ function renderQuizQuestion() {
 
   area.innerHTML = `
     <div class="qz-play-header">
-      <button class="qz-back-btn" onclick="renderQuizHome()">← Levels</button>
+      <button class="qz-back-btn" data-action="backhome">← Levels</button>
       <div class="qz-q-meta">
         ${combo >= 2 ? `<span class="qz-combo">🔥 ${combo}x Combo!</span>` : ''}
         <div class="qz-timer-wrap">
@@ -4175,10 +4175,10 @@ function renderQuizQuestion() {
       <div class="qz-prog-fill" style="width:${pct}%"></div>
     </div>
     <div class="qz-lifelines">
-      <button class="qz-ll-btn" id="qzLL50" onclick="useLifeline50()" ${!lifelines.fifty ? 'disabled' : ''}>
+      <button class="qz-ll-btn" id="qzLL50" ${!lifelines.fifty ? 'disabled' : ''}>
         <span class="qz-ll-icon">✂️</span> 50/50 ${!lifelines.fifty ? '(used)' : ''}
       </button>
-      <button class="qz-ll-btn" id="qzLLSkip" onclick="useLifelineSkip()" ${!lifelines.skip ? 'disabled' : ''}>
+      <button class="qz-ll-btn" id="qzLLSkip" ${!lifelines.skip ? 'disabled' : ''}>
         <span class="qz-ll-icon">⏭️</span> Skip ${!lifelines.skip ? '(used)' : ''}
       </button>
       <div style="flex:2;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;text-align:center;font-size:0.72rem;color:var(--text-4);font-family:var(--serif)">
@@ -4190,7 +4190,7 @@ function renderQuizQuestion() {
       <div class="qz-question">${q.q}</div>
       <div class="qz-opts" id="qzOpts">
         ${q.opts.map((opt, i) => `
-          <button class="qz-opt" onclick="answerQuiz(${i})" id="qzOpt${i}">
+          <button class="qz-opt" data-optidx="${i}" id="qzOpt${i}">
             <span class="qz-opt-letter">${letters[i]}</span>${opt}
           </button>`).join('')}
       </div>
@@ -4202,9 +4202,27 @@ function renderQuizQuestion() {
   `;
 
   qzStartTimer(level.timePerQ);
-  // Scroll page to top for new question
   const mainEl = document.querySelector('.main');
   if (mainEl) mainEl.scrollTop = 0;
+
+  // Play screen delegation
+  area.onclick = function(e) {
+    // Back button
+    if (e.target.closest('[data-action="backhome"]')) { qzStopTimer(); renderQuizHome(); return; }
+    // Answer option
+    const opt = e.target.closest('.qz-opt');
+    if (opt && !opt.disabled) {
+      const idx = parseInt(opt.dataset.optidx);
+      if (!isNaN(idx)) answerQuiz(idx);
+      return;
+    }
+    // Next button
+    if (e.target.closest('.qz-next-btn')) { nextQuizQuestion(); return; }
+    // Lifeline 50/50
+    if (e.target.closest('#qzLL50')) { useLifeline50(); return; }
+    // Lifeline skip
+    if (e.target.closest('#qzLLSkip')) { useLifelineSkip(); return; }
+  };
 }
 
 // ── TIMER ────────────────────────────────────────────
@@ -4449,8 +4467,8 @@ function renderQuizResult(score, total, pct, xpGained, newLevel) {
         <div class="qz-stat" style="min-width:70px"><div class="qz-stat-n">${qz.earnedBadges.length}</div><div class="qz-stat-l">Badges</div></div>
       </div>
       <div class="qz-result-btns">
-        <button class="qz-play-again-btn" onclick="startQuizLevel('${level.id}')">🔄 Play Again</button>
-        <button class="qz-back-home-btn" onclick="renderQuizHome()">← All Levels</button>
+        <button class="qz-play-again-btn" data-action="playagain" data-levelid="${level.id}">🔄 Play Again</button>
+        <button class="qz-back-home-btn" data-action="backhome">← All Levels</button>
       </div>
     </div>
   `;
