@@ -7575,18 +7575,5 @@ function hrShare() {
 
 </script>
 
-// ── SCROLL FIX — Force scrollability on main element ──────────────
-(function forceScroll() {
-  function applyScroll() {
-    const m = document.getElementById('mainScroll') || document.querySelector('.main');
-    if (!m) return;
-    m.style.cssText = 'flex:1;height:0;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;';
-  }
-  document.addEventListener('DOMContentLoaded', applyScroll);
-  window.addEventListener('load', applyScroll);
-  setTimeout(applyScroll, 500);
-  setTimeout(applyScroll, 1500);
-})();
-
 </body>
 </html>
