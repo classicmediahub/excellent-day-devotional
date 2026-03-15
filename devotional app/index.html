@@ -143,7 +143,7 @@ body {
   background: #2A3B30;
   transition: opacity 0.9s ease;
 }
-#splash.hide { opacity: 0; pointer-events: none; }
+#splash.hide { opacity: 0; pointer-events: none; display: none; }
 
 .sp-emblem {
   width: 88px; height: 88px; position: relative; margin-bottom: 28px;
@@ -3149,7 +3149,9 @@ window.addEventListener('load', () => {
   document.documentElement.setAttribute('data-theme', theme);
 
   setTimeout(() => {
-    document.getElementById('splash').classList.add('hide');
+    const splashEl = document.getElementById('splash');
+    splashEl.classList.add('hide');
+    setTimeout(() => { if (splashEl) splashEl.style.display = 'none'; }, 1000);
     setTimeout(() => {
       document.getElementById('app').classList.add('show');
       boot();
