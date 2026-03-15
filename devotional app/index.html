@@ -4446,81 +4446,70 @@ function renderQuizResult(score, total, pct, xpGained, newLevel) {
 // ══════════════════════════════════════════════════════
 
 const CW_PUZZLES = [
-  // PUZZLE 1 — People of the Bible (5×7 simple grid)
+  // PUZZLE 1 — Bible People (7 cols x 7 rows, across only for reliability)
   {
     title: "People of the Bible",
     size: 7,
-    // '#' = black cell, letter = solution
     grid: [
       "NOAH###",
-      "O#A###.",
-      "MOSES##",
-      "O#E###.",
-      "S#S###.",
-      "##DAVID",
       "#######",
+      "MOSES##",
+      "#######",
+      "DAVID##",
+      "#######",
+      "PAUL###",
     ],
     clues: {
       across: [
-        { num:1, row:0, col:0, len:4, clue:"Built the ark (4)" },
-        { num:3, row:2, col:0, len:5, clue:"Led Israel out of Egypt (5)" },
-        { num:5, row:5, col:2, len:5, clue:"Killed Goliath, became king (5)" },
-      ],
-      down: [
-        { num:1, row:0, col:0, len:5, clue:"Ark builder (4) — first 4 letters down" },
-        { num:2, row:0, col:2, len:5, clue:"Prophet in the fish (5) — letters down" },
-        { num:4, row:2, col:2, len:4, clue:"Lawgiver (5) — letters down" },
-      ]
-    }
-  },
-  // PUZZLE 2 — Books of the Bible (simple across only)
-  {
-    title: "Books of the Bible",
-    size: 9,
-    grid: [
-      "GENESIS##",
-      "#########",
-      "##EXODUS##",
-      "#########",
-      "####ACTS#",
-      "#########",
-      "######JOHN",
-      "#########",
-      "RUTH#####",
-    ],
-    clues: {
-      across: [
-        { num:1, row:0, col:0, len:7, clue:"First book of the Bible (7)" },
-        { num:2, row:2, col:2, len:6, clue:"Second book — Moses leads Israel out (6)" },
-        { num:3, row:4, col:4, len:4, clue:"Luke's second book (4)" },
-        { num:4, row:6, col:6, len:4, clue:"The beloved disciple's gospel (4)" },
-        { num:5, row:8, col:0, len:4, clue:"Story of loyalty and redemption (4)" },
+        { num:1, row:0, col:0, len:4, clue:"Built the ark to survive the flood (4)" },
+        { num:2, row:2, col:0, len:5, clue:"Led Israel out of Egypt (5)" },
+        { num:3, row:4, col:0, len:5, clue:"Shepherd boy who became king (5)" },
+        { num:4, row:6, col:0, len:4, clue:"Apostle to the Gentiles (4)" },
       ],
       down: []
     }
   },
-  // PUZZLE 3 — Places in Scripture (across only)
+  // PUZZLE 2 — Books of the Bible (8 cols x 8 rows)
+  {
+    title: "Books of the Bible",
+    size: 8,
+    grid: [
+      "GENESIS#",
+      "########",
+      "EXODUS##",
+      "########",
+      "PSALMS##",
+      "########",
+      "ACTS####",
+      "########",
+    ],
+    clues: {
+      across: [
+        { num:1, row:0, col:0, len:7, clue:"First book — creation and patriarchs (7)" },
+        { num:2, row:2, col:0, len:6, clue:"Moses leads Israel out of Egypt (6)" },
+        { num:3, row:4, col:0, len:6, clue:"Book of 150 songs and prayers (6)" },
+        { num:4, row:6, col:0, len:4, clue:"Luke's second book about the early church (4)" },
+      ],
+      down: []
+    }
+  },
+  // PUZZLE 3 — Places in Scripture (9 cols x 6 rows)
   {
     title: "Places in Scripture",
     size: 9,
     grid: [
       "BETHLEHEM",
       "#########",
-      "#JORDAN##",
-      "#########",
       "EGYPT####",
       "#########",
-      "#SINAI###",
+      "JORDAN###",
       "#########",
-      "ZION#####",
     ],
     clues: {
       across: [
-        { num:1, row:0, col:0, len:9, clue:"Where Jesus was born (9)" },
-        { num:2, row:2, col:1, len:6, clue:"River where Jesus was baptised (6)" },
-        { num:3, row:4, col:0, len:5, clue:"Land of the Pharaohs (5)" },
-        { num:4, row:6, col:1, len:5, clue:"Mountain where Moses got the Law (5)" },
-        { num:5, row:8, col:0, len:4, clue:"Holy hill of God in Jerusalem (4)" },
+        { num:1, row:0, col:0, len:9, clue:"Town where Jesus was born (9)" },
+        { num:2, row:2, col:0, len:5, clue:"Land of the Pharaohs (5)" },
+        { num:3, row:4, col:0, len:6, clue:"River where Jesus was baptised (6)" },
       ],
       down: []
     }
@@ -4545,7 +4534,7 @@ let cwState = {
   finished: false,
 };
 
-const CW_SAVE_KEY = 'edd_cw_state';
+const CW_SAVE_KEY = 'edd_cw_state_v3';
 
 function initCrossword() {
   const saved = localStorage.getItem(CW_SAVE_KEY);
@@ -4570,8 +4559,13 @@ function initCrossword() {
 
 function cwStartFresh() {
   const puzzle = getCWPuzzle();
-  const size = puzzle.size;
-  const userGrid = Array(size).fill(null).map(() => Array(size).fill(''));
+  // Use actual grid rows to determine dimensions (not just puzzle.size)
+  const numRows = puzzle.grid.length;
+  const numCols = puzzle.grid[0].length;
+  // Ensure all rows are same length
+  const userGrid = Array(numRows).fill(null).map(() => Array(numCols).fill(''));
+  // Override size with actual col count for rendering
+  puzzle.size = numCols;
   cwState = {
     puzzle, userGrid, selected: null, direction: 'across',
     solvedClues: new Set(), wrongCells: new Set(),
@@ -4623,7 +4617,7 @@ function renderCrossword() {
       <div class="cw-stat"><div class="cw-stat-n">${Math.round([...cwState.solvedClues].length / (puzzle.clues.across.length + puzzle.clues.down.length) * 100)}%</div><div class="cw-stat-l">Complete</div></div>
     </div>
     <div class="cw-grid-wrap">
-      <div class="cw-grid" id="cwGrid" style="grid-template-columns:repeat(${puzzle.size},32px)">
+      <div class="cw-grid" id="cwGrid" style="grid-template-columns:repeat(${puzzle.grid[0].length},32px)">
         ${buildCWGridHTML()}
       </div>
     </div>
@@ -4656,7 +4650,8 @@ function renderCrossword() {
 
 function buildCWGridHTML() {
   const { puzzle, userGrid, selected, direction } = cwState;
-  const size = puzzle.size;
+  const numRows = puzzle.grid.length;
+  const numCols = puzzle.grid[0] ? puzzle.grid[0].length : puzzle.size;
   let html = '';
 
   // Build number map
@@ -4681,8 +4676,8 @@ function buildCWGridHTML() {
     }
   }
 
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
+  for (let r = 0; r < numRows; r++) {
+    for (let c = 0; c < numCols; c++) {
       const sol = puzzle.grid[r][c];
       const isBlack = sol === '#' || sol === '.' || sol === ' ' || !sol;
       const key = `${r},${c}`;
@@ -4698,10 +4693,13 @@ function buildCWGridHTML() {
       if (isSolCorrect) cls += ' correct';
       if (isWrong) cls += ' wrong';
       const num = numMap[key];
-      html += `<div class="${cls}" ${!isBlack ? `onclick="cwCellClick(${r},${c})"` : ''}>
-        ${num ? `<span class="cw-cell-num">${num}</span>` : ''}
-        ${!isBlack ? `<span class="cw-cell-letter">${userLetter}</span>` : ''}
-      </div>`;
+      const cellContent = num ? `<span class="cw-cell-num">${num}</span>` : '';
+      const letterSpan = !isBlack ? `<span class="cw-cell-letter">${userLetter}</span>` : '';
+      if (!isBlack) {
+        html += `<div class="${cls}" data-r="${r}" data-c="${c}">${cellContent}${letterSpan}</div>`;
+      } else {
+        html += `<div class="${cls}">${cellContent}</div>`;
+      }
     }
   }
   return html;
@@ -4746,7 +4744,15 @@ function cwUpdateActiveClue() {
 
 function cwRefreshGrid() {
   const grid = document.getElementById('cwGrid');
-  if (grid) grid.innerHTML = buildCWGridHTML();
+  if (grid) {
+    grid.innerHTML = buildCWGridHTML();
+    // Use event delegation — one listener on grid handles all cell taps
+    grid.onclick = function(e) {
+      const cell = e.target.closest('[data-r]');
+      if (!cell) return;
+      cwCellClick(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
+    };
+  }
 }
 
 function cwKey(k) {
@@ -4903,7 +4909,7 @@ const SM_VERSES = [
   { ref:"John 15:5", text:"I am the vine, ye are the branches: He that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing.", category:"Abiding" },
 ];
 
-const SM_SAVE_KEY = 'edd_sm_progress';
+const SM_SAVE_KEY = 'edd_sm_progress_v2';
 let smProgress = {}; // { "John 3:16": { stars:2, attempts:3 } }
 let smMode = 'wordbank'; // 'wordbank' | 'type'
 let smCurrentVerse = null;
