@@ -2,9 +2,6 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Excellent Day Devotional</title>
 
@@ -4099,7 +4096,7 @@ function renderQuizHome() {
   `;
 
   // Single delegation on area container — more reliable on mobile
-  area.onclick = function(e) {
+  if (area) area.onclick = function(e) {
     const card = e.target.closest('.qz-level-card');
     if (!card) return;
     const levelId = card.dataset.levelid;
@@ -4209,7 +4206,7 @@ function renderQuizQuestion() {
   if (mainEl) mainEl.scrollTop = 0;
 
   // Play screen delegation
-  area.onclick = function(e) {
+  if (area) area.onclick = function(e) {
     // Back button
     if (e.target.closest('[data-action="backhome"]')) { qzStopTimer(); renderQuizHome(); return; }
     // Answer option
@@ -4786,7 +4783,7 @@ function cwRefreshGrid() {
   if (grid) {
     grid.innerHTML = buildCWGridHTML();
     // Use event delegation — one listener on grid handles all cell taps
-    grid.onclick = function(e) {
+    if (grid) grid.onclick = function(e) {
       const cell = e.target.closest('[data-r]');
       if (!cell) return;
       cwCellClick(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
@@ -7474,10 +7471,7 @@ const _origNav = nav;
 function nav(p) {
   if (p !== 'today') stopAudioIfPlaying();
   if (p === 'prayer') { loadPrayerWall(true); updatePwStats(); }
-  if (p === 'quiz') { initQuiz(); }
-  if (p === 'crossword') { initCrossword(); }
-  if (p === 'scripture') { initScripture(); }
-  if (p === 'games') {} // static page
+  // Show page FIRST, then init games so elements are visible and interactive
   document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
   document.querySelectorAll('.nb').forEach(x => x.classList.remove('active'));
   const page = document.getElementById('page-' + p);
@@ -7486,6 +7480,10 @@ function nav(p) {
   if (nb) nb.classList.add('active');
   const mainScroll = document.getElementById('mainScroll') || document.querySelector('.main');
   if (mainScroll) mainScroll.scrollTop = 0;
+  // Init games AFTER page is active so DOM elements are fully interactive
+  if (p === 'quiz') { requestAnimationFrame(() => initQuiz()); }
+  if (p === 'crossword') { requestAnimationFrame(() => initCrossword()); }
+  if (p === 'scripture') { requestAnimationFrame(() => initScripture()); }
   // Sync side menu active state
   document.querySelectorAll('.sm-item[id^="sm-"]').forEach(el => el.classList.remove('active'));
   const smItem = document.getElementById('sm-' + p);
