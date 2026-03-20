@@ -4583,6 +4583,17 @@ function initCrossword() {
       if (s.dateKey === todayKey) {
         cwState = { ...cwState, ...s };
         cwState.solvedClues = new Set(s.solvedClues || []);
+        cwState.wrongCells = new Set(s.wrongCells || []);
+        // Always re-assign puzzle from date (never saved in localStorage)
+        const puzzle = getCWPuzzle();
+        const numRows = puzzle.grid.length;
+        const numCols = puzzle.grid[0].length;
+        puzzle.size = numCols;
+        cwState.puzzle = puzzle;
+        // Rebuild userGrid if missing or wrong size
+        if (!cwState.userGrid || cwState.userGrid.length !== numRows) {
+          cwState.userGrid = Array(numRows).fill(null).map(() => Array(numCols).fill(''));
+        }
       } else {
         cwStartFresh();
         return;
@@ -4626,6 +4637,8 @@ function cwSave() {
 function renderCrossword() {
   const area = document.getElementById('crosswordArea');
   if (!area) return;
+  // Safety: if puzzle missing, start fresh
+  if (!cwState.puzzle) { cwStartFresh(); return; }
   const { puzzle, finished } = cwState;
 
   if (finished) {
