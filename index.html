@@ -4466,6 +4466,14 @@ function renderQuizResult(score, total, pct, xpGained, newLevel) {
       </div>
     </div>
   `;
+
+  // Result screen click delegation
+  if (area) area.onclick = function(e) {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    if (btn.dataset.action === 'playagain') startQuizLevel(btn.dataset.levelid);
+    if (btn.dataset.action === 'backhome') renderQuizHome();
+  };
 }
 
 
@@ -5141,7 +5149,8 @@ function renderScriptureChallenge() {
     <div style="font-family:var(--serif);font-size:0.85rem;color:var(--text-3);line-height:1.75;padding:8px 0;font-style:italic">"${verse.text}" — ${verse.ref}</div>`;
 
   // Event delegation for all interactive elements in scripture challenge
-  area.addEventListener('click', function(e) {
+  // Use onclick (not addEventListener) so it replaces on re-render
+  area.onclick = function(e) {
     // Clear blank
     const blankEl = e.target.closest('[data-clearblank]');
     if (blankEl) { smClearBlank(parseInt(blankEl.dataset.clearblank)); return; }
@@ -5159,7 +5168,7 @@ function renderScriptureChallenge() {
     if (modeTab) { smSetMode(modeTab.dataset.mode || (modeTab.textContent.includes('Word')?'wordbank':'type')); return; }
     // Back button
     if (e.target.closest('.sm-back-btn')) { renderScriptureHome(); return; }
-  });
+  };
 }
 
 function smSetMode(mode) {
