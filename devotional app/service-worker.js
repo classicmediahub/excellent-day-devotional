@@ -1,4 +1,4 @@
-const CACHE_NAME='excellent-day-v39';
+const CACHE_NAME='excellent-day-v40';
 const SHELL=['/','/index.html','/manifest.json','/icons/icon-192.png','/icons/icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>Promise.allSettled(SHELL.map(u=>c.add(u).catch(()=>{})))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',e=>{e.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k))))]));});
