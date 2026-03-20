@@ -4189,7 +4189,7 @@ function renderQuizQuestion() {
           </button>`).join('')}
       </div>
       <div class="qz-feedback" id="qzFeedback"></div>
-      <button class="qz-next-btn" id="qzNextBtn" onclick="nextQuizQuestion()" style="display:none">
+      <button class="qz-next-btn" id="qzNextBtn" style="display:none">
         ${current + 1 < total ? 'Next Question →' : 'See My Results 🎉'}
       </button>
     </div>
@@ -4676,6 +4676,39 @@ function renderCrossword() {
         </div>`).join('')}` : ''}
     </div>
   `;
+
+  // Set up grid click delegation AFTER innerHTML is set
+  const cwGrid = document.getElementById('cwGrid');
+  if (cwGrid) {
+    cwGrid.onclick = function(e) {
+      const cell = e.target.closest('[data-r]');
+      if (!cell) return;
+      cwCellClick(parseInt(cell.dataset.r), parseInt(cell.dataset.c));
+    };
+  }
+
+  // Set up keyboard delegation
+  const cwKb = area.querySelector('.cw-keyboard');
+  if (cwKb) {
+    cwKb.onclick = function(e) {
+      const key = e.target.closest('[data-key]');
+      if (!key) return;
+      if (key.dataset.key === 'CHECK') cwCheckAll();
+      else cwKey(key.dataset.key);
+    };
+  }
+
+  // Set up clue click delegation
+  area.querySelectorAll('.cw-clue').forEach(clue => {
+    clue.addEventListener('click', function() {
+      const id = this.id; // cwClue_a1 or cwClue_d1
+      if (!id) return;
+      const parts = id.replace('cwClue_','').split('');
+      const dir = parts[0] === 'a' ? 'across' : 'down';
+      const num = parseInt(id.replace('cwClue_a','').replace('cwClue_d',''));
+      cwSelectClue(dir, num);
+    });
+  });
 }
 
 function buildCWGridHTML() {
@@ -5069,9 +5102,9 @@ function renderScriptureChallenge() {
   const inputSection = smMode === 'wordbank' ? `
     <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:6px">Tap a word to fill the next blank · Tap a blank to remove</div>
     <div class="sm-word-bank">
-      ${smWordBank.map(w => {
+      ${smWordBank.map((w,wi) => {
         const used = smUserBlanks.map(smNorm).includes(smNorm(w));
-        return '<div class="sm-word '+(used?'used':'')+'">'+w+'</div>'; // click handled below
+        return '<div class="sm-word '+(used?'used':'')+'" data-wordidx="'+wi+'" style="'+(used?'opacity:0.4;text-decoration:line-through':'')+'">'+w+'</div>';
       }).join('')}
     </div>` : `
     <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:6px">
