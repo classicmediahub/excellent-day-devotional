@@ -220,14 +220,14 @@ body {
 /* ══════════════════════════════════════
    APP SHELL
 ══════════════════════════════════════ */
-#app { display: none; height: 100%; flex-direction: column; }
+#app { display: none; height: 100%; flex-direction: column; overflow: hidden; }
 #app.show { display: flex; }
 
 /* ══════════════════════════════════════
    TOP BAR
 ══════════════════════════════════════ */
 .topbar {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  position: sticky; top: 0; z-index: 200;
   height: 60px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -299,19 +299,14 @@ body {
    MAIN + PAGES
 ══════════════════════════════════════ */
 .main {
-  position: fixed;
-  top: 60px;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  overflow-y: scroll;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
-  touch-action: pan-y;
-  z-index: 1;
   transition: background var(--transition);
 }
-.page { display: none; padding: 22px 16px 40px; max-width: 680px; margin: 0 auto; }
+.page { display: none; padding: 22px 16px 80px; max-width: 680px; margin: 0 auto; }
 .page.active { display: block; animation: pg-in 0.35s ease; }
 @keyframes pg-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -322,7 +317,6 @@ body {
    BOTTOM NAV
 ══════════════════════════════════════ */
 .bnav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
   display: flex;
   background: var(--nav-bg);
   border-top: 1px solid var(--nav-border);
