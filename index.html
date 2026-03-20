@@ -1986,8 +1986,8 @@ button.brand:active { transform: scale(0.97); }
 .sm-mode-tab { flex:1; padding:8px; border-radius:10px; border:1.5px solid var(--border); background:transparent; color:var(--text-3); font-family:var(--serif); font-size:0.75rem; cursor:pointer; transition:all 0.2s; text-align:center; }
 .sm-mode-tab.active { border-color:var(--gold); background:var(--gold-bg); color:var(--gold); }
 /* Word bank mode */
-.sm-word-bank { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:12px; min-height:52px; }
-.sm-word { padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-1); font-family:var(--serif); font-size:0.82rem; cursor:pointer; transition:all 0.18s; user-select:none; }
+.sm-word-bank { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; padding:12px; background:var(--surface); border:1px solid var(--border); border-radius:12px; min-height:52px; touch-action:manipulation; }
+.sm-word { padding:6px 14px; border-radius:20px; border:1.5px solid var(--border); background:var(--bg); color:var(--text-1); font-family:var(--serif); font-size:0.82rem; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation; -webkit-tap-highlight-color:transparent; transition:all 0.18s; user-select:none; }
 .sm-word:hover { border-color:var(--accent); background:var(--accent-bg); }
 .sm-word.used { opacity:0.3; cursor:default; text-decoration:line-through; }
 /* Type mode */
@@ -5112,7 +5112,7 @@ function renderScriptureChallenge() {
     <div class="sm-word-bank">
       ${smWordBank.map((w,wi) => {
         const used = smUserBlanks.map(smNorm).includes(smNorm(w));
-        return '<div class="sm-word '+(used?'used':'')+'" data-wordidx="'+wi+'" style="'+(used?'opacity:0.4;text-decoration:line-through':'')+'">'+w+'</div>';
+        return '<button class="sm-word '+(used?'used':'')+'" data-wordidx="'+wi+'" type="button" '+(used?'disabled':'')+'style="'+(used?'opacity:0.4;text-decoration:line-through;cursor:default':'')+'">'+w+'</button>';
       }).join('')}
     </div>` : `
     <div style="font-size:0.72rem;color:var(--text-4);margin-bottom:6px">
@@ -5274,7 +5274,9 @@ function smCheck() {
 }
 
 function smWordTap(idx) {
+  if (idx === undefined || idx === null || isNaN(idx)) return;
   const w = smWordBank[idx];
+  if (!w) return;
   const used = smUserBlanks.map(smNorm).includes(smNorm(w));
   if (!used) smPickWord(w);
 }
