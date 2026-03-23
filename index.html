@@ -301,12 +301,21 @@ body {
 .main {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
   transition: background var(--transition);
 }
 .page { display: none; padding: 22px 16px 80px; max-width: 680px; margin: 0 auto; }
+#page-quiz, #page-crossword, #page-scripture, #page-games, #page-prayer {
+  /* Game pages need explicit scroll permission */
+  -webkit-overflow-scrolling: touch;
+}
+#quizArea, #crosswordArea, #scriptureArea {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+}
 .page.active { display: block; animation: pg-in 0.35s ease; }
 @keyframes pg-in {
   from { opacity: 0; transform: translateY(10px); }
@@ -2029,6 +2038,40 @@ button.brand:active { transform: scale(0.97); }
 .sm-vl-star { font-size:12px; filter:grayscale(1) opacity(0.3); }
 .sm-vl-star.e { filter:none; }
 
+
+/* ═══════════════════════════════════════
+   PREVIOUS DEVOTIONALS
+═══════════════════════════════════════ */
+.prev-devo-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.prev-devo-card:hover { border-color: var(--accent); transform: translateX(3px); }
+.pdc-date { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.1em;
+  text-transform: uppercase; font-family: var(--serif); margin-bottom: 5px; }
+.pdc-title { font-family: var(--serif); font-size: 1rem; font-weight: 700;
+  color: var(--text-1); margin-bottom: 4px; line-height: 1.3; }
+.pdc-verse { font-size: 0.78rem; color: var(--text-3); font-style: italic;
+  line-height: 1.5; margin-bottom: 8px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pdc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.pdc-tag { background: rgba(200,168,74,0.1); border: 1px solid rgba(200,168,74,0.25);
+  color: var(--gold); border-radius: 8px; padding: 2px 8px; font-size: 0.68rem; font-family: var(--serif); }
+.prev-devo-full { background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px; margin-bottom: 14px; }
+.pdf-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.pdf-back-btn { background: transparent; border: 1px solid var(--border);
+  border-radius: 10px; padding: 6px 14px; font-family: var(--serif);
+  font-size: 0.75rem; color: var(--text-3); cursor: pointer; transition: all 0.2s; }
+.pdf-back-btn:hover { border-color: var(--accent); color: var(--accent); }
+.prev-empty { text-align: center; padding: 40px 20px; color: var(--text-4);
+  font-family: var(--serif); font-size: 0.9rem; font-style: italic; }
+.prev-load-more { width: 100%; padding: 10px; background: transparent;
+  border: 1px solid var(--border); border-radius: 10px; color: var(--text-3);
+  font-family: var(--serif); font-size: 0.78rem; cursor: pointer;
+  margin-top: 4px; transition: all 0.2s; }
+.prev-load-more:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
@@ -2518,6 +2561,19 @@ button.brand:active { transform: scale(0.97); }
     </div>
 
 
+
+    <!-- PREVIOUS DEVOTIONALS PAGE -->
+    <div class="page" id="page-archive">
+      <div class="ph" style="margin-bottom:16px">
+        <div class="ph-label">Revisit God's Word</div>
+        <h2 class="ph-title" style="font-size:1.32rem">Previous Devotionals</h2>
+        <div class="ph-divider"><div class="ph-div-line"></div><span>✦</span><div class="ph-div-line r"></div></div>
+      </div>
+      <div id="archiveArea">
+        <div class="prev-empty">Loading previous devotionals…</div>
+      </div>
+    </div>
+
     <!-- PRAYER WALL PAGE -->
     <div class="page" id="page-prayer">
       <div class="ph" style="margin-bottom:16px">
@@ -2738,6 +2794,16 @@ button.brand:active { transform: scale(0.97); }
         <div class="sm-item-text">
           <div class="sm-item-name" style="font-size:0.82rem">❓ Bible Quiz</div>
           <div class="sm-item-sub">10 levels — trivia challenge</div>
+        </div>
+        <div class="sm-arrow">›</div>
+      </li>
+      <li class="sm-item" id="sm-archive" data-nav="archive">
+        <div class="sm-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <div class="sm-item-text">
+          <div class="sm-item-name">Previous Devotionals</div>
+          <div class="sm-item-sub">Read past devotionals</div>
         </div>
         <div class="sm-arrow">›</div>
       </li>
@@ -5297,6 +5363,169 @@ function smWordTap(idx) {
 
 
 // ══════════════════════════════════════════════════════
+//  PREVIOUS DEVOTIONALS ARCHIVE
+// ══════════════════════════════════════════════════════
+let archiveOffset = 0;
+const ARCHIVE_PAGE = 10;
+let archiveCurrentDevo = null;
+
+async function initArchive() {
+  archiveOffset = 0;
+  archiveCurrentDevo = null;
+  await loadArchive(true);
+}
+
+async function loadArchive(reset = false) {
+  const area = document.getElementById('archiveArea');
+  if (!area) return;
+  if (reset) {
+    area.innerHTML = '<div class="prev-empty">Loading previous devotionals…</div>';
+    archiveOffset = 0;
+  }
+
+  if (!_db) {
+    area.innerHTML = '<div class="prev-empty">Connect to the internet to view previous devotionals.</div>';
+    return;
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const { data, count, error } = await _db
+      .from('devotionals')
+      .select('id, date, title, verse_text, verse_ref, theme_tags', { count: 'exact' })
+      .lt('date', today)
+      .order('date', { ascending: false })
+      .range(archiveOffset, archiveOffset + ARCHIVE_PAGE - 1);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      if (reset) area.innerHTML = '<div class="prev-empty">No previous devotionals yet. Check back after the first devotional is posted! ✦</div>';
+      return;
+    }
+
+    const cards = data.map(d => {
+      const dateObj = new Date(d.date + 'T00:00:00');
+      const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      const tags = (d.theme_tags || '').split(',').filter(t => t.trim()).slice(0, 3);
+      return `
+        <div class="prev-devo-card" data-devoid="${d.id}" data-devodate="${d.date}">
+          <div class="pdc-date">${dateStr}</div>
+          <div class="pdc-title">${d.title || 'Devotional'}</div>
+          <div class="pdc-verse">${d.verse_text ? '"' + d.verse_text + '"' : ''}</div>
+          ${tags.length ? `<div class="pdc-tags">${tags.map(t => `<span class="pdc-tag">✦ ${t.trim()}</span>`).join('')}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    if (reset) {
+      area.innerHTML = `<div id="archiveList">${cards}</div>`;
+    } else {
+      const list = document.getElementById('archiveList');
+      if (list) list.insertAdjacentHTML('beforeend', cards);
+    }
+
+    archiveOffset += data.length;
+
+    // Remove old load more button
+    const oldBtn = document.getElementById('archiveLoadMore');
+    if (oldBtn) oldBtn.remove();
+
+    // Add load more if there are more
+    if (data.length === ARCHIVE_PAGE) {
+      const btn = document.createElement('button');
+      btn.className = 'prev-load-more';
+      btn.id = 'archiveLoadMore';
+      btn.textContent = 'Load more devotionals…';
+      btn.addEventListener('click', () => loadArchive(false));
+      area.appendChild(btn);
+    }
+
+    // Click delegation for cards
+    const list = document.getElementById('archiveList');
+    if (list) {
+      list.onclick = function(e) {
+        const card = e.target.closest('.prev-devo-card');
+        if (card) openArchiveDevo(card.dataset.devoid, card.dataset.devodate);
+      };
+    }
+
+  } catch(e) {
+    console.error('Archive load error:', e);
+    if (reset) area.innerHTML = '<div class="prev-empty">Could not load devotionals. Please check your connection.</div>';
+  }
+}
+
+async function openArchiveDevo(id, date) {
+  const area = document.getElementById('archiveArea');
+  if (!area || !_db) return;
+
+  area.innerHTML = '<div class="prev-empty">Loading…</div>';
+
+  try {
+    const { data, error } = await _db
+      .from('devotionals')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) throw error || new Error('Not found');
+
+    const dateObj = new Date(date + 'T00:00:00');
+    const dateStr = dateObj.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const tags = (data.theme_tags || '').split(',').filter(t => t.trim());
+
+    // Pick fields based on current language
+    function pick(field) {
+      if (currentLang === 'yo' && data[field + '_yo']) return data[field + '_yo'];
+      if (currentLang === 'pcm' && data[field + '_pcm']) return data[field + '_pcm'];
+      if (currentLang === 'fr' && data[field + '_fr']) return data[field + '_fr'];
+      return data[field] || '';
+    }
+
+    const reflections = [pick('reflection_1'), pick('reflection_2'), pick('reflection_3')].filter(Boolean);
+
+    area.innerHTML = `
+      <div class="pdf-nav">
+        <button class="pdf-back-btn" id="archiveBackBtn">← Back to Archive</button>
+        <span style="font-size:0.72rem;color:var(--text-4);font-family:var(--serif)">${dateStr}</span>
+      </div>
+      <div class="prev-devo-full">
+        <div style="font-size:0.68rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--serif);margin-bottom:8px">✦ Previous Devotional</div>
+        <h2 style="font-family:var(--serif);font-size:1.4rem;font-weight:700;color:var(--text-1);margin-bottom:14px;line-height:1.3">${pick('title')}</h2>
+
+        <div style="background:linear-gradient(135deg,rgba(15,40,20,0.95),rgba(10,28,14,0.95));border:1px solid rgba(200,168,74,0.3);border-radius:12px;padding:14px;margin-bottom:16px">
+          <div style="font-size:0.65rem;color:var(--gold);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px">✦ Verse of the Day</div>
+          <p style="font-family:var(--serif);font-size:1rem;color:rgba(240,234,220,0.92);line-height:1.72;font-style:italic;margin-bottom:8px">"${pick('verse_text')}"</p>
+          <div style="font-size:0.65rem;color:var(--gold);letter-spacing:0.1em">${data.verse_ref || ''}</div>
+        </div>
+
+        ${tags.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tags.map(t => `<span class="pdc-tag">✦ ${t.trim()}</span>`).join('')}</div>` : ''}
+
+        <div style="font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-family:var(--serif)">✦ Today's Reflection</div>
+        ${reflections.map(r => `<p style="font-family:var(--serif);font-size:0.92rem;color:var(--text-2);line-height:1.8;margin-bottom:14px">${r}</p>`).join('')}
+
+        ${pick('prayer') ? `
+        <div style="background:rgba(200,168,74,0.06);border:1px solid rgba(200,168,74,0.2);border-radius:10px;padding:14px;margin-top:8px">
+          <div style="font-size:0.65rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px">✦ Morning Prayer</div>
+          <p style="font-family:var(--serif);font-size:0.88rem;color:var(--text-2);line-height:1.7;font-style:italic">"${pick('prayer')}"</p>
+        </div>` : ''}
+      </div>
+    `;
+
+    // Back button
+    document.getElementById('archiveBackBtn').addEventListener('click', () => {
+      archiveOffset = 0;
+      loadArchive(true);
+    });
+
+  } catch(e) {
+    console.error('Open devo error:', e);
+    area.innerHTML = '<div class="prev-empty">Could not load this devotional.</div>';
+  }
+}
+
+
+// ══════════════════════════════════════════════════════
 //  PRAYER WALL
 // ══════════════════════════════════════════════════════
 let pwCategory = 'General';
@@ -7533,6 +7762,7 @@ function nav(p) {
   if (mainScroll) mainScroll.scrollTop = 0;
   // Init games AFTER page is active so DOM elements are fully interactive
   if (p === 'quiz') { requestAnimationFrame(() => initQuiz()); }
+  if (p === 'archive') { requestAnimationFrame(() => initArchive()); }
   if (p === 'crossword') { requestAnimationFrame(() => initCrossword()); }
   if (p === 'scripture') { requestAnimationFrame(() => initScripture()); }
   // Sync side menu active state
